@@ -1,0 +1,8 @@
+platform :ios, "9.2"
+#platform :ios
+pod 'CorePlot', :git => 'https://github.com/core-plot/core-plot.git'
+pod 'AFNetworking'
+#pod "DownloadButton"
+#pod 'OpenCV' '2.4.9'
+pod 'OpenCV'
+pod 'QBImagePickerController'

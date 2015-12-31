@@ -1,0 +1,3 @@
+[submodule "smarteye"]
+	path = smarteye
+	url = https://github.com/Threee-s/smarteye.git

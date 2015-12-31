@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DebugModeViewController" customModule="LEDSignalDetector" customModuleProvider="target">
+            <connections>
+                <outlet property="batchDetectSwitch" destination="SYW-sv-LFt" id="9He-GW-p3A"/>
+                <outlet property="colorTypeSegment" destination="AwS-RO-Us1" id="r4B-a1-hm0"/>
+                <outlet property="exposureBiasNameLabel" destination="duS-Vo-agr" id="MeE-cG-bYW"/>
+                <outlet property="exposureBiasSlider" destination="rmm-vV-YFs" id="48R-da-LrJ"/>
+                <outlet property="exposureBiasValueLabel" destination="bYZ-oX-Q0Z" id="eOk-YE-vEp"/>
+                <outlet property="exposureDurationNameLabel" destination="BwR-N9-gcr" id="bA8-mT-zZy"/>
+                <outlet property="exposureDurationSlider" destination="TIN-gF-qyW" id="Ea9-PN-E8g"/>
+                <outlet property="exposureDurationValueLabel" destination="2kj-lD-8OJ" id="dd3-hi-S1G"/>
+                <outlet property="exposureISONameLabel" destination="rTj-Om-F2U" id="OAD-R5-e3T"/>
+                <outlet property="exposureISOSlider" destination="P0Z-NZ-qD8" id="Bb2-TQ-k7G"/>
+                <outlet property="exposureISOValueLabel" destination="cGE-W3-W6c" id="nWL-Qq-WdG"/>
+                <outlet property="exposureOffsetNameLabel" destination="4ot-Cr-CRh" id="9o6-fO-xkw"/>
+                <outlet property="exposureOffsetSlider" destination="FXD-q9-0Rf" id="bk2-53-NIm"/>
+                <outlet property="exposureOffsetValueLabel" destination="uwV-0S-8Vm" id="s63-LM-MPx"/>
+                <outlet property="fpsNameLabel" destination="RjD-X5-OJ1" id="JCH-th-28u"/>
+                <outlet property="fpsSlider" destination="lcv-lW-Kp1" id="iog-c5-866"/>
+                <outlet property="fpsValueLabel" destination="TbF-TQ-EjA" id="J9u-xE-L61"/>
+                <outlet property="hueHighSlider" destination="1Si-H3-RN7" id="Wlo-pj-WmH"/>
+                <outlet property="hueLowSlider" destination="4fC-a9-h7s" id="tDW-qj-fEO"/>
+                <outlet property="hueNameLabel" destination="6Sf-Np-51I" id="7DW-4T-toV"/>
+                <outlet property="hueValueLabel" destination="Jvp-yd-XGN" id="Ure-Ow-Wen"/>
+                <outlet property="imageRecordNameLabel" destination="Aei-DQ-aMV" id="eci-i2-9aQ"/>
+                <outlet property="imageRecordSwitch" destination="wRo-62-bkF" id="EmV-gq-qXH"/>
+                <outlet property="imageRecordTimeSlider" destination="Skp-kM-1gI" id="WuT-AQ-SnR"/>
+                <outlet property="imageRecordValueLabel" destination="vhq-fO-I6t" id="PZ3-Aj-sUK"/>
+                <outlet property="logRecordSwitch" destination="Nqb-xU-VTN" id="kYy-Zj-5oW"/>
+                <outlet property="rangeFPSLabel" destination="zxC-ai-2CD" id="9WO-wv-tXA"/>
+                <outlet property="rangeISOLabel" destination="3ri-ck-wuF" id="owB-W1-5Wb"/>
+                <outlet property="rangeSSLabel" destination="Qmm-JH-R8B" id="Qfp-df-blB"/>
+                <outlet property="saturationHighSlider" destination="jmV-E3-jAz" id="cwA-3A-8X3"/>
+                <outlet property="saturationLowSlider" destination="GMH-55-Nml" id="4s6-UY-fiY"/>
+                <outlet property="saturationNameLabel" destination="KPq-T2-C2l" id="oO5-bq-PBH"/>
+                <outlet property="saturationValueLabel" destination="ibL-mR-X4B" id="o4O-zj-dL8"/>
+                <outlet property="sensorGraphView" destination="ikk-tv-N8r" id="QiX-9j-2sz"/>
+                <outlet property="sensorSegControl" destination="mf6-3S-18V" id="s01-DT-IAO"/>
+                <outlet property="valueFPSLabel" destination="x8l-CS-89u" id="0YL-bs-ddO"/>
+                <outlet property="valueHighSlider" destination="x0h-bt-ACF" id="4IR-oD-gF4"/>
+                <outlet property="valueISOLabel" destination="DrL-Vo-fTy" id="deh-91-pdm"/>
+                <outlet property="valueLowSlider" destination="55j-hs-Vgl" id="Htt-WL-vxH"/>
+                <outlet property="valueNameLabel" destination="RAx-uL-8DB" id="Me0-QC-htB"/>
+                <outlet property="valueSSLabel" destination="UOj-5G-fiZ" id="hDe-5g-lhX"/>
+                <outlet property="valueValueLabel" destination="crb-cQ-P1n" id="eSB-CP-gxg"/>
+                <outlet property="videoFPSSegmentControl" destination="Qik-T5-7Et" id="Hnj-yX-SXy"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="zoomNameLabel" destination="wfi-lN-0hl" id="xAD-n4-8Gg"/>
+                <outlet property="zoomSlider" destination="6DX-H9-D18" id="Wir-r3-iIj"/>
+                <outlet property="zoomValueLabel" destination="5ha-BD-k4Y" id="R7S-7p-13v"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ISO" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ri-ck-wuF">
+                    <rect key="frame" x="65" y="60" width="60" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="SS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qmm-JH-R8B">
+                    <rect key="frame" x="147" y="60" width="81" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="FPS" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zxC-ai-2CD">
+                    <rect key="frame" x="250" y="60" width="60" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ISO" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DrL-Vo-fTy">
+                    <rect key="frame" x="65" y="81" width="60" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="SS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOj-5G-fiZ">
+                    <rect key="frame" x="147" y="81" width="81" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="FPS" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x8l-CS-89u">
+                    <rect key="frame" x="250" y="81" width="60" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="H" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Sf-Np-51I">
+                    <rect key="frame" x="16" y="108" width="31" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="160" minValue="0.0" maxValue="180" translatesAutoresizingMaskIntoConstraints="NO" id="4fC-a9-h7s" userLabel="HueLow Slider">
+                    <rect key="frame" x="63" y="104" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="eTr-hi-hSy"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="OZC-Mr-jKa"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="i3x-YH-cXe"/>
+                        <action selector="sliderHueLowChanged:" destination="-1" eventType="valueChanged" id="Qcj-Ld-XSZ"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="Ln6-Na-1iu"/>
+                    </connections>
+                </slider>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="20" minValue="0.0" maxValue="180" translatesAutoresizingMaskIntoConstraints="NO" id="1Si-H3-RN7" userLabel="HueHigh Slider">
+                    <rect key="frame" x="194" y="104" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="EHa-U5-KzC"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="GOR-qa-l9z"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="cgg-B2-x8a"/>
+                        <action selector="sliderHueHighChanged:" destination="-1" eventType="valueChanged" id="zyQ-4n-qGB"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="iR2-mv-MM5"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="160-20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jvp-yd-XGN">
+                    <rect key="frame" x="318" y="108" width="41" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="S" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KPq-T2-C2l">
+                    <rect key="frame" x="16" y="146" width="31" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="100" minValue="0.0" maxValue="255" translatesAutoresizingMaskIntoConstraints="NO" id="GMH-55-Nml" userLabel="SaturationLow Slider">
+                    <rect key="frame" x="63" y="142" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="vzS-7e-e2Z"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="o4P-AU-Mz4"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="xbo-yf-ZcL"/>
+                        <action selector="sliderSaturationLowChanged:" destination="-1" eventType="valueChanged" id="ZYw-Tg-epw"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="Zru-QH-qGz"/>
+                    </connections>
+                </slider>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="255" minValue="0.0" maxValue="255" translatesAutoresizingMaskIntoConstraints="NO" id="jmV-E3-jAz" userLabel="SaturationHigh Slider">
+                    <rect key="frame" x="194" y="142" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="Mcb-Wc-jtJ"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="b0i-Cc-qqq"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="ghg-Wg-Tv5"/>
+                        <action selector="sliderSaturationHighChanged:" destination="-1" eventType="valueChanged" id="8wp-m1-hIO"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="CbN-wv-dji"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="100-255" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ibL-mR-X4B">
+                    <rect key="frame" x="318" y="146" width="41" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="V" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RAx-uL-8DB">
+                    <rect key="frame" x="16" y="184" width="31" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="70" minValue="0.0" maxValue="255" translatesAutoresizingMaskIntoConstraints="NO" id="55j-hs-Vgl" userLabel="ValueLow Slider">
+                    <rect key="frame" x="63" y="180" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="Y7q-Zj-CRW"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="ekq-SJ-Yyr"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="z4I-lb-fZ9"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="Gdy-Gf-CTM"/>
+                        <action selector="sliderValueLowChanged:" destination="-1" eventType="valueChanged" id="cXR-iS-217"/>
+                    </connections>
+                </slider>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="255" minValue="0.0" maxValue="255" translatesAutoresizingMaskIntoConstraints="NO" id="x0h-bt-ACF" userLabel="ValueHigh Slider">
+                    <rect key="frame" x="194" y="180" width="118" height="31"/>
+                    <connections>
+                        <action selector="sliderColorTouchCancel:" destination="-1" eventType="touchCancel" id="tGj-nk-7Qk"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpInside" id="4Jh-tL-S7e"/>
+                        <action selector="sliderColorTouchEnded:" destination="-1" eventType="touchUpOutside" id="PKc-B8-ySW"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="fUe-sM-P26"/>
+                        <action selector="sliderValueHighChanged:" destination="-1" eventType="valueChanged" id="l6O-hk-dCU"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="70-255" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="crb-cQ-P1n">
+                    <rect key="frame" x="318" y="184" width="41" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <segmentedControl hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="AwS-RO-Us1">
+                    <rect key="frame" x="86" y="218" width="202" height="29"/>
+                    <segments>
+                        <segment title="Green"/>
+                        <segment title="Red"/>
+                        <segment title="All"/>
+                    </segments>
+                    <connections>
+                        <action selector="colorTypeChanged:" destination="-1" eventType="valueChanged" id="0Lp-yU-Ml8"/>
+                    </connections>
+                </segmentedControl>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Offset" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ot-Cr-CRh">
+                    <rect key="frame" x="16" y="269" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="FXD-q9-0Rf">
+                    <rect key="frame" x="63" y="265" width="249" height="31"/>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uwV-0S-8Vm">
+                    <rect key="frame" x="317" y="269" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Bias" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="duS-Vo-agr">
+                    <rect key="frame" x="16" y="307" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="rmm-vV-YFs" userLabel="Bias Slider">
+                    <rect key="frame" x="63" y="303" width="249" height="31"/>
+                    <connections>
+                        <action selector="exposureBiasChanged:" destination="-1" eventType="valueChanged" id="LA8-n8-DFm"/>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="Mqr-qw-eWE"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="hEy-l7-stQ"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpOutside" id="tzj-kX-Vpi"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="6J1-xC-RRf"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bYZ-oX-Q0Z">
+                    <rect key="frame" x="317" y="307" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ISO" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rTj-Om-F2U">
+                    <rect key="frame" x="16" y="345" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="P0Z-NZ-qD8" userLabel="ISO Slider">
+                    <rect key="frame" x="63" y="341" width="249" height="31"/>
+                    <connections>
+                        <action selector="exposureIOSChanged:" destination="-1" eventType="valueChanged" id="jUq-TL-mGw"/>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="A8A-dK-7i9"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="5OK-0o-lxF"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpOutside" id="Fc2-kO-I8a"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="zC3-sw-Lq0"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cGE-W3-W6c">
+                    <rect key="frame" x="317" y="345" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="SS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BwR-N9-gcr" userLabel="Duration">
+                    <rect key="frame" x="16" y="383" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="TIN-gF-qyW" userLabel="Duration Slider">
+                    <rect key="frame" x="63" y="379" width="249" height="31"/>
+                    <connections>
+                        <action selector="exposureDurationChanged:" destination="-1" eventType="valueChanged" id="q9c-CR-cQU"/>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="9cl-I9-ltc"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="YAf-4b-Zma"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpOutside" id="z9B-gd-2aA"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="Lrx-OT-SZT"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2kj-lD-8OJ">
+                    <rect key="frame" x="317" y="383" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="FPS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RjD-X5-OJ1">
+                    <rect key="frame" x="16" y="421" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="240" translatesAutoresizingMaskIntoConstraints="NO" id="lcv-lW-Kp1" userLabel="FPS Slider">
+                    <rect key="frame" x="63" y="417" width="249" height="31"/>
+                    <connections>
+                        <action selector="fpsValueChanged:" destination="-1" eventType="valueChanged" id="Zoa-Vj-sdJ"/>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="xJZ-CZ-gn1"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="bWs-xm-EKT"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpOutside" id="eIi-n5-wGE"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="aA7-A1-nHm"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TbF-TQ-EjA">
+                    <rect key="frame" x="317" y="421" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <segmentedControl hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Qik-T5-7Et">
+                    <rect key="frame" x="86" y="455" width="202" height="29"/>
+                    <segments>
+                        <segment title="30"/>
+                        <segment title="60"/>
+                        <segment title="120"/>
+                        <segment title="240"/>
+                    </segments>
+                    <connections>
+                        <action selector="fpsValueChanged:" destination="-1" eventType="valueChanged" id="QUU-S6-TAJ"/>
+                    </connections>
+                </segmentedControl>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Zoom" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wfi-lN-0hl">
+                    <rect key="frame" x="16" y="495" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="200" translatesAutoresizingMaskIntoConstraints="NO" id="6DX-H9-D18">
+                    <rect key="frame" x="63" y="491" width="249" height="31"/>
+                    <connections>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="rUU-g1-514"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="hpU-qs-ifa"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="z2y-Fw-evj"/>
+                        <action selector="zoomChanged:" destination="-1" eventType="valueChanged" id="sCf-i7-iSA"/>
+                    </connections>
+                </slider>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5ha-BD-k4Y">
+                    <rect key="frame" x="318" y="495" width="41" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Record" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Aei-DQ-aMV">
+                    <rect key="frame" x="16" y="533" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="Skp-kM-1gI" userLabel="RecordTime Slider">
+                    <rect key="frame" x="63" y="529" width="78" height="31"/>
+                    <connections>
+                        <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="0UQ-SU-TWg"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpOutside" id="a5w-yx-Rog"/>
+                        <action selector="sliderCameraTouchEnded:" destination="-1" eventType="touchUpInside" id="g0n-3x-Hni"/>
+                        <action selector="sliderRecordTimeChanged:" destination="-1" eventType="valueChanged" id="vDY-eq-0Fm"/>
+                        <action selector="sliderTouchBegan:" destination="-1" eventType="touchDown" id="FZK-lG-ns2"/>
+                    </connections>
+                </slider>
+                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="wRo-62-bkF">
+                    <rect key="frame" x="204" y="528" width="51" height="31"/>
+                    <connections>
+                        <action selector="saveCaptureSwitchChanged:" destination="-1" eventType="valueChanged" id="t1F-Sj-5Lv"/>
+                    </connections>
+                </switch>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vhq-fO-I6t">
+                    <rect key="frame" x="317" y="533" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Nqb-xU-VTN">
+                    <rect key="frame" x="261" y="528" width="51" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="Log"/>
+                    <connections>
+                        <action selector="saveLogSwitchChanged:" destination="-1" eventType="valueChanged" id="hza-2A-Xyf"/>
+                    </connections>
+                </switch>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Kp-5t-C63">
+                    <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                    <items>
+                        <barButtonItem tag="1" title="B" width="42" style="plain" id="HNw-ai-Y0y" userLabel="Binary">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="z6w-2z-gwV"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="2" title="P" width="42" style="plain" id="27b-Ge-g08" userLabel="Point">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="yzr-6h-xBh"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="3" title="R" width="42" style="plain" id="U9f-y6-pdB" userLabel="Rect">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="KRI-If-29k"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="4" title="A" width="42" style="plain" id="NwG-eu-s80" userLabel="Area">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="0JE-Vv-FaU"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="5" title="S" width="42" style="plain" id="1ss-E0-O3w" userLabel="Signal">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="IVu-PC-UAH"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="6" title="R" width="42" style="plain" id="NcV-uO-PXa" userLabel="Range">
+                            <connections>
+                                <action selector="dispModeChanged:" destination="-1" id="xhU-oD-5RR"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem tag="7" title="H" width="42" style="plain" id="Wg1-ji-oBg" userLabel="Histogram"/>
+                    </items>
+                    <color key="tintColor" red="0.0" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                </toolbar>
+                <view hidden="YES" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ikk-tv-N8r" customClass="AirGraphView">
+                    <rect key="frame" x="8" y="180" width="359" height="229"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <segmentedControl hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="mf6-3S-18V">
+                    <rect key="frame" x="16" y="575" width="343" height="29"/>
+                    <segments>
+                        <segment title="None"/>
+                        <segment title="Acceleration"/>
+                        <segment title="Gyro"/>
+                        <segment title="Attitude"/>
+                    </segments>
+                </segmentedControl>
+                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="SYW-sv-LFt">
+                    <rect key="frame" x="147" y="529" width="51" height="31"/>
+                    <connections>
+                        <action selector="batchDetectSwitchChanged:" destination="-1" eventType="valueChanged" id="6IN-B9-Hhr"/>
+                    </connections>
+                </switch>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <gestureRecognizers/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <connections>
+                <outletCollection property="gestureRecognizers" destination="8st-vk-cfU" appends="YES" id="ZmN-Lk-Clc"/>
+                <outletCollection property="gestureRecognizers" destination="zpo-1g-t9s" appends="YES" id="O1P-Kg-Ghb"/>
+            </connections>
+        </view>
+        <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="8st-vk-cfU">
+            <connections>
+                <action selector="longGestureForDebug:" destination="-1" id="PMY-Fo-L2W"/>
+                <outlet property="delegate" destination="-1" id="hc9-MT-7oA"/>
+            </connections>
+        </pongPressGestureRecognizer>
+        <panGestureRecognizer minimumNumberOfTouches="1" id="zpo-1g-t9s">
+            <connections>
+                <action selector="panGestureForDebug:" destination="-1" id="1rr-c3-sKz"/>
+                <outlet property="delegate" destination="-1" id="RmA-pN-1ds"/>
+            </connections>
+        </panGestureRecognizer>
+    </objects>
+</document>
