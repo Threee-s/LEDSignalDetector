@@ -14,7 +14,6 @@
 		652223A119E1855C00F1667A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652223A019E1855C00F1667A /* Images.xcassets */; };
 		652223A419E1855C00F1667A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 652223A219E1855C00F1667A /* LaunchScreen.xib */; };
 		652223B019E1855D00F1667A /* LEDSignalDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652223AF19E1855D00F1667A /* LEDSignalDetectorTests.swift */; };
-		652223EC19E1953000F1667A /* SmartEyeW.mm in Sources */ = {isa = PBXBuildFile; fileRef = 652223EB19E1953000F1667A /* SmartEyeW.mm */; };
 		6524FE5E1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */; };
 		6557474419EF3FAE00429846 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 6557474319EF3FAE00429846 /* Log.m */; };
 		6557474619EFBE0100429846 /* FileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6557474519EFBE0100429846 /* FileManager.m */; };
@@ -29,7 +28,6 @@
 		65AA460319FFEB1600D0695C /* SignalGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 65AA460219FFEB1600D0695C /* SignalGraphView.m */; };
 		65C59A6219E58A5B005A3F96 /* blue.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 65C59A5D19E58A5B005A3F96 /* blue.jpg */; };
 		65C59A6419E58A5B005A3F96 /* panel.png in Resources */ = {isa = PBXBuildFile; fileRef = 65C59A5F19E58A5B005A3F96 /* panel.png */; };
-		65C59A6C19E58DFA005A3F96 /* SmartEye.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65C59A5919E48475005A3F96 /* SmartEye.mm */; };
 		65C59A6F19E5907C005A3F96 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C59A6A19E58DDB005A3F96 /* Photos.framework */; };
 		65C6C17219EAB345003518D0 /* CameraCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C6C17119EAB345003518D0 /* CameraCapture.m */; };
 		65D94FE219E9882E001B8D49 /* CameraOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652E646B19E2C38C002789DC /* CameraOperator.swift */; };
@@ -50,7 +48,6 @@
 		65F482D81A05F9960057D363 /* LEDPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482D71A05F9960057D363 /* LEDPanelView.swift */; };
 		65F482DA1A05F9FD0057D363 /* LEDPedestrianSignalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */; };
 		65F482DC1A05FA2F0057D363 /* LEDVehicleSignalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */; };
-		65F6F5CA1A016D3C00A56E96 /* SmartEyeLog.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F6F5C81A016D3C00A56E96 /* SmartEyeLog.mm */; };
 		C72157781BA715C70081467B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72157771BA715C70081467B /* MapKit.framework */; };
 		C721577A1BA719E50081467B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72157791BA719E50081467B /* CoreLocation.framework */; };
 		C72157811BAC27C50081467B /* LEDMapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C72157801BAC27C50081467B /* LEDMapManager.m */; };
@@ -60,13 +57,17 @@
 		C721649B1B36FCCA003A472D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C721649A1B36FCCA003A472D /* QuartzCore.framework */; };
 		C728A7DC1B9DAE860009670C /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C728A7DB1B9DAE860009670C /* LogViewController.swift */; };
 		C72CCC8B1C3192C700369814 /* AirGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC8A1C3192C700369814 /* AirGraphView.m */; };
+		C72CCC8F1C34DE4D00369814 /* AirSensorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC8E1C34DE4D00369814 /* AirSensorManager.m */; };
+		C72CCC921C34DE5A00369814 /* SmartEyeW.mm in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC911C34DE5A00369814 /* SmartEyeW.mm */; };
+		C72CCC9C1C34DE9000369814 /* SmartEyeLog.mm in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC961C34DE9000369814 /* SmartEyeLog.mm */; };
+		C72CCC9D1C34DE9000369814 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC971C34DE9000369814 /* README.md */; };
+		C72CCC9E1C34DE9000369814 /* SmartEye.mm in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC991C34DE9000369814 /* SmartEye.mm */; };
 		C730C1ED1B8455C600684588 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C730C1EC1B8455C600684588 /* AVFoundation.framework */; };
 		C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C730C1EE1B85F33000684588 /* RecordInfo.swift */; };
 		C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */; };
 		C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */; };
 		C7B012221B402A5500539E4A /* ConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C7B012211B402A5500539E4A /* ConfigManager.m */; };
 		C7B012251B4FDD6100539E4A /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B012241B4FDD6100539E4A /* DebugLog.swift */; };
-		C7CAF5E71BDFB05A007930C1 /* AirSensorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C7CAF5E61BDFB05A007930C1 /* AirSensorManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,13 +91,10 @@
 		652223A919E1855C00F1667A /* LEDSignalDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEDSignalDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		652223AE19E1855D00F1667A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		652223AF19E1855D00F1667A /* LEDSignalDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEDSignalDetectorTests.swift; sourceTree = "<group>"; };
-		652223EB19E1953000F1667A /* SmartEyeW.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartEyeW.mm; sourceTree = "<group>"; };
 		6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = SmartEyeConfig_Init.plist; sourceTree = "<group>"; };
 		652E646B19E2C38C002789DC /* CameraOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOperator.swift; sourceTree = "<group>"; };
 		652E646D19E2C525002789DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		652E646F19E2E854002789DC /* VideoOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoOperator.swift; sourceTree = "<group>"; };
-		6547D20B19FADAED0078527D /* SmartEyeDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmartEyeDefine.h; sourceTree = "<group>"; };
-		6547D20C19FADB970078527D /* SmartEyeType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmartEyeType.h; sourceTree = "<group>"; };
 		6557474319EF3FAE00429846 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Log.m; path = Utility/Log.m; sourceTree = "<group>"; };
 		6557474519EFBE0100429846 /* FileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileManager.m; path = Utility/FileManager.m; sourceTree = "<group>"; };
 		6563026819EBEE6600A7E401 /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
@@ -108,8 +106,6 @@
 		65AA45FE19FFEAA300D0695C /* VehicleSignalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VehicleSignalView.m; sourceTree = "<group>"; };
 		65AA460019FFEAE600D0695C /* PedestrianSignalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PedestrianSignalView.m; sourceTree = "<group>"; };
 		65AA460219FFEB1600D0695C /* SignalGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignalGraphView.m; sourceTree = "<group>"; };
-		65C59A5919E48475005A3F96 /* SmartEye.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartEye.mm; sourceTree = "<group>"; };
-		65C59A5A19E48476005A3F96 /* SmartEye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEye.h; sourceTree = "<group>"; };
 		65C59A5D19E58A5B005A3F96 /* blue.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blue.jpg; sourceTree = "<group>"; };
 		65C59A5F19E58A5B005A3F96 /* panel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = panel.png; sourceTree = "<group>"; };
 		65C59A6A19E58DDB005A3F96 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
@@ -130,8 +126,6 @@
 		65F482D71A05F9960057D363 /* LEDPanelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDPanelView.swift; sourceTree = "<group>"; };
 		65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDPedestrianSignalView.swift; sourceTree = "<group>"; };
 		65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDVehicleSignalView.swift; sourceTree = "<group>"; };
-		65F6F5C81A016D3C00A56E96 /* SmartEyeLog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SmartEyeLog.mm; path = Log/SmartEyeLog.mm; sourceTree = "<group>"; };
-		65F6F5C91A016D3C00A56E96 /* SmartEyeLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartEyeLog.h; path = Log/SmartEyeLog.h; sourceTree = "<group>"; };
 		8B700469493E057F519CBF95 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		9B050E182A954B6E938A3D58 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB32CD7412067552F82C644C /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -147,12 +141,22 @@
 		C721649C1B386AA0003A472D /* FileManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FileManager.h; path = Utility/FileManager.h; sourceTree = "<group>"; };
 		C721649D1B386C97003A472D /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = Utility/Log.h; sourceTree = "<group>"; };
 		C721649E1B3D6AE0003A472D /* CameraCapture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraCapture.h; sourceTree = "<group>"; };
-		C721649F1B3D6BE5003A472D /* SmartEyeW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmartEyeW.h; sourceTree = "<group>"; };
 		C72164A01B3D6DEC003A472D /* SignalGraphView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignalGraphView.h; sourceTree = "<group>"; };
 		C728A7DB1B9DAE860009670C /* LogViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
 		C72CCC891C3192C700369814 /* AirGraphView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirGraphView.h; sourceTree = "<group>"; };
 		C72CCC8A1C3192C700369814 /* AirGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirGraphView.m; sourceTree = "<group>"; };
 		C72CCC8C1C31B80C00369814 /* LEDSignalDetector-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LEDSignalDetector-Bridging-Header.h"; sourceTree = "<group>"; };
+		C72CCC8D1C34DE4D00369814 /* AirSensorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirSensorManager.h; sourceTree = "<group>"; };
+		C72CCC8E1C34DE4D00369814 /* AirSensorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirSensorManager.m; sourceTree = "<group>"; };
+		C72CCC901C34DE5A00369814 /* SmartEyeW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeW.h; sourceTree = "<group>"; };
+		C72CCC911C34DE5A00369814 /* SmartEyeW.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartEyeW.mm; sourceTree = "<group>"; };
+		C72CCC951C34DE9000369814 /* SmartEyeLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeLog.h; sourceTree = "<group>"; };
+		C72CCC961C34DE9000369814 /* SmartEyeLog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartEyeLog.mm; sourceTree = "<group>"; };
+		C72CCC971C34DE9000369814 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C72CCC981C34DE9000369814 /* SmartEye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEye.h; sourceTree = "<group>"; };
+		C72CCC991C34DE9000369814 /* SmartEye.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartEye.mm; sourceTree = "<group>"; };
+		C72CCC9A1C34DE9000369814 /* SmartEyeDefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeDefine.h; sourceTree = "<group>"; };
+		C72CCC9B1C34DE9000369814 /* SmartEyeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeType.h; sourceTree = "<group>"; };
 		C730C1EC1B8455C600684588 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C730C1EE1B85F33000684588 /* RecordInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordInfo.swift; sourceTree = "<group>"; };
 		C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSettingViewController.swift; sourceTree = "<group>"; };
@@ -161,8 +165,6 @@
 		C7B012211B402A5500539E4A /* ConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConfigManager.m; path = Utility/ConfigManager.m; sourceTree = "<group>"; };
 		C7B012231B4CFCF800539E4A /* HistogramGraphView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HistogramGraphView.h; sourceTree = "<group>"; };
 		C7B012241B4FDD6100539E4A /* DebugLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DebugLog.swift; path = Utility/DebugLog.swift; sourceTree = "<group>"; };
-		C7CAF5E51BDFB05A007930C1 /* AirSensorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirSensorManager.h; path = ../../../../AirCard/Dev/project/AirCommCamera/AirCommCamera/AirSensorManager.h; sourceTree = "<group>"; };
-		C7CAF5E61BDFB05A007930C1 /* AirSensorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AirSensorManager.m; path = ../../../../AirCard/Dev/project/AirCommCamera/AirCommCamera/AirSensorManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,12 +206,12 @@
 		6522238B19E1855C00F1667A = {
 			isa = PBXGroup;
 			children = (
+				C72CCC931C34DE9000369814 /* smarteye */,
 				6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */,
 				6557474219EF3F4700429846 /* Utility */,
 				65C59A6719E58A6B005A3F96 /* Video */,
 				65C59A5C19E58A5B005A3F96 /* Image */,
 				652E646D19E2C525002789DC /* README.md */,
-				652223E719E1949300F1667A /* SmartEye */,
 				6522239619E1855C00F1667A /* LEDSignalDetector */,
 				652223AC19E1855D00F1667A /* LEDSignalDetectorTests */,
 				6522239519E1855C00F1667A /* Products */,
@@ -230,11 +232,13 @@
 		6522239619E1855C00F1667A /* LEDSignalDetector */ = {
 			isa = PBXGroup;
 			children = (
+				C72CCC901C34DE5A00369814 /* SmartEyeW.h */,
+				C72CCC911C34DE5A00369814 /* SmartEyeW.mm */,
+				C72CCC8D1C34DE4D00369814 /* AirSensorManager.h */,
+				C72CCC8E1C34DE4D00369814 /* AirSensorManager.m */,
 				C72CCC8C1C31B80C00369814 /* LEDSignalDetector-Bridging-Header.h */,
 				C72CCC891C3192C700369814 /* AirGraphView.h */,
 				C72CCC8A1C3192C700369814 /* AirGraphView.m */,
-				C7CAF5E51BDFB05A007930C1 /* AirSensorManager.h */,
-				C7CAF5E61BDFB05A007930C1 /* AirSensorManager.m */,
 				C721577F1BAC27C50081467B /* LEDMapManager.h */,
 				C72157801BAC27C50081467B /* LEDMapManager.m */,
 				C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */,
@@ -302,20 +306,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		652223E719E1949300F1667A /* SmartEye */ = {
-			isa = PBXGroup;
-			children = (
-				65F6F5C71A016CF900A56E96 /* Log */,
-				C721649F1B3D6BE5003A472D /* SmartEyeW.h */,
-				652223EB19E1953000F1667A /* SmartEyeW.mm */,
-				65C59A5A19E48476005A3F96 /* SmartEye.h */,
-				65C59A5919E48475005A3F96 /* SmartEye.mm */,
-				6547D20B19FADAED0078527D /* SmartEyeDefine.h */,
-				6547D20C19FADB970078527D /* SmartEyeType.h */,
-			);
-			path = SmartEye;
-			sourceTree = "<group>";
-		};
 		6557474219EF3F4700429846 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -352,15 +342,6 @@
 			path = Video;
 			sourceTree = "<group>";
 		};
-		65F6F5C71A016CF900A56E96 /* Log */ = {
-			isa = PBXGroup;
-			children = (
-				65F6F5C91A016D3C00A56E96 /* SmartEyeLog.h */,
-				65F6F5C81A016D3C00A56E96 /* SmartEyeLog.mm */,
-			);
-			name = Log;
-			sourceTree = "<group>";
-		};
 		6C675835BB4941FB9601CF03 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -375,6 +356,29 @@
 				9B050E182A954B6E938A3D58 /* libPods.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C72CCC931C34DE9000369814 /* smarteye */ = {
+			isa = PBXGroup;
+			children = (
+				C72CCC941C34DE9000369814 /* Log */,
+				C72CCC971C34DE9000369814 /* README.md */,
+				C72CCC981C34DE9000369814 /* SmartEye.h */,
+				C72CCC991C34DE9000369814 /* SmartEye.mm */,
+				C72CCC9A1C34DE9000369814 /* SmartEyeDefine.h */,
+				C72CCC9B1C34DE9000369814 /* SmartEyeType.h */,
+			);
+			name = smarteye;
+			path = ../../smarteye;
+			sourceTree = "<group>";
+		};
+		C72CCC941C34DE9000369814 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				C72CCC951C34DE9000369814 /* SmartEyeLog.h */,
+				C72CCC961C34DE9000369814 /* SmartEyeLog.mm */,
+			);
+			path = Log;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -538,18 +542,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C72CCC8F1C34DE4D00369814 /* AirSensorManager.m in Sources */,
 				65D94FE319E98836001B8D49 /* VideoOperator.swift in Sources */,
 				65D94FE219E9882E001B8D49 /* CameraOperator.swift in Sources */,
 				C72CCC8B1C3192C700369814 /* AirGraphView.m in Sources */,
 				65F3B79C1A9B6497007CFC22 /* RecordDetailCollectionViewController.swift in Sources */,
 				65F482DC1A05FA2F0057D363 /* LEDVehicleSignalView.swift in Sources */,
 				657288B41AB319730003DD01 /* HistogramGraphView.m in Sources */,
-				65F6F5CA1A016D3C00A56E96 /* SmartEyeLog.mm in Sources */,
-				C7CAF5E71BDFB05A007930C1 /* AirSensorManager.m in Sources */,
 				C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */,
 				C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */,
+				C72CCC921C34DE5A00369814 /* SmartEyeW.mm in Sources */,
 				65F3B7AB1A9B762C007CFC22 /* RecordCell.swift in Sources */,
-				65C59A6C19E58DFA005A3F96 /* SmartEye.mm in Sources */,
 				6557474619EFBE0100429846 /* FileManager.m in Sources */,
 				65F482DA1A05F9FD0057D363 /* LEDPedestrianSignalView.swift in Sources */,
 				65F3B7981A9A09A0007CFC22 /* Util_C.m in Sources */,
@@ -561,7 +564,10 @@
 				6563026919EBEE6600A7E401 /* SettingViewController.swift in Sources */,
 				C728A7DC1B9DAE860009670C /* LogViewController.swift in Sources */,
 				65C6C17219EAB345003518D0 /* CameraCapture.m in Sources */,
+				C72CCC9D1C34DE9000369814 /* README.md in Sources */,
 				65F3B79A1A9A09DB007CFC22 /* Util.swift in Sources */,
+				C72CCC9C1C34DE9000369814 /* SmartEyeLog.mm in Sources */,
+				C72CCC9E1C34DE9000369814 /* SmartEye.mm in Sources */,
 				65F3B7B31AA8A77A007CFC22 /* LEDSignalGraphViewController.swift in Sources */,
 				C72164931B36ECB2003A472D /* Uploader.m in Sources */,
 				C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */,
@@ -576,7 +582,6 @@
 				C7B012251B4FDD6100539E4A /* DebugLog.swift in Sources */,
 				65AA45FF19FFEAA300D0695C /* VehicleSignalView.m in Sources */,
 				65A0BE271A8B2867000F8850 /* ConfigManager.swift in Sources */,
-				652223EC19E1953000F1667A /* SmartEyeW.mm in Sources */,
 				C7B012221B402A5500539E4A /* ConfigManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
