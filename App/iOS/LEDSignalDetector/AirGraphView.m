@@ -86,6 +86,7 @@
     [self setupXYPlotSpace];
     [self setupAxes];
     
+    // todo:graphを随時追加可能にする
     [self addScatterPlot:@"AxisX" withColor:[self getScatterColorWithSensorAxis:AirSensorAxisX]];
     [self addScatterPlot:@"AxisY" withColor:[self getScatterColorWithSensorAxis:AirSensorAxisY]];
     [self addScatterPlot:@"AxisZ" withColor:[self getScatterColorWithSensorAxis:AirSensorAxisZ]];
@@ -273,7 +274,7 @@
 {
     _type = type;
     
-    if (type == AirSensorTypeAcceleration) {
+    if (type == AirSensorTypeAccelerationHigh) {
         _axisCount = 3;
     } else if (type == AirSensorTypeGyro) {
         _axisCount = 3;
@@ -294,7 +295,7 @@
         [self addSensorData:data.y toList:_accelerationDataList forAxis:@"AxisY"];
         [self addSensorData:data.z toList:_accelerationDataList forAxis:@"AxisZ"];
         
-        if (_type == AirSensorTypeAcceleration) {
+        if (_type == AirSensorTypeAccelerationHigh) {
             [self updateGraph:graph];
         }
     }
@@ -355,7 +356,7 @@
     NSDictionary* dataList = [NSDictionary dictionary];
     NSArray* axisDataList;
     
-    if (_type == AirSensorTypeAcceleration) {
+    if (_type == AirSensorTypeAccelerationHigh) {
         dataList = _accelerationDataList;
     } else if (_type == AirSensorTypeGyro) {
         dataList = _gyroDataList;
@@ -378,12 +379,13 @@
     return num;
 }
 
+// 1graphのデータ数(X軸で良い?)
 -(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plot
 {
     NSDictionary* dataList = [NSDictionary dictionary];
     uint num = 0;
     
-    if (_type == AirSensorTypeAcceleration) {
+    if (_type == AirSensorTypeAccelerationHigh) {
         dataList = _accelerationDataList;
     } else if (_type == AirSensorTypeGyro) {
         dataList = _gyroDataList;

@@ -1,0 +1,42 @@
+PODS:
+  - AFNetworking (3.0.4):
+    - AFNetworking/NSURLSession (= 3.0.4)
+    - AFNetworking/Reachability (= 3.0.4)
+    - AFNetworking/Security (= 3.0.4)
+    - AFNetworking/Serialization (= 3.0.4)
+    - AFNetworking/UIKit (= 3.0.4)
+  - AFNetworking/NSURLSession (3.0.4):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.0.4)
+  - AFNetworking/Security (3.0.4)
+  - AFNetworking/Serialization (3.0.4)
+  - AFNetworking/UIKit (3.0.4):
+    - AFNetworking/NSURLSession
+  - CorePlot (2.0)
+  - OpenCV (3.0.0)
+  - QBImagePickerController (3.4.0)
+
+DEPENDENCIES:
+  - AFNetworking
+  - CorePlot (from `https://github.com/core-plot/core-plot.git`)
+  - OpenCV
+  - QBImagePickerController
+
+EXTERNAL SOURCES:
+  CorePlot:
+    :git: https://github.com/core-plot/core-plot.git
+
+CHECKOUT OPTIONS:
+  CorePlot:
+    :commit: 7dc7634e4407b358a292a62a782e60238b9b8a08
+    :git: https://github.com/core-plot/core-plot.git
+
+SPEC CHECKSUMS:
+  AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
+  CorePlot: c1e9eeb17628baba3ab5ea63600d73d7e948d1c4
+  OpenCV: be07c02f0d8f125f1d40d261e66a66cb66ece3b3
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
+
+COCOAPODS: 0.39.0

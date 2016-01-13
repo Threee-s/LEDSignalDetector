@@ -123,6 +123,7 @@ class DebugModeViewController: UIViewController {
     @IBOutlet weak var sensorGraphView: AirGraphView!
     @IBOutlet weak var sensorSegControl: UISegmentedControl!
     var sensorStart: Bool = false // センサー起動フラグ
+    var sensorType: AirSensorType = AirSensorTypeNone
     
     var confManager: ConfigManager = ConfigManager.sharedInstance()
     
@@ -355,10 +356,11 @@ class DebugModeViewController: UIViewController {
     }
     
     private func setupGraphModeView(debugMode: Bool, graphMode: Bool) {
-        let modeFlag = (debugMode && cameraMode)
+        let modeFlag = (debugMode && graphMode)
         //self.graphView?.hidden = !(debugMode && graphMode)
         //self.graphViewController?.signalGraphView?.hidden = !(debugMode && graphMode)
         self.sensorGraphView.hidden = !modeFlag
+        self.sensorSegControl.hidden = !modeFlag
         if (modeFlag) {
             self.startSensor()
         } else {
@@ -372,12 +374,16 @@ class DebugModeViewController: UIViewController {
             self.colorType = Int(confManager.confSettings.colorSettings.detectColors)
             if (self.colorType == 1) {
                 self.colorTypeSegment.tag = 0
+                self.colorTypeSegment.selectedSegmentIndex = 0
             } else if (self.colorType == 4) {
                 self.colorTypeSegment.tag = 1
+                self.colorTypeSegment.selectedSegmentIndex = 1
             } else if (self.colorType == 5) {
                 self.colorTypeSegment.tag = 2
+                self.colorTypeSegment.selectedSegmentIndex = 2
             }
             getColor(self.colorType)
+            updateColorValue()
         } else {
             //setColor(self.colorType)// 変更時保存すれば良い。無効時保存しなくて良い。
         }
@@ -412,6 +418,7 @@ class DebugModeViewController: UIViewController {
     }
     
     private func getColor(type: Int) {
+        // todo:allの場合は?
         if (type & 1 == 1) {
             self.hue.low = Int(confManager.confSettings.colorSettings.colorSpaceGreen.h.lower)
             self.hue.high = Int(confManager.confSettings.colorSettings.colorSpaceGreen.h.upper)
@@ -448,6 +455,12 @@ class DebugModeViewController: UIViewController {
     }
     
     private func updateColorValue() {
+        self.hueLowSlider.value = Float(self.hue.low)
+        self.hueHighSlider.value = Float(self.hue.high)
+        self.saturationLowSlider.value = Float(self.saturation.low)
+        self.saturationHighSlider.value = Float(self.saturation.high)
+        self.valueLowSlider.value = Float(self.value.low)
+        self.valueHighSlider.value = Float(self.value.high)
         self.hueValueLabel.text = String(format:"%d-%d", self.hue.low, self.hue.high)
         self.saturationValueLabel.text = String(format:"%d-%d", self.saturation.low, self.saturation.high)
         self.valueValueLabel.text = String(format:"%d-%d", self.value.low, self.value.high)
@@ -718,12 +731,15 @@ class DebugModeViewController: UIViewController {
     }
     
     func setSensorData(info: AirSensorInfo!, ofType type: AirSensorType) {
-        if (type == AirSensorTypeAcceleration) {
-            self.sensorGraphView.addAccelerationData(info.rawInfo.acceleration)
-        } else if (type == AirSensorTypeGyro) {
-            self.sensorGraphView.addGyroData(info.rawInfo.rotation)
-        } else if (type == AirSensorTypeAttitude) {
-            self.sensorGraphView.addAttitudeData(info.rawInfo.rotation)
+        print("self.sensorType:\(self.sensorType) type:\(type)")
+        if (self.sensorType != AirSensorTypeNone) {
+            if (self.sensorType == AirSensorTypeAccelerationHigh) {
+                self.sensorGraphView.addAccelerationData(info.rawInfo.acceleration)
+            } else if (self.sensorType == AirSensorTypeGyro) {
+                self.sensorGraphView.addGyroData(info.rawInfo.rotation)
+            } else if (self.sensorType == AirSensorTypeAttitude) {
+                self.sensorGraphView.addAttitudeData(info.rawInfo.rotation)
+            }
         }
     }
     
@@ -1080,25 +1096,28 @@ class DebugModeViewController: UIViewController {
     
     @IBAction func sensorGraphChanged(sender: AnyObject) {
         let segCtrl = sender as! UISegmentedControl
-        var sensorType = AirSensorTypeNone
+        var type = AirSensorTypeNone
         
         switch (segCtrl.selectedSegmentIndex) {
         case 0:
-            sensorType = AirSensorTypeNone
+            type = AirSensorTypeNone
             break;
         case 1:
-            sensorType = AirSensorTypeAcceleration
+            // Hight/Low/Allに分ける?
+            type = AirSensorTypeAccelerationHigh
             break;
         case 2:
-            sensorType = AirSensorTypeGyro
+            type = AirSensorTypeGyro
             break;
         case 3:
-            sensorType = AirSensorTypeAttitude
+            type = AirSensorTypeAttitude
             break;
         default:
-            sensorType = AirSensorTypeNone
+            type = AirSensorTypeNone
         }
         
-        self.sensorGraphView.setSensorType(sensorType)
+        self.sensorType = type
+        self.sensorGraphView.setSensorType(self.sensorType)
+        self.observer?.setSensorType!(self.sensorType)
     }
 }

@@ -85,9 +85,9 @@
 			<key>H</key>
 			<dict>
 				<key>Lower</key>
-				<integer>50</integer>
+				<integer>80</integer>
 				<key>Upper</key>
-				<integer>70</integer>
+				<integer>100</integer>
 			</dict>
 			<key>S</key>
 			<dict>
@@ -137,16 +137,16 @@
 			<key>Min</key>
 			<dict>
 				<key>Width</key>
-				<integer>4</integer>
+				<integer>8</integer>
 				<key>Height</key>
-				<integer>4</integer>
+				<integer>8</integer>
 			</dict>
 			<key>Max</key>
 			<dict>
 				<key>Width</key>
-				<integer>48</integer>
+				<integer>64</integer>
 				<key>Height</key>
-				<integer>48</integer>
+				<integer>64</integer>
 			</dict>
 		</dict>
 		<key>CompareRect</key>

@@ -185,15 +185,17 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
         
         if (db == .Folder) {
             self.getImagesFromFolder()
+            self.changeDispData(self.dispMode)
+            self.collectionView?.reloadData()// todo:ここで良い?
         } else if (db == .Photos) {
             //self.getImagesFromPhotos()
             //self.changeDispData(.List)
             //self.getImagesFromImagePicker()// no lib :OK
-            self.getImagesFromQBImagePicker()
+            self.getImagesFromQBImagePicker()// callbackで更新
         }
         
-        self.changeDispData(self.dispMode)
-        self.collectionView?.reloadData()// todo:ここで良い?
+        //self.changeDispData(self.dispMode)
+        //self.collectionView?.reloadData()// todo:ここで良い?
     }
     
     private func getImagesFromQBImagePicker() {
@@ -328,6 +330,8 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
         
         self.dismissViewControllerAnimated(true, completion: { () -> Void in
             print("dismissImagePickerController")
+            self.changeDispData(self.dispMode)
+            self.collectionView?.reloadData()// todo:ここで良い?
         })
     }
     

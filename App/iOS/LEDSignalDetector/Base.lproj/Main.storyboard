@@ -55,6 +55,12 @@
                             <mapView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JwP-C0-zAL">
                                 <rect key="frame" x="0.0" y="380" width="375" height="200"/>
                             </mapView>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QD6-gl-7mk">
+                                <rect key="frame" x="146" y="108" width="83" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
@@ -107,6 +113,7 @@
                         <outlet property="camFormatLabel" destination="Yxk-0Y-tLy" id="rTI-w6-NCp"/>
                         <outlet property="captureImageView" destination="7aX-eh-3x2" id="VVB-tM-qy5"/>
                         <outlet property="debugButton" destination="X62-G1-ioP" id="EuF-cx-RWG"/>
+                        <outlet property="dummySignalDistance" destination="QD6-gl-7mk" id="j9p-Jv-Fsk"/>
                         <outlet property="dummySignalGreen" destination="Fbt-kJ-T6z" id="hI2-kd-vQM"/>
                         <outlet property="dummySignalGreenCount" destination="fu0-wd-3hg" id="NQX-Kp-B5A"/>
                         <outlet property="dummySignalRed" destination="BMy-GL-0Yw" id="dh8-N7-kuq"/>

@@ -750,7 +750,8 @@ static CameraCapture *sharedInstance = nil;
                         }
                     }
                     format.minZoom = 1.0;
-                    format.maxZoom = self.videoDevice.activeFormat.videoMaxZoomFactor;
+                    format.maxZoom = self.videoDevice.activeFormat.videoZoomFactorUpscaleThreshold;
+                    //format.maxZoom = self.videoDevice.activeFormat.videoMaxZoomFactor;
                     
                     [self.cameraObserver activeFormatChanged:format];
                 }
@@ -898,7 +899,12 @@ static CameraCapture *sharedInstance = nil;
                     //activeSettings.exposureDuration = [self calculateExposureDurationSecond:activeSettings.exposureValue];
                     
                     activeSettings.offset = self.videoDevice.exposureTargetOffset;
+                    // 最大光学倍率の半分か1
+                    // memo:最大光学倍率よりも出力映像サイズがセンサーサイズより小さい場合、どうscalingするか。
+                    //      センサーサイズより小さい場合、中心から出力サイズ分切り取って、zoomに縮小する(thresholdの場合、縮小なし。以上の場合拡大->画質落ちる)
                     activeSettings.zoom = MAX(format.videoZoomFactorUpscaleThreshold / 2, 1.0);
+                    // memo:手ぶれがひどくなるので
+                    //activeSettings.zoom = format.videoZoomFactorUpscaleThreshold;
                     
                     // todo:範囲を最小限にする? activeFormatとmin/maxDurationは同時に設定する必要がある。
                     // 先にactiveFormatを設定してからその他を設定
@@ -1359,7 +1365,8 @@ static CameraCapture *sharedInstance = nil;
         }
     }
     format.minZoom = 1.0;
-    format.maxZoom = self.videoDevice.activeFormat.videoMaxZoomFactor;
+    format.maxZoom = self.videoDevice.activeFormat.videoZoomFactorUpscaleThreshold;
+    //format.maxZoom = self.videoDevice.activeFormat.videoMaxZoomFactor;
     
     CMFormatDescriptionRef desc = self.videoDevice.activeFormat.formatDescription;
     // AVCaptureDeviceFormatに映像サイズがないので(静止サイズはある)、下記の方法で取得(encode済み)

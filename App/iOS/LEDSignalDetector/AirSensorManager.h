@@ -15,25 +15,28 @@ typedef enum {
 } AirSensorAxis;
 
 typedef enum {
-    AirSensorTypeNone         = 0x00,
-    AirSensorTypeAcceleration = 1 << 1,
-    AirSensorTypeRotationRate = 1 << 2,
-    AirSensorTypeLocation     = 1 << 3,
-    AirSensorTypeHeading      = 1 << 4,
-    AirSensorTypeActivity     = 1 << 5,
-    AirSensorTypeMagnetometer = 1 << 6,
-    AirSensorTypeGyro         = 1 << 7,
-    AirSensorTypeAttitude     = 1 << 8,
-    AirSensorTypeProximity    = 1 << 9,
+    AirSensorTypeNone              = 0x00,
+    AirSensorTypeMotion                = 0x0001,
+    AirSensorTypeAccelerationLow   = AirSensorTypeMotion << 1,
+    AirSensorTypeAccelerationHigh  = AirSensorTypeAccelerationLow << 1,
+    AirSensorTypeAcceleration      = AirSensorTypeAccelerationHigh << 1,
+    AirSensorTypeGyro         = AirSensorTypeAcceleration << 1,
+    AirSensorTypeRotationRate = AirSensorTypeGyro << 1,
+    //AirSensorTypeLocation     = AirSensorTypeRotationRate << 1,
+    //AirSensorTypeHeading      = AirSensorTypeLocation << 1,
+    AirSensorTypeActivity     = AirSensorTypeRotationRate << 1,
+    AirSensorTypeMagnetometer = AirSensorTypeActivity << 1,
+    AirSensorTypeAttitude     = AirSensorTypeMagnetometer << 1,
+    AirSensorTypeProximity    = AirSensorTypeAttitude << 1,
 } AirSensorType;
 
 typedef enum {
-    AirSensorNotifyTypeAcceleration,
-    AirSensorNotifyTypeRotationRate,
-    AirSensorNotifyTypeLocationCoordinate,
-    AirSensorNotifyTypeLocationHeading,
-    AirSensorNotifyTypeActivity
-} AirSensorNotifyType;
+    AirSensorMovementDirectionNone,
+    AirSensorMovementDirectionUp,
+    AirSensorMovementDirectionDown,
+    AirSensorMovementDirectionLeft,
+    AirSensorMovementDirectionRight,
+} AirSensorMovementDirection;
 
 /*
 typedef struct {
@@ -74,6 +77,7 @@ typedef struct {
 @property (nonatomic) double x;
 @property (nonatomic) double y;
 @property (nonatomic) double z;
+@property (nonatomic) NSTimeInterval timestamp;
 
 @end
 
@@ -85,18 +89,15 @@ typedef struct {
 @property (nonatomic) double pitch;
 @property (nonatomic) double roll;
 @property (nonatomic) double yaw;
+@property (nonatomic) NSTimeInterval timestamp;
 
 @end
 
-@interface AirSensorLocation : NSObject
+@interface AirSensorMagnetometer : NSObject
 
-@property (nonatomic) double magneticHeading;
-@property (nonatomic) double trueHeading;
 @property (nonatomic) double headingX;
 @property (nonatomic) double headingY;
 @property (nonatomic) double headingZ;
-@property (nonatomic) double latitude;
-@property (nonatomic) double longitude;
 
 @end
 
@@ -116,7 +117,7 @@ typedef struct {
 
 @property (nonatomic) AirSensorAcceleration *acceleration;
 @property (nonatomic) AirSensorRotationRate *rotation;
-@property (nonatomic) AirSensorLocation *location;
+@property (nonatomic) AirSensorMagnetometer *magnetometer;
 @property (nonatomic) AirSensorActivity *activity;
 
 @end
@@ -136,8 +137,12 @@ typedef struct {
 
 // カメラ画面表示するか。接近センサーで判断
 -(void)displayCameraView:(BOOL)flag info:(AirSensorInfo*)info;
-// カメラでキャプチャするか。加速度/ジャイロセンサーで判断
+// カメラでキャプチャするか。加速度/ジャイロセンサーで判断.todo:不要
 -(void)capture:(AirSensorInfo*)info;
+// 信号検出処理を行うか
+-(void)ifNeededToDetect:(BOOL)flag;
+// 移動距離と方向。加速度/ジャイロセンサーで判断(移動方向:加速度の+/-だけで良い？)
+-(void)movedDistance:(float)distance inDirection:(AirSensorMovementDirection)direction;
 // raw info
 -(void)sensorInfo:(AirSensorInfo*)info ofType:(AirSensorType)type;
 
@@ -145,7 +150,7 @@ typedef struct {
 
 
 
-// todo:汎用的にする
+// todo:汎用的にする。GPSを分離する->MapManagerとか
 @interface AirSensorManager : NSObject
 
 @property (nonatomic, weak) id<AirSensorObserver> observer;
@@ -156,5 +161,7 @@ typedef struct {
 -(void)deleteSensorType:(AirSensorType)type;
 -(void)start;
 -(void)stop;
+-(void)startWithType:(AirSensorType)type;
+-(void)stopWithType:(AirSensorType)type;
 
 @end

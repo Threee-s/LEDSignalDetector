@@ -206,8 +206,8 @@
 		6522238B19E1855C00F1667A = {
 			isa = PBXGroup;
 			children = (
-				C72CCC931C34DE9000369814 /* smarteye */,
 				6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */,
+				C72CCC931C34DE9000369814 /* smarteye */,
 				6557474219EF3F4700429846 /* Utility */,
 				65C59A6719E58A6B005A3F96 /* Video */,
 				65C59A5C19E58A5B005A3F96 /* Image */,

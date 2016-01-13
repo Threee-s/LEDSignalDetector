@@ -24,6 +24,7 @@ enum SignalColor {
     case None, Green, Red
 }
 
+// todo:(01/06)　すべての音声(シンプル、必要最小限)。シナリオ検討.
 
 class SignalSpeaker: NSObject, AVSpeechSynthesizerDelegate {
     
@@ -88,6 +89,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     @IBOutlet weak var dummySignalGreen: UIImageView! = nil
     @IBOutlet weak var dummySignalRedCount: UILabel! = nil
     @IBOutlet weak var dummySignalGreenCount: UILabel! = nil
+    @IBOutlet weak var dummySignalDistance: UILabel!
     
     var selectedImageView: UIImageView?
     //var drawPath: UIBezierPath?
@@ -120,6 +122,10 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var mapRegionSet: Bool = false
     
     var sensorMan: AirSensorManager? = nil
+    var lastMotionTime: NSTimeInterval = 0.0
+    var velocityDeltaX: Double = 0.0
+    var velocityDeltaY: Double = 0.0
+    var motionClock: CMClockRef?
     
     var selectedRect: CGRect = CGRectZero
     
@@ -203,6 +209,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         // cameraより先にsetup(カメラからのformat通知をdebugに設定するので)
         self.setupDebugMode()
         self.setupMapview()
+        self.setupSensor()
         
         if (self.captureType == .Camera) {
             self.setupCamera()
@@ -311,11 +318,15 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         self.sensorMan = AirSensorManager.getInstance()
         self.sensorMan?.observer = self
         //self.sensorMan?.addSensorType(AirSensorTypeProximity)
-        self.sensorMan?.addSensorType(AirSensorTypeLocation)
-        self.sensorMan?.addSensorType(AirSensorTypeHeading)
-        self.sensorMan?.addSensorType(AirSensorTypeAcceleration)
-        self.sensorMan?.addSensorType(AirSensorTypeGyro)
-        //self.sensorMan?.addSensorType(AirSensorTypeAttitude)
+        //self.sensorMan?.addSensorType(AirSensorTypeAcceleration)
+        //self.sensorMan?.addSensorType(AirSensorTypeGyro)
+        self.sensorMan?.addSensorType(AirSensorTypeMotion)
+        
+        self.motionClock = CMClockGetHostTimeClock()
+    }
+    
+    private func convertSampleBufferTimeToMotionClock(sampleBuffer: CMSampleBufferRef) {
+        
     }
     
     private func detectSignal(image: UIImage) -> (Bool, UIImage) {
@@ -530,6 +541,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                         } else if (signalData.color == 4) {
                             signalColor = .Red
                         }
+                        self.dummySignalDistance.text = String(format: "%f", signalData.distance)
                     }
                 }
                 self.voiceNotice(signalColor)
@@ -546,6 +558,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                         } else if (signalData.color == 4) {
                             signalColor = .Red
                         }
+                        self.dummySignalDistance.text = String(format: "%f", signalData.distance)
                     }
                 }
                 self.voiceNotice(signalColor)
@@ -583,32 +596,109 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         self.dispImage = !flag
     }
     
+    func ifNeededToDetect(flag: Bool) {
+        
+        // headingの代わりにrollをみても良いかも->pitch/yaw(上向き/傾き)によって多少影響が出るようだ(上向きではない場合のお互いの関係がよく分からない)->とりあえずheading
+    }
+    
+    func movedDistance(distance: Float, inDirection direction: AirSensorMovementDirection) {
+        
+    }
+    
     func sensorInfo(info: AirSensorInfo!, ofType type: AirSensorType) {
+        if (self.lastMotionTime == 0) {
+            self.lastMotionTime = info.rawInfo.acceleration.timestamp
+        }
+        
+        // todo:移動方向判断。加速度の+/-だけで良い？
+        
+        // todo:配列にする。motionのtimestamp/distDeltaとキャプチャのtimestampを比較。一番近いtimestampのdistDeltaを探す？
+        // timestampは同期とる必要がある。appleのsample参照
+        let timeDelta = info.rawInfo.acceleration.timestamp - self.lastMotionTime
+        self.lastMotionTime = info.rawInfo.acceleration.timestamp
+        
+        // todo:AirSensorManagerで計算してinfoで渡したほうが良いかも
+        
+        // memo:user accelerationは動いていない場合、x/y/zとも0.
+        // distとtransDeltaはあんまり変わらない。
+        // todo:歩き時(手ぶれ時)は基本mm/cm単位で位置がずれる(実際の値は0.xxxm単位。Gがg/m2なので)。->inch->pointに変換すればOK?
+        //      一旦信号の相対移動距離を計算->センサー内での移動距離->画面上のpoint移動距離計算?->結局上記と同じ?
+        // test1
+        let initVelX = self.velocityDeltaX
+        let initVelY = self.velocityDeltaY
+        let distX = (initVelX * timeDelta) + 0.5 * info.rawInfo.acceleration.x * timeDelta * timeDelta
+        let distY = (initVelY * timeDelta) + 0.5 * info.rawInfo.acceleration.y * timeDelta * timeDelta
+        
+        self.velocityDeltaX += info.rawInfo.acceleration.x * timeDelta
+        self.velocityDeltaY += info.rawInfo.acceleration.y * timeDelta
+        
+        // test2
+        //let transDeltaX = 0.5 * info.rawInfo.acceleration.x * timeDelta * timeDelta
+        //let transDeltaY = 0.5 * info.rawInfo.acceleration.y * timeDelta * timeDelta
+        // test3
+        let transDeltaX = self.velocityDeltaX * timeDelta
+        let transDeltaY = self.velocityDeltaY * timeDelta
+        
+        if (self.debugMode) {
+            print("x:\(info.rawInfo.acceleration.x) y:\(info.rawInfo.acceleration.y) z:\(info.rawInfo.acceleration.z)")
+            print("vX:\(self.velocityDeltaX) vY:\(self.velocityDeltaX)")
+            print("distX:\(distX) distY:\(distY)")
+            print("transDeltaX:\(transDeltaX) transDeltaY:\(transDeltaY)")
+            
+            print("pitch:\(info.rawInfo.rotation.pitch) roll:\(info.rawInfo.rotation.roll) yaw:\(info.rawInfo.rotation.yaw)")
+            
+            self.debugViewController?.setSensorData(info, ofType: type)
+        }
     }
     
     // MARK: - LEDMapManagerDelegate protocol
     
-    func mapManager(mapManager: LEDMapManager!, currentPostion pos: CLLocationCoordinate2D) {
+    func mapManager(mapManager: LEDMapManager!, currentPostion pos: LEDMapLocation) {
         //println("latitude:\(pos.latitude) longitude:\(pos.longitude)")
         
         if (self.mapRegionSet == false) {
             // memo: 0.0 ~ 180.0
             let coorSpan: MKCoordinateSpan = MKCoordinateSpanMake(0.0, 0.0)
-            let coorRegion: MKCoordinateRegion = MKCoordinateRegionMake(pos, coorSpan)
+            let coorRegion: MKCoordinateRegion = MKCoordinateRegionMake(pos.coor, coorSpan)
             
             self.mapView.setRegion(coorRegion, animated: false)
             self.mapRegionSet = true
         }
         
-        self.mapView.setCenterCoordinate(pos, animated: true)
+        self.mapView.setCenterCoordinate(pos.coor, animated: true)
     }
     
+    func mapManager(mapManager: LEDMapManager!, currentDirection dir: LEDMapHeading!) {
+        // todo:保存し、frameの情報としてsmarteyeに渡す
+    }
+    
+    // todo:情報登録の場合
+    func mapManager(mapManager: LEDMapManager!, signalsOfNeighboring signals: [AnyObject]!) {
+        
+    }
+    
+    // todo:情報登録の場合
     func mapManager(mapManager: LEDMapManager!, isValidArea flag: Bool) {
         if (self.captureMode == .Navi) {
             if (flag) {
                 self.startCapture()
             } else {
                 self.stopCapture()
+            }
+        }
+    }
+    
+    func mapManager(mapManager: LEDMapManager!, isNearToCrossing flag: Bool) {
+        if (self.captureMode == .Navi) {
+            // todo:GPSをoff、Headingをon。
+            if (flag) {
+                self.startCapture()
+                self.mapManager.stopWithType(LEDMapTypeLocation)
+                self.mapManager.startWithType(LEDMapTypeHeading)
+            } else {
+                self.stopCapture()
+                self.mapManager.stopWithType(LEDMapTypeHeading)
+                self.mapManager.startWithType(LEDMapTypeLocation)
             }
         }
     }
@@ -729,6 +819,10 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     
     func sensorStart() {
         self.sensorMan!.start()
+    }
+    
+    func setSensorType(type: AirSensorType) {
+        self.sensorMan?.setSensorType(type)
     }
     
     func sensorEnd() {

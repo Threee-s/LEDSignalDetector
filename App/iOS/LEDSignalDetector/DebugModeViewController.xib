@@ -325,7 +325,7 @@
                     <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="200" translatesAutoresizingMaskIntoConstraints="NO" id="6DX-H9-D18">
+                <slider hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="6DX-H9-D18">
                     <rect key="frame" x="63" y="491" width="249" height="31"/>
                     <connections>
                         <action selector="sliderCameraTouchCancel:" destination="-1" eventType="touchCancel" id="rUU-g1-514"/>
@@ -357,9 +357,22 @@
                     </connections>
                 </slider>
                 <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="wRo-62-bkF">
-                    <rect key="frame" x="204" y="528" width="51" height="31"/>
+                    <rect key="frame" x="147" y="528" width="51" height="31"/>
                     <connections>
                         <action selector="saveCaptureSwitchChanged:" destination="-1" eventType="valueChanged" id="t1F-Sj-5Lv"/>
+                    </connections>
+                </switch>
+                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="SYW-sv-LFt">
+                    <rect key="frame" x="204" y="529" width="51" height="31"/>
+                    <connections>
+                        <action selector="batchDetectSwitchChanged:" destination="-1" eventType="valueChanged" id="6IN-B9-Hhr"/>
+                    </connections>
+                </switch>
+                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Nqb-xU-VTN">
+                    <rect key="frame" x="261" y="528" width="51" height="31"/>
+                    <accessibility key="accessibilityConfiguration" label="Log"/>
+                    <connections>
+                        <action selector="saveLogSwitchChanged:" destination="-1" eventType="valueChanged" id="hza-2A-Xyf"/>
                     </connections>
                 </switch>
                 <label hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vhq-fO-I6t">
@@ -368,13 +381,6 @@
                     <color key="textColor" red="1" green="0.39179695129999997" blue="0.8041749923" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Nqb-xU-VTN">
-                    <rect key="frame" x="261" y="528" width="51" height="31"/>
-                    <accessibility key="accessibilityConfiguration" label="Log"/>
-                    <connections>
-                        <action selector="saveLogSwitchChanged:" destination="-1" eventType="valueChanged" id="hza-2A-Xyf"/>
-                    </connections>
-                </switch>
                 <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Kp-5t-C63">
                     <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                     <items>
@@ -417,20 +423,17 @@
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
                 <segmentedControl hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="mf6-3S-18V">
-                    <rect key="frame" x="16" y="575" width="343" height="29"/>
+                    <rect key="frame" x="16" y="567" width="343" height="29"/>
                     <segments>
                         <segment title="None"/>
                         <segment title="Acceleration"/>
                         <segment title="Gyro"/>
                         <segment title="Attitude"/>
                     </segments>
-                </segmentedControl>
-                <switch hidden="YES" opaque="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="SYW-sv-LFt">
-                    <rect key="frame" x="147" y="529" width="51" height="31"/>
                     <connections>
-                        <action selector="batchDetectSwitchChanged:" destination="-1" eventType="valueChanged" id="6IN-B9-Hhr"/>
+                        <action selector="sensorGraphChanged:" destination="-1" eventType="valueChanged" id="hNW-dA-35e"/>
                     </connections>
-                </switch>
+                </segmentedControl>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <gestureRecognizers/>
