@@ -36,6 +36,7 @@ using namespace cv;
 @synthesize level;
 @synthesize rect;
 @synthesize pixel;
+@synthesize distance;
 @synthesize rectId;
 @synthesize signalId;
 
@@ -602,6 +603,13 @@ using namespace cv;
     conf.drawFlag = true;
     conf.reset = true;
     
+    conf.frequency = 100;
+    // default pedestrian
+    //this->signalConf->frameSize = cv::Size(SE_SIGNAL_SIZE_PEDESTRIAN_250, SE_SIGNAL_SIZE_PEDESTRIAN_250);
+    conf.frameSize = cv::sqrt(cv::pow(SE_SIGNAL_SIZE_PEDESTRIAN_250, 2.0) * 2);
+    conf.focalLength = SE_CAMERA_FOCAL_LENGTH_415mm; // 0の場合、距離計算しない
+    conf.sensorSize = SE_CAMERA_SENSOR_SIZE_620mm;
+    conf.fps = 30;
     conf.imgOri = cm.confSettings.detectParams.imageSetting.orientation;
     conf.combineCountThreshold = cm.confSettings.detectParams.combinePoint.threshold;
     conf.combineOffset = cm.confSettings.detectParams.combinePoint.offset;
@@ -647,11 +655,11 @@ using namespace cv;
     Mat dstImage;
     std::vector<SESignal> signals;
     SEDebugInfo debugInfo;
-    SEAdditionInfo addInfo;
+    SEFrameInfo framInfo;
     int count;
     SmartEye se = SmartEye::getInstance();
-    addInfo.detectRect = cv::Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    addInfo.debugInfoFlag = YES;
+    framInfo.detectRect = cv::Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    framInfo.debugInfoFlag = YES;
     
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
     //CGFloat cols = image.size.width;// orientationによって、bufferの向きと異なる可能性がある
@@ -680,11 +688,13 @@ using namespace cv;
     // オリジナル画像へ描画用
     //orgImage.copyTo(dstImage);
     // 信号検出
-    count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_RGB, CV_RGB2HSV, &addInfo);
+    count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_RGB, CV_RGB2HSV, &framInfo);
+    //count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_BGR, CV_BGR2HSV, &framInfo);
 //    cout << "signal count:" << count << endl;
     
     // memo: draw on orgImage
     orgImage.copyTo(dstImage);
+    //cvtColor(orgImage, dstImage, CV_HSV2RGB);//NG
     
     NSMutableArray* signalArray = (NSMutableArray*)signalList;
     
@@ -701,6 +711,7 @@ using namespace cv;
         signalW.state = signal.state;
         signalW.level = signal.level;
         signalW.pixel = signal.pixel;
+        signalW.distance = signal.distance;
         signalW.rect = CGRectMake(signal.rect.x, signal.rect.y, signal.rect.width, signal.rect.height);
         
         [signalArray addObject:signalW];
@@ -719,7 +730,7 @@ using namespace cv;
             for (int j = 0; j < rectCount; j++) {
                 SERectArea area = signalArea.rects.at(j);
                 CGRect rect = CGRectMake(area.rect.x, area.rect.y, area.rect.width, area.rect.height);
-                rectStr = [NSString stringWithFormat:@"%@%d->rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%d, length:%d, color:%d, state:%d, nullRect:%d\n", rectStr, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state, !area.nullRect];
+                rectStr = [NSString stringWithFormat:@"%@%d->rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%f, length:%f, color:%d, state:%d, nullRect:%d\n", rectStr, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state, !area.nullRect];
                 
                 rectFlags = [NSString stringWithFormat:@"%@%d", rectFlags, !area.nullRect];
             }
@@ -739,10 +750,10 @@ using namespace cv;
     Mat dstImage;
     std::vector<SESignal> signals;
     SEDebugInfo debugInfo;
-    SEAdditionInfo addInfo;
+    SEFrameInfo framInfo;
     int count;
     SmartEye se = SmartEye::getInstance();
-    addInfo.detectRect = cv::Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    framInfo.detectRect = cv::Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     CVPixelBufferRef buffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     // イメージバッファのロック
@@ -769,7 +780,7 @@ using namespace cv;
     
     // 信号検出
     // memo:bufferの場合、色空間がBGRになる(kCVPixelFormatType_32BGRAでキャプチャしているので)
-    count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_BGR, CV_BGR2HSV, &addInfo);
+    count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_BGR, CV_BGR2HSV, &framInfo);
     //    cout << "signal count:" << count << endl;
     
     NSMutableArray* signalArray = (NSMutableArray*)signalList;
@@ -787,6 +798,7 @@ using namespace cv;
         signalW.state = signal.state;
         signalW.level = signal.level;
         signalW.pixel = signal.pixel;
+        signalW.distance = signal.distance;
         signalW.rect = CGRectMake(signal.rect.x, signal.rect.y, signal.rect.width, signal.rect.height);
         
         [signalArray addObject:signalW];
@@ -805,7 +817,7 @@ using namespace cv;
             for (int j = 0; j < rectCount; j++) {
                 SERectArea area = signalArea.rects.at(j);
                 CGRect rect = CGRectMake(area.rect.x, area.rect.y, area.rect.width, area.rect.height);
-                rectStr = [NSString stringWithFormat:@"%@%d->[%d], rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%d, length:%d, color:%d, state:%d\n", rectStr, !area.nullRect, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state];
+                rectStr = [NSString stringWithFormat:@"%@%d->[%d], rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%f, length:%f, color:%d, state:%d\n", rectStr, !area.nullRect, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state];
                 
                 rectFlags = [NSString stringWithFormat:@"%@%d", rectFlags, !area.nullRect];
             }

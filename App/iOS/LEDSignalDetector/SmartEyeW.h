@@ -22,6 +22,7 @@
 @property (nonatomic) int level;// 何%点なのか(option)
 @property (nonatomic) CGRect rect;// 信号位置範囲
 @property (nonatomic) int pixel;// 矩形内有効画素数(vの数)
+@property (nonatomic) float distance;
 @property (nonatomic) unsigned long rectId;// 矩形を一意に識別するため、同じ矩形の場合、既存矩形idに統合
 @property (nonatomic) unsigned long signalId;// 信号矩形を一時に識別するため。ただの矩形の場合0
 @property (nonatomic) NSMutableArray *currentRects;// 現在保存中の矩形一覧(デバッグ用)
