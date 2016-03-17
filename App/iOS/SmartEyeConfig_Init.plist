@@ -43,7 +43,7 @@
 		<key>ISO</key>
 		<integer>800</integer>
 		<key>ExposureBias</key>
-		<integer>0</integer>
+		<integer>-3</integer>
 		<key>VideoFPS</key>
 		<integer>30</integer>
 	</dict>
@@ -100,6 +100,30 @@
 			<dict>
 				<key>Lower</key>
 				<integer>70</integer>
+				<key>Upper</key>
+				<integer>255</integer>
+			</dict>
+		</dict>
+		<key>ColorSpaceCenter</key>
+		<dict>
+			<key>H</key>
+			<dict>
+				<key>Lower</key>
+				<integer>0</integer>
+				<key>Upper</key>
+				<integer>180</integer>
+			</dict>
+			<key>S</key>
+			<dict>
+				<key>Lower</key>
+				<integer>0</integer>
+				<key>Upper</key>
+				<integer>255</integer>
+			</dict>
+			<key>V</key>
+			<dict>
+				<key>Lower</key>
+				<integer>230</integer>
 				<key>Upper</key>
 				<integer>255</integer>
 			</dict>

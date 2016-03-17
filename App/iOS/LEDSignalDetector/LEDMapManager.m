@@ -182,6 +182,15 @@
     }
 }
 
+-(LEDMapHeading*)getCurrentHeading
+{
+    LEDMapHeading *heading = [[LEDMapHeading alloc] init];
+    CLLocationDirection magneticHeading = _locationMan.heading.magneticHeading;
+    heading.magneticHeading = magneticHeading;
+    
+    return heading;
+}
+
 -(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
     //DEBUGLOG_PRINTF(@"locationManager didUpdateHeading");

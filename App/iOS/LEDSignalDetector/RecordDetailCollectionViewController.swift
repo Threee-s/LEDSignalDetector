@@ -132,6 +132,7 @@ class RecordDetailCollectionViewController : UICollectionViewController, DebugMo
         
         if (debugInfo != nil && debugInfo.des != nil) {
             self.logger?.addLog(debugInfo.des)
+            self.logger?.addPatternLog(debugInfo.pattern)
         }
     }
     
@@ -160,6 +161,17 @@ class RecordDetailCollectionViewController : UICollectionViewController, DebugMo
     }
     
     func selectRectEnd() {
+    }
+    
+    func detectRect(rect: CGRect) {
+    }
+    
+    func deleteDetectRect() {
+        
+    }
+    
+    func deleteSelectedRect() {
+        
     }
     
     func cameraSettingChanged(exposureBias bias: Float) {

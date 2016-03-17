@@ -22,7 +22,13 @@
 @property (nonatomic) int level;// 何%点なのか(option)
 @property (nonatomic) CGRect rect;// 信号位置範囲
 @property (nonatomic) int pixel;// 矩形内有効画素数(vの数)
-@property (nonatomic) float distance;
+@property (nonatomic) float probability;// 信号の確率
+@property (nonatomic) float circleLevel;
+@property (nonatomic) float matching;
+@property (nonatomic) float distance;// 信号までの距離
+@property (nonatomic) int direction;// 信号位置方向(信号検出後->動きによって見失った場合の信号位置方向) or 差分方向(回転すべき度数)。実際の数値は特に意味ない。必要なのは差分
+@property (nonatomic) int time;// 信号が変わるまでの時間
+@property (nonatomic) int position;// 信号位置(上下左右)
 @property (nonatomic) unsigned long rectId;// 矩形を一意に識別するため、同じ矩形の場合、既存矩形idに統合
 @property (nonatomic) unsigned long signalId;// 信号矩形を一時に識別するため。ただの矩形の場合0
 @property (nonatomic) NSMutableArray *currentRects;// 現在保存中の矩形一覧(デバッグ用)
@@ -34,6 +40,7 @@
 @interface DebugInfoW : NSObject
 
 @property (nonatomic, copy) NSString *des;
+@property (nonatomic, copy) NSString *pattern;
 //@property (nonatomic) NSMutableArray *currentRects;// 現在保存中の矩形一覧(デバッグ用)
 
 - (NSString *)description;
@@ -82,6 +89,7 @@ struct SignalW {
 
 +(void)testRecognize;
 +(UIImage*)testInRange:(UIImage*)image;
++(void)testMatching:(UIImage*)image1 withImage:(UIImage*)image2 color:(int)color;
 
 /*  */
 

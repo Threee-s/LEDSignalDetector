@@ -34,8 +34,11 @@ enum DebugMode: Int {
     optional func selectRectStart(startPoint: CGPoint)
     optional func selectRectChanged(nextPoint: CGPoint)
     optional func selectRectEnd()
+    optional func selectRectCancel()
     //optional func selectRectEnd(size: CGSize)
     optional func deleteSelectedRect()
+    optional func detectRect(rect: CGRect)
+    optional func deleteDetectRect()
     
     optional func cameraSettingChanged(exposureBias bias: Float)
     optional func cameraSettingChanged(exposureISO iso: Float)
@@ -53,6 +56,8 @@ enum DebugMode: Int {
     
     optional func detectSignalColor(color: Int)
     optional func detectBatch(flag: Bool)
+    
+    optional func saveCapturedImage(flag: Bool)
     
     optional func sensorStart()
     optional func setSensorType(type: AirSensorType)
@@ -156,6 +161,9 @@ class DebugModeViewController: UIViewController {
     var dispModeArea: Bool = false
     var dispModeSignal: Bool = false
     var dispModeSelect: Bool = false
+    var dispModeHistogram: Bool = false
+    var dispModeMatching: Bool = false
+    var dispModeCollection: Bool = false
     
     //var selectMode: Bool = false
     var rectSelected: Bool = false
@@ -174,6 +182,9 @@ class DebugModeViewController: UIViewController {
     //        return Int(self.videoFPS) * self.recordTime
     //    }
     //}
+    //var capturedImages: [AnyObject?] = []
+    //var capturedImages: [(image: UIImage, timestamp: CMTime)] = []
+    var capturedImages: [(image: UIImage, count: Int)] = []
     
     var saveLog: Bool = false
     var batchDetect: Bool = false
@@ -433,6 +444,13 @@ class DebugModeViewController: UIViewController {
             self.saturation.high = Int(confManager.confSettings.colorSettings.colorSpaceRed.s.upper)
             self.value.low = Int(confManager.confSettings.colorSettings.colorSpaceRed.v.lower)
             self.value.high = Int(confManager.confSettings.colorSettings.colorSpaceRed.v.upper)
+        } else if (type & 8 == 8) {
+            self.hue.low = Int(confManager.confSettings.colorSettings.colorSpaceCenter.h.lower)
+            self.hue.high = Int(confManager.confSettings.colorSettings.colorSpaceCenter.h.upper)
+            self.saturation.low = Int(confManager.confSettings.colorSettings.colorSpaceCenter.s.lower)
+            self.saturation.high = Int(confManager.confSettings.colorSettings.colorSpaceCenter.s.upper)
+            self.value.low = Int(confManager.confSettings.colorSettings.colorSpaceCenter.v.lower)
+            self.value.high = Int(confManager.confSettings.colorSettings.colorSpaceCenter.v.upper)
         }
     }
     
@@ -451,6 +469,13 @@ class DebugModeViewController: UIViewController {
             confManager.confSettings.colorSettings.colorSpaceRed.s.upper = Int32(self.saturation.high)
             confManager.confSettings.colorSettings.colorSpaceRed.v.lower = Int32(self.value.low)
             confManager.confSettings.colorSettings.colorSpaceRed.v.upper = Int32(self.value.high)
+        } else if (type & 8 == 8) {
+            confManager.confSettings.colorSettings.colorSpaceCenter.h.lower = Int32(self.hue.low)
+            confManager.confSettings.colorSettings.colorSpaceCenter.h.upper = Int32(self.hue.high)
+            confManager.confSettings.colorSettings.colorSpaceCenter.s.lower = Int32(self.saturation.low)
+            confManager.confSettings.colorSettings.colorSpaceCenter.s.upper = Int32(self.saturation.high)
+            confManager.confSettings.colorSettings.colorSpaceCenter.v.lower = Int32(self.value.low)
+            confManager.confSettings.colorSettings.colorSpaceCenter.v.upper = Int32(self.value.high)
         }
     }
     
@@ -498,6 +523,30 @@ class DebugModeViewController: UIViewController {
         confManager.confSettings.debugMode.rect = self.dispModeRect
         confManager.confSettings.debugMode.area = self.dispModeArea
         confManager.confSettings.debugMode.signal = self.dispModeSignal
+        confManager.confSettings.debugMode.center = self.dispModeMatching
+        confManager.confSettings.debugMode.collection = self.dispModeCollection
+    }
+    
+    private func setCollection(selected: Bool) {
+        if (selected) {
+            let maxValidSizeWidh = CGFloat(confManager.confSettings.detectParams.validRectMax.width)
+            let maxValidSizeHeight = CGFloat(confManager.confSettings.detectParams.validRectMax.height)
+            let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+            let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+            /*
+            let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+            let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+            let startPos: CGPoint = CGPointMake(startPosX, startPosY)
+            let endPos: CGPoint = CGPointMake(startPosX + maxValidSizeWidh, startPosY + maxValidSizeHeight)
+            self.observer?.selectRectStart!(startPos)
+            self.observer?.selectRectChanged!(endPos)
+            self.observer?.selectRectEnd!()
+            */
+            let detectRect: CGRect = CGRectMake(startPosX, startPosY, maxValidSizeWidh, maxValidSizeHeight)
+            self.observer?.detectRect!(detectRect)
+        } else {
+            self.observer?.deleteDetectRect!()
+        }
     }
     
     // for UISegmentControl
@@ -543,6 +592,35 @@ class DebugModeViewController: UIViewController {
         }
         self.observer?.smartEyeConfigChanged!(true)
         self.saveLog = flag
+    }
+    
+    private func saveCapturedImages() {
+        dispatch_async(self.imageSaveQueue!, { () -> Void in
+            for imageInfo in self.capturedImages {
+            //for info in self.capturedImages {
+                //var saveImage = SEUtil.imageFromSampleBuffer(info.sampleBuffer, imageOrientation: info.orientation)
+                let saveImage = imageInfo.image
+                
+                // memo:jpegの場合、圧縮されるので、sampleBufferのデータと結果が違うかも
+                let data = UIImageJPEGRepresentation(saveImage, 0.5)
+                // todo:キャプチャ時と結果が異なる場合、圧縮率を減らす
+                //let data = UIImageJPEGRepresentation(saveImage, 1)
+                // memo:orientaionが保存されない
+                //let data = UIImagePNGRepresentation(saveImage)// not dImage
+                if (data == nil) {
+                    print("data is nil")
+                }
+                //let now = NSDate()
+                // @memo double->string
+                //let fileName = String(format:"%.3f", now.timeIntervalSince1970)
+                //let imageNameExt = String(format:"image_%d.jpg", imageInfo.count)
+                let imageNameExt = String(format:"image_%d", imageInfo.count)
+                //let imageNameExt = String(format:"image_%d.png", imageInfo.timestamp.value)
+                if (!FileManager.saveData(data, toFile: imageNameExt, inFolder: "/image")) {
+                    print("image save error")
+                }
+            }
+        })
     }
     
     func setValidMode(validMode: DebugMode) {
@@ -614,87 +692,46 @@ class DebugModeViewController: UIViewController {
         updateCameraSettingSlider()
     }
     
+    func saveCapturedImageInfo(captureImageInfo cInfo: CaptureImageInfo!) {
+        self.saveImageCount++
+        let capturedImage = SEUtil.imageFromSampleBuffer(cInfo.sampleBuffer, imageOrientation: cInfo.orientation)
+        self.capturedImages.append((capturedImage, self.saveImageCount))
+        //self.capturedImages.append(cInfo)
+        
+        //print("saveImageCount:\(self.saveImageCount) saveCountMax:\(self.saveCountMax)")
+        if (self.saveImageCount == 1) {
+            self.captureTime = cInfo.timeStamp.value
+        }
+        
+        if (self.saveImageCount == self.saveCountMax) {
+            self.saveCapture = false
+            self.captureTime = cInfo.timeStamp.value - self.captureTime
+            self.saveCapturedImages()
+            
+            // set in UI thread. 保存処理完了後UI更新。更新完了後次の保存処理を行う。countがずれる可能性があるので。
+            //dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            // todo:ファイル保存は非同期なので、実際全てのファイル保存後も数回呼ばれる(溜まっている) ok
+            dispatch_sync(dispatch_get_main_queue(), { () -> Void in
+                print("saveCapture:\(self.saveCapture) saveImageCount:\(self.saveImageCount)")
+                self.imageRecordValueLabel.text = String(format: "%d/%ds", self.saveImageCount, self.recordTime)
+                
+                if (self.saveCapture == false) {
+                    print("captureTime:\(self.captureTime)")
+                    self.imageRecordValueLabel.text = String(format: "%d/%2d", self.saveImageCount, self.captureTime)
+                    //self.imageRecordTimeSlider.value = 0// changeValueが呼ばれる？
+                    self.imageRecordSwitch.on = false
+                }
+            })
+            //self.imageRecordValueLabel.text = String(format: "%d/%ds", self.saveImageCount, self.recordTime)//すぐ反映されない？
+            self.observer?.saveCapturedImage!(false)
+        }
+    }
+    
     // todo:graph更新。RecordTimerSlider移動対応
-    func updateDetectedImageData(detectedImage dImage: UIImage!, data: [AnyObject]!, captureImageInfo cInfo: CaptureImageInfo! = nil, debugInfo dInfo: DebugInfoW!, selectedImage sImage: UIImage, selectecRect rect: CGRect = CGRectZero) {
+    func updateDetectedImageData(data: [AnyObject]!, captureImageInfo cInfo: CaptureImageInfo! = nil, debugInfo dInfo: DebugInfoW!, detectTime: Double) {
         
         if (self.debugMode && self.graphMode) {
             self.graphViewController!.setSignalData(data)
-        }
-        
-        // 画像保存. todo: create queue for saving
-        //println("debugMode:\(self.debugMode) recordMode:\(self.recordMode) saveCapture:\(self.saveCapture)")
-        if (self.debugMode /*&& self.recordMode*/ && self.saveCapture) {
-            // 最大画像数分処理(queueに入れる最大画像数)
-            if (self.captureImageCount >= self.saveCountMax) {
-                return
-            } else {
-                self.captureImageCount++
-            }
-            dispatch_async(self.imageSaveQueue!, { () -> Void in // @memo:非同期なので、最大画像数まで制限しないと、キューで待機されるとき、メモリが増え続ける。警告発生して落ちる!?
-            //dispatch_sync(self.imageSaveQueue!, { () -> Void in
-                print("saveImageCount:\(self.saveImageCount) saveCountMax:\(self.saveCountMax)")
-                //var saveImage = cInfo.image
-                var saveImage = dImage
-                if (self.dispModeSelect) {
-                    saveImage = sImage
-                }
-                // memo:jpegの場合、圧縮されるので、sampleBufferのデータと結果が違うかも
-                let data = UIImageJPEGRepresentation(saveImage, 0.5)
-                // todo:キャプチャ時と結果が異なる場合、圧縮率を減らす
-                //let data = UIImageJPEGRepresentation(saveImage, 1)
-                // memo:orientaionが保存されない
-                //let data = UIImagePNGRepresentation(saveImage)// not dImage
-                if (data == nil) {
-                    print("data is nil")
-                }
-                //let now = NSDate()
-                // @memo double->string
-                //let fileName = String(format:"%.3f", now.timeIntervalSince1970)
-                //let fileNameExt = String(format:"image_%d.jpg", self.saveImageCount + 1)
-                let imageNameExt = String(format:"image_%d.png", self.saveImageCount + 1)
-                if (FileManager.saveData(data, toFile: imageNameExt, inFolder: "/image")) {
-                    /*
-                    let dataNameExt = String(format:"data_%d.dat", self.saveImageCount + 1)
-                    var str = String(format: "%lld", cInfo.timeStamp.value)
-                    if (FileManager.saveString(str, toFile: dataNameExt, inFolder: "/image")) {
-                    self.saveImageCount++
-                    if (self.saveImageCount == 1) {
-                    self.captureTime = cInfo.timeStamp.value
-                    }
-                    } else {
-                    println("data save error")
-                    }
-                    */
-                    self.saveImageCount++
-                    if (self.saveImageCount == 1) {
-                        self.captureTime = cInfo.timeStamp.value
-                    }
-                    
-                    if (self.saveImageCount == self.saveCountMax) {
-                        self.saveCapture = false
-                        self.captureImageCount = 0
-                        self.captureTime = cInfo.timeStamp.value - self.captureTime
-                        
-                        // set in UI thread. 保存処理完了後UI更新。更新完了後次の保存処理を行う。countがずれる可能性があるので。
-                        //dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        // todo:ファイル保存は非同期なので、実際全てのファイル保存後も数回呼ばれる(溜まっている) ok
-                        dispatch_sync(dispatch_get_main_queue(), { () -> Void in
-                            print("saveCapture:\(self.saveCapture) saveImageCount:\(self.saveImageCount)")
-                            self.imageRecordValueLabel.text = String(format: "%d/%ds", self.saveImageCount, self.recordTime)
-                            
-                            if (self.saveCapture == false) {
-                                print("captureTime:\(self.captureTime)")
-                                self.imageRecordValueLabel.text = String(format: "%d/%2d", self.saveImageCount, self.captureTime)
-                                //self.imageRecordTimeSlider.value = 0// changeValueが呼ばれる？
-                                self.imageRecordSwitch.on = false
-                            }
-                        })
-                        //self.imageRecordValueLabel.text = String(format: "%d/%ds", self.saveImageCount, self.recordTime)//すぐ反映されない？
-                    }
-                } else {
-                    print("image save error")
-                }
-            })
         }
         
         if (self.debugMode && self.saveLog) {
@@ -713,7 +750,9 @@ class DebugModeViewController: UIViewController {
                     }
                     
                     if (dInfo != nil && dInfo.des != nil) {
+                        self.logger?.addLog("Time:" + detectTime.description + "")
                         self.logger?.addLog(dInfo.des)
+                        self.logger?.addPatternLog(dInfo.pattern)
                     } else {
                         //self.logger?.addLog("no info")
                     }
@@ -727,6 +766,11 @@ class DebugModeViewController: UIViewController {
                     self.logRecordSwitch.on = false
                 })
             }
+        }
+        
+        // todo: dispmodeではなく、saveCollectionにする
+        if (self.debugMode && self.dispModeCollection) {
+            
         }
     }
     
@@ -818,7 +862,7 @@ class DebugModeViewController: UIViewController {
         let gesRec: UIPanGestureRecognizer = sender as! UIPanGestureRecognizer
         let pos: CGPoint = gesRec.locationInView(self.view)
         
-        if (self.dispModeSelect) {
+        if (self.dispModeSelect || self.dispModeCollection) {
             print("x:\(pos.x) y:\(pos.y)")
             if (gesRec.state == UIGestureRecognizerState.Began) {
                 self.observer?.selectRectStart!(pos)
@@ -879,6 +923,19 @@ class DebugModeViewController: UIViewController {
             self.dispModeSelect = !self.dispModeSelect
             selected = self.dispModeSelect
             break
+        case 7:
+            self.dispModeHistogram = !self.dispModeHistogram
+            selected = self.dispModeHistogram
+            break;
+        case 8:
+            self.dispModeMatching = !self.dispModeMatching
+            selected = self.dispModeMatching
+            break;
+        case 9:
+            self.dispModeCollection = !self.dispModeCollection
+            selected = self.dispModeCollection
+            self.setCollection(selected)
+            break;
         default:
             break
         }
@@ -971,7 +1028,9 @@ class DebugModeViewController: UIViewController {
         case 1:
             self.colorType = 4
         case 2:
-            self.colorType = 5;
+            self.colorType = 8;
+        case 3:
+            self.colorType = 15;
         default:
             break
         }
@@ -1060,7 +1119,6 @@ class DebugModeViewController: UIViewController {
     @IBAction func saveCaptureSwitchChanged(sender: AnyObject) {
         let saveSwitch = sender as! UISwitch
         
-        self.observer?.detectEnd!()
         // onの場合、imageフォルダを新規作成
         if (saveSwitch.on) {
             FileManager.deleteSubFolder("image")
@@ -1069,9 +1127,8 @@ class DebugModeViewController: UIViewController {
             self.saveCountMax = self.videoFPS * self.recordTime + 1
             self.imageRecordValueLabel.text = String(format: "%ds", self.recordTime)
         }
-        
         self.saveCapture = saveSwitch.on
-        self.observer?.detectStart!()
+        self.observer?.saveCapturedImage!(true)
     }
 
     @IBAction func saveLogSwitchChanged(sender: AnyObject) {

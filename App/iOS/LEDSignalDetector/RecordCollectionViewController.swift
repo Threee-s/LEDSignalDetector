@@ -227,7 +227,8 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
         let localPath = FileManager.getSubDirectoryPath("/image")
         let fileCount: Int = Int(FileManager.getFileCountInFolder(localPath))
         for (var i = 1; i <= fileCount; i++) {
-            let fileName = String(format: "image_%d.png", i)
+            //let fileName = String(format: "image_%d.png", i)
+            let fileName = String(format: "image_%d", i)
             let filePath = FileManager.getPathWithFileName(fileName, fromFolder: "/image")
             let image = UIImage(contentsOfFile: filePath)
             if (image != nil) {
@@ -478,6 +479,7 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
                 }
                 if (debugInfo != nil && debugInfo.des != nil) {
                     self.logger?.addLog(debugInfo.des)
+                    self.logger?.addPatternLog(debugInfo.pattern)
                 }
             }
         }
@@ -492,6 +494,10 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
             for obj in self.records {
                 imageCount++
                 print("imageCount:\(imageCount)")
+                // nullをskip
+                if (imageCount == 1) {
+                    continue
+                }
                 let recordInfo = obj as RecordInfo
                 let info = CaptureImageInfo()
                 info.image = recordInfo.detectImage
@@ -533,6 +539,7 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
                 }
                 if (debugInfo != nil && debugInfo.des != nil) {
                     self.logger?.addLog(debugInfo.des)
+                    self.logger?.addPatternLog(debugInfo.pattern)
                 }
             }
         }

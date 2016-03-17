@@ -64,10 +64,16 @@
 		C72CCC9E1C34DE9000369814 /* SmartEye.mm in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC991C34DE9000369814 /* SmartEye.mm */; };
 		C730C1ED1B8455C600684588 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C730C1EC1B8455C600684588 /* AVFoundation.framework */; };
 		C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C730C1EE1B85F33000684588 /* RecordInfo.swift */; };
+		C79D82661C6BC4BA0070614B /* image_5.png in Resources */ = {isa = PBXBuildFile; fileRef = C79D82651C6BC4BA0070614B /* image_5.png */; };
 		C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */; };
 		C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */; };
 		C7B012221B402A5500539E4A /* ConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C7B012211B402A5500539E4A /* ConfigManager.m */; };
 		C7B012251B4FDD6100539E4A /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B012241B4FDD6100539E4A /* DebugLog.swift */; };
+		C7E9B11C1C4B55D5002165B6 /* pedestrian_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */; };
+		C7E9B11E1C4B55F2002165B6 /* pedestrian_red.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */; };
+		C7E9B1201C513E9B002165B6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7E9B11F1C513E9B002165B6 /* AudioToolbox.framework */; };
+		C7E9B1221C550A29002165B6 /* blue_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B1211C550A29002165B6 /* blue_2.jpg */; };
+		C7E9B1261C5526D3002165B6 /* image_1.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B1251C5526D3002165B6 /* image_1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,12 +165,18 @@
 		C72CCC9B1C34DE9000369814 /* SmartEyeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeType.h; sourceTree = "<group>"; };
 		C730C1EC1B8455C600684588 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C730C1EE1B85F33000684588 /* RecordInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordInfo.swift; sourceTree = "<group>"; };
+		C79D82651C6BC4BA0070614B /* image_5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_5.png; sourceTree = "<group>"; };
 		C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSettingViewController.swift; sourceTree = "<group>"; };
 		C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDTabBarViewController.swift; sourceTree = "<group>"; };
 		C7B012201B402A5500539E4A /* ConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigManager.h; path = Utility/ConfigManager.h; sourceTree = "<group>"; };
 		C7B012211B402A5500539E4A /* ConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConfigManager.m; path = Utility/ConfigManager.m; sourceTree = "<group>"; };
 		C7B012231B4CFCF800539E4A /* HistogramGraphView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HistogramGraphView.h; sourceTree = "<group>"; };
 		C7B012241B4FDD6100539E4A /* DebugLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DebugLog.swift; path = Utility/DebugLog.swift; sourceTree = "<group>"; };
+		C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedestrian_green.png; sourceTree = "<group>"; };
+		C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedestrian_red.png; sourceTree = "<group>"; };
+		C7E9B11F1C513E9B002165B6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		C7E9B1211C550A29002165B6 /* blue_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blue_2.jpg; sourceTree = "<group>"; };
+		C7E9B1251C5526D3002165B6 /* image_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_1.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +184,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7E9B1201C513E9B002165B6 /* AudioToolbox.framework in Frameworks */,
 				C721577A1BA719E50081467B /* CoreLocation.framework in Frameworks */,
 				C72157781BA715C70081467B /* MapKit.framework in Frameworks */,
 				C730C1ED1B8455C600684588 /* AVFoundation.framework in Frameworks */,
@@ -329,6 +342,11 @@
 		65C59A5C19E58A5B005A3F96 /* Image */ = {
 			isa = PBXGroup;
 			children = (
+				C79D82651C6BC4BA0070614B /* image_5.png */,
+				C7E9B1251C5526D3002165B6 /* image_1.png */,
+				C7E9B1211C550A29002165B6 /* blue_2.jpg */,
+				C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */,
+				C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */,
 				65C59A5D19E58A5B005A3F96 /* blue.jpg */,
 				65C59A5F19E58A5B005A3F96 /* panel.png */,
 			);
@@ -345,6 +363,7 @@
 		6C675835BB4941FB9601CF03 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C7E9B11F1C513E9B002165B6 /* AudioToolbox.framework */,
 				C72157791BA719E50081467B /* CoreLocation.framework */,
 				C72157771BA715C70081467B /* MapKit.framework */,
 				C730C1EC1B8455C600684588 /* AVFoundation.framework */,
@@ -468,7 +487,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6522239F19E1855C00F1667A /* Main.storyboard in Resources */,
+				C7E9B1221C550A29002165B6 /* blue_2.jpg in Resources */,
 				65F3B7B41AA8A77A007CFC22 /* LEDSignalGraphViewController.xib in Resources */,
+				C79D82661C6BC4BA0070614B /* image_5.png in Resources */,
 				65F3B7B01AA744BD007CFC22 /* DebugModeViewController.xib in Resources */,
 				65F3B7A41A9B6CC5007CFC22 /* RecordDetailCell.xib in Resources */,
 				652223A419E1855C00F1667A /* LaunchScreen.xib in Resources */,
@@ -477,6 +498,9 @@
 				65F3B7AC1A9B762C007CFC22 /* RecordCell.xib in Resources */,
 				652223A119E1855C00F1667A /* Images.xcassets in Resources */,
 				65C59A6219E58A5B005A3F96 /* blue.jpg in Resources */,
+				C7E9B11E1C4B55F2002165B6 /* pedestrian_red.png in Resources */,
+				C7E9B11C1C4B55D5002165B6 /* pedestrian_green.png in Resources */,
+				C7E9B1261C5526D3002165B6 /* image_1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +745,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "LEDSignalDetector/LEDSignalDetector-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -745,6 +770,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "LEDSignalDetector/LEDSignalDetector-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

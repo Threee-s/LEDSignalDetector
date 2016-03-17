@@ -55,6 +55,7 @@ typedef enum {
 -(void)stop;
 -(void)startWithType:(LEDMapType)type;
 -(void)stopWithType:(LEDMapType)type;
+-(LEDMapHeading*)getCurrentHeading;
 
 @end
 

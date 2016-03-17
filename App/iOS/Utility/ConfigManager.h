@@ -111,6 +111,8 @@ typedef struct {
 @property (nonatomic) BOOL rect;
 @property (nonatomic) BOOL area;
 @property (nonatomic) BOOL signal;
+@property (nonatomic) BOOL center;
+@property (nonatomic) BOOL collection;
 @property (nonatomic) BOOL log;
 @end
 
@@ -143,6 +145,7 @@ typedef struct {
 @property (nonatomic) int detectColors;
 @property (nonatomic) ColorSpace* colorSpaceRed;
 @property (nonatomic) ColorSpace* colorSpaceGreen;
+@property (nonatomic) ColorSpace* colorSpaceCenter;
 @end
 
 @interface ImageSettings : NSObject

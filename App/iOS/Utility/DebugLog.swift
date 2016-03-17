@@ -13,8 +13,9 @@ import QuartzCore
 
 
 class SignalLogger {
-    var allLogs: String = ""
-    var latestLogs: String = ""
+    private var allLogs: [String] = []
+    private var latestLogs: [String] = []
+    private var patternLogs: [String] = []
     
     class var sharedInstance: SignalLogger {
         struct Wrapper {// @memo:Can't define static var in class
@@ -26,24 +27,40 @@ class SignalLogger {
     
     func addLog(log: String!) {
         if (log != nil && log != "") {
-            latestLogs += log + "\n"
+            //latestLogs += log + "\n"
+            latestLogs.append(log)
         }
     }
     
+    func addPatternLog(log: String!) {
+        if (log != nil && log != "") {
+            //patternLogs += log + "\n"
+            patternLogs.append(log)
+        }
+    }
+    
+    func getPatternLogs() -> String {
+        //return patternLogs.debugDescription
+        return patternLogs.joinWithSeparator("\n")
+    }
+    
     func getLatestLog() -> String {
-        return latestLogs
+        //return latestLogs.debugDescription
+        return latestLogs.joinWithSeparator("\n")
     }
     
     func getAllLogs() -> String {
         //allLogs += latestLogs
         allLogs = latestLogs
         
-        return allLogs
+        //return allLogs.debugDescription
+        return allLogs.joinWithSeparator("\n")
     }
     
     func clearLogs() {
-        allLogs = ""
-        latestLogs = ""
+        allLogs = []
+        latestLogs = []
+        patternLogs = []
     }
 }
 

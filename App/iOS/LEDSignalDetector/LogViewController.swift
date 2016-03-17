@@ -26,8 +26,9 @@ class LogViewController: UIViewController {
         super.viewWillAppear(animated)
         
         let logStr = self.logger?.getAllLogs()
+        let patternLogStr = self.logger?.getPatternLogs()
         //print(logStr)
-        self.logView.text = logStr
+        self.logView.text = patternLogStr! + logStr!
     }
 
     override func didReceiveMemoryWarning() {

@@ -15,6 +15,8 @@
 
 #define FREQUENCY 60.0
 
+#define QUEUE_SERIAL_SENSOR_MOTION "com.threees.tre.led.sensor.motion"
+
 @implementation AirSensorAcceleration
 
 -(id)init
@@ -107,6 +109,7 @@
 @property (nonatomic) CMMotionActivityManager *activityMan;
 @property (nonatomic) AirSensorInfo *info;
 @property (nonatomic) AirSensorType activeSensorType;
+@property (nonatomic) dispatch_queue_t motionQueue;
 
 @end
 
@@ -133,6 +136,7 @@
         _activityMan = [[CMMotionActivityManager alloc] init];
         
         _info = [[AirSensorInfo alloc] init];
+        _motionQueue = dispatch_queue_create(QUEUE_SERIAL_SENSOR_MOTION, DISPATCH_QUEUE_SERIAL);
     }
     
     return self;
@@ -144,7 +148,7 @@
     
     //if (_observer != nil) {
     //    if ([_observer respondsToSelector:@selector(sensorInfo:ofType:)]) {
-            [_observer sensorInfo:_info ofType:type];
+//            [_observer sensorInfo:_info ofType:type];
     //    }
     //}
 }
@@ -155,7 +159,7 @@
     BOOL state = [UIDevice currentDevice].proximityState;// YES:proximity NO:other
     if (_observer != nil) {
         if ([_observer respondsToSelector:@selector(displayCameraView:info:)]) {
-            [_observer displayCameraView:state info:_info];
+            [_observer displayCameraView:!state info:_info]; // proximity:not display
         }
     }
 }
@@ -309,6 +313,7 @@
         };
         
         [_motionMan startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        //[_motionMan startDeviceMotionUpdatesToQueue:_motionQueue withHandler:handler];
     }
     
     if ([CMMotionActivityManager isActivityAvailable] && (type & AirSensorTypeActivity) == AirSensorTypeActivity) {
@@ -355,7 +360,7 @@
         [_motionMan stopMagnetometerUpdates];
     }
     
-    if (_motionMan.deviceMotionActive && (type & AirSensorTypeAttitude) == AirSensorTypeAttitude) {
+    if (_motionMan.deviceMotionActive && (type & AirSensorTypeMotion) == AirSensorTypeMotion) {
         [_motionMan stopDeviceMotionUpdates];
     }
     
@@ -500,7 +505,7 @@
         [_motionMan stopGyroUpdates];
     }
     
-    if (_motionMan.deviceMotionActive && (_activeSensorType & AirSensorTypeAttitude) == AirSensorTypeAttitude) {
+    if (_motionMan.deviceMotionActive && (_activeSensorType & AirSensorTypeMotion) == AirSensorTypeMotion) {
         [_motionMan stopDeviceMotionUpdates];
     }
     

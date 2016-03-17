@@ -29,6 +29,7 @@ using namespace cv;
 
 @implementation SignalW
 
+/*
 @synthesize kind;
 @synthesize type;
 @synthesize color;
@@ -39,12 +40,13 @@ using namespace cv;
 @synthesize distance;
 @synthesize rectId;
 @synthesize signalId;
+*/
 
 - (NSString *)description
 {
     NSString *des = @"SignalW";
     
-    des = [NSString stringWithFormat:@"rectId:%lu, signalId:%lu, kind:%d, type:%d, color:%d, state:%d, level:%d rect:[%.2f, %.2f, %.2f, %.2f], pixel:%d", rectId, signalId, kind, type, color, state, level, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, pixel];
+    des = [NSString stringWithFormat:@"rectId:%lu, signalId:%lu, kind:%d, type:%d, color:%d, state:%d, level:%d rect:[%.2f, %.2f, %.2f, %.2f], pixel:%d", _rectId, _signalId, _kind, _type, _color, _state, _level, _rect.origin.x, _rect.origin.y, _rect.size.width, _rect.size.height, _pixel];
     
     return des;
 }
@@ -135,7 +137,7 @@ using namespace cv;
     //CGFloat width = size.width;
     //CGFloat height = size.height;
     
-    DEBUGLOG(@"UIImage orientation(before):%ld width:%f height:%f", (long)orientation, imageWidth, imageHeight);
+    //DEBUGLOG(@"UIImage orientation(before):%ld width:%d height:%d", (long)image->orientation, imageWidth, imageHeight);
     
     // ピクセルバッファを作成
     CVPixelBufferCreate(kCFAllocatorDefault,
@@ -589,6 +591,8 @@ using namespace cv;
         conf.rectDrawFlag = cm.confSettings.debugMode.rect;
         conf.areaDrawFlag = cm.confSettings.debugMode.area;
         conf.signalDrawFlag = cm.confSettings.debugMode.signal;
+        conf.centerDrawFlag = cm.confSettings.debugMode.center;
+        conf.frameDrawFlag = cm.confSettings.debugMode.collection;
         conf.debugInfoFlag = cm.confSettings.debugMode.log;
     } else {
         conf.binImageDrawFlag = false;
@@ -596,6 +600,8 @@ using namespace cv;
         conf.rectDrawFlag = false;
         conf.areaDrawFlag = false;
         conf.signalDrawFlag = false;
+        conf.centerDrawFlag = false;
+        conf.frameDrawFlag = false;
         conf.debugInfoFlag = false;
     }
     
@@ -606,7 +612,8 @@ using namespace cv;
     conf.frequency = 100;
     // default pedestrian
     //this->signalConf->frameSize = cv::Size(SE_SIGNAL_SIZE_PEDESTRIAN_250, SE_SIGNAL_SIZE_PEDESTRIAN_250);
-    conf.frameSize = cv::sqrt(cv::pow(SE_SIGNAL_SIZE_PEDESTRIAN_250, 2.0) * 2);
+    //conf.frameSize = cv::sqrt(cv::pow(SE_SIGNAL_SIZE_PEDESTRIAN_250, 2.0) * 2);
+    conf.frameSize = SE_SIGNAL_SIZE_PEDESTRIAN_250;
     conf.focalLength = SE_CAMERA_FOCAL_LENGTH_415mm; // 0の場合、距離計算しない
     conf.sensorSize = SE_CAMERA_SENSOR_SIZE_620mm;
     conf.fps = 30;
@@ -638,12 +645,20 @@ using namespace cv;
     conf.signalGreen.s.upper = cm.confSettings.colorSettings.colorSpaceGreen.s.upper;
     conf.signalGreen.v.lower = cm.confSettings.colorSettings.colorSpaceGreen.v.lower;
     conf.signalGreen.v.upper = cm.confSettings.colorSettings.colorSpaceGreen.v.upper;
+    conf.signalCenter.h.lower = cm.confSettings.colorSettings.colorSpaceCenter.h.lower;
+    conf.signalCenter.h.upper = cm.confSettings.colorSettings.colorSpaceCenter.h.upper;
+    conf.signalCenter.s.lower = cm.confSettings.colorSettings.colorSpaceCenter.s.lower;
+    conf.signalCenter.s.upper = cm.confSettings.colorSettings.colorSpaceCenter.s.upper;
+    conf.signalCenter.v.lower = cm.confSettings.colorSettings.colorSpaceCenter.v.lower;
+    conf.signalCenter.v.upper = cm.confSettings.colorSettings.colorSpaceCenter.v.upper;
     
-    DEBUGLOG_PRINTF(@"DebugInfo:%d BinaryImageDraw:%d PointDraw:%d RectDraw:%d AreaDraw:%d SignalDraw:%d ImageOrientation:%d CombineCountThreshold:%d CombineOffset:%d IntegrateRectProp:%f IntegrateRectOffset:%d IntegrateValidRectMinWidth:%d IntegrateValidRectMaxWidth:%d IntegrateValidRectMinHeight:%d IntegrateValidRectMaxHeight:%d CompareRectDist:%f CompareRectScale:%f RecogSignalLightnessDiff:%f RecogSignalCompRectDiffCount:%d RecogSignalCompRectInvalidCount:%d DetectColors:%d", conf.debugInfoFlag, conf.binImageDrawFlag, conf.pointDrawFlag, conf.rectDrawFlag, conf.areaDrawFlag, conf.signalDrawFlag, conf.imgOri, conf.combineCountThreshold, conf.combineOffset, conf.integrateRectProp, conf.integrateRectOffset, conf.validRectMinWidth, conf.validRectMaxWidth, conf.validRectMinHeight, conf.validRectMaxHeight, conf.compareRectDist, conf.compareRectScale, conf.recogSignalLightnessDiff, conf.recogSignalCompRectDiffCount, conf.recogSignalCompRectInvalidCount, conf.detectColors);
+    DEBUGLOG_PRINTF(@"DebugInfo:%d BinaryImageDraw:%d PointDraw:%d RectDraw:%d AreaDraw:%d SignalDraw:%d CenterDrawFlag:%d FrameDrawFlag:%d ImageOrientation:%d CombineCountThreshold:%d CombineOffset:%d IntegrateRectProp:%f IntegrateRectOffset:%d IntegrateValidRectMinWidth:%d IntegrateValidRectMaxWidth:%d IntegrateValidRectMinHeight:%d IntegrateValidRectMaxHeight:%d CompareRectDist:%f CompareRectScale:%f RecogSignalLightnessDiff:%f RecogSignalCompRectDiffCount:%d RecogSignalCompRectInvalidCount:%d DetectColors:%d", conf.debugInfoFlag, conf.binImageDrawFlag, conf.pointDrawFlag, conf.rectDrawFlag, conf.areaDrawFlag, conf.signalDrawFlag, conf.centerDrawFlag, conf.frameDrawFlag, conf.imgOri, conf.combineCountThreshold, conf.combineOffset, conf.integrateRectProp, conf.integrateRectOffset, conf.validRectMinWidth, conf.validRectMaxWidth, conf.validRectMinHeight, conf.validRectMaxHeight, conf.compareRectDist, conf.compareRectScale, conf.recogSignalLightnessDiff, conf.recogSignalCompRectDiffCount, conf.recogSignalCompRectInvalidCount, conf.detectColors);
     
     DEBUGLOG_PRINTF(@"Red:[%d, %d], [%d, %d], [%d, %d]", conf.signalRed.h.lower, conf.signalRed.h.upper, conf.signalRed.s.lower, conf.signalRed.s.upper, conf.signalRed.v.lower, conf.signalRed.v.upper);
 
     DEBUGLOG_PRINTF(@"Green:[%d, %d], [%d, %d], [%d, %d]", conf.signalGreen.h.lower, conf.signalGreen.h.upper, conf.signalGreen.s.lower, conf.signalGreen.s.upper, conf.signalGreen.v.lower, conf.signalGreen.v.upper);
+    
+    DEBUGLOG_PRINTF(@"Center:[%d, %d], [%d, %d], [%d, %d]", conf.signalCenter.h.lower, conf.signalCenter.h.upper, conf.signalCenter.s.lower, conf.signalCenter.s.upper, conf.signalCenter.v.lower, conf.signalCenter.v.upper);
     
     se.setupLEDSignalConfig(&conf);
 }
@@ -711,7 +726,13 @@ using namespace cv;
         signalW.state = signal.state;
         signalW.level = signal.level;
         signalW.pixel = signal.pixel;
-        signalW.distance = signal.distance;
+        signalW.probability = signal.probability;
+        signalW.circleLevel = signal.circleLevel;
+        signalW.matching = signal.matching;
+        signalW.distance = signal.guideInfo.distance;
+        signalW.direction = signal.guideInfo.direction;
+        signalW.time = signal.guideInfo.time;
+        signalW.position = signal.guideInfo.position;
         signalW.rect = CGRectMake(signal.rect.x, signal.rect.y, signal.rect.width, signal.rect.height);
         
         [signalArray addObject:signalW];
@@ -721,23 +742,28 @@ using namespace cv;
     int rectsCount = (int)debugInfo.currentRectsList.size();
     if (rectsCount > 0) {
         NSString *debugDes = [NSString stringWithFormat:@"<===========[%d]===========>\n", rectsCount];
+        NSString *allFlags = @"";
         for (int i = 0; i < rectsCount; i++) {
             SESignalArea signalArea = debugInfo.currentRectsList.at(i);
             int rectCount = (int)signalArea.rects.size();
+            unsigned long rectId = 0;
             NSString *rectFlags = @"";
             
             NSString *rectStr = @"";
             for (int j = 0; j < rectCount; j++) {
                 SERectArea area = signalArea.rects.at(j);
+                rectId = area.rectId;
                 CGRect rect = CGRectMake(area.rect.x, area.rect.y, area.rect.width, area.rect.height);
-                rectStr = [NSString stringWithFormat:@"%@%d->rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%f, length:%f, color:%d, state:%d, nullRect:%d\n", rectStr, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state, !area.nullRect];
+                rectStr = [NSString stringWithFormat:@"%@%d->[%d], rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%f, length:%f, color:%d, state:%d\n", rectStr, !area.nullRect, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state];
                 
                 rectFlags = [NSString stringWithFormat:@"%@%d", rectFlags, !area.nullRect];
             }
+            allFlags = [NSString stringWithFormat:@"%@ID<%lu, %lu>=>[%@]\n", allFlags, rectId, signalArea.signalId, rectFlags];
             
             debugDes = [NSString stringWithFormat:@"%@%d[%d]=>ID:%lu\n[%@]\n%@", debugDes, i+1, rectCount, signalArea.signalId, rectFlags, rectStr];
         }
         info.des = debugDes;
+        info.pattern = allFlags;
     }
     
 //    [Log debug:@"=== detect end ==="];
@@ -798,7 +824,13 @@ using namespace cv;
         signalW.state = signal.state;
         signalW.level = signal.level;
         signalW.pixel = signal.pixel;
-        signalW.distance = signal.distance;
+        signalW.probability = signal.probability;
+        signalW.circleLevel = signal.circleLevel;
+        signalW.matching = signal.matching;
+        signalW.distance = signal.guideInfo.distance;
+        signalW.direction = signal.guideInfo.direction;
+        signalW.time = signal.guideInfo.time;
+        signalW.position = signal.guideInfo.position;
         signalW.rect = CGRectMake(signal.rect.x, signal.rect.y, signal.rect.width, signal.rect.height);
         
         [signalArray addObject:signalW];
@@ -808,23 +840,28 @@ using namespace cv;
     int rectsCount = (int)debugInfo.currentRectsList.size();
     if (rectsCount > 0) {
         NSString *debugDes = [NSString stringWithFormat:@"<===========[%d]===========>\n", rectsCount];
+        NSString *allFlags = @"";
         for (int i = 0; i < rectsCount; i++) {
             SESignalArea signalArea = debugInfo.currentRectsList.at(i);
             int rectCount = (int)signalArea.rects.size();
+            unsigned long rectId = 0;
             NSString *rectFlags = @"";
             
             NSString *rectStr = @"";
             for (int j = 0; j < rectCount; j++) {
                 SERectArea area = signalArea.rects.at(j);
+                rectId = area.rectId;
                 CGRect rect = CGRectMake(area.rect.x, area.rect.y, area.rect.width, area.rect.height);
                 rectStr = [NSString stringWithFormat:@"%@%d->[%d], rect:[%.2f, %.2f, %.2f, %.2f] rectId:%lu, signalId:%lu, pixels:[%d, %d], area:%f, length:%f, color:%d, state:%d\n", rectStr, !area.nullRect, j+1, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, area.rectId, area.signalId, area.pixels, (int)area.averageLightness, area.area, area.length, area.color, area.state];
                 
                 rectFlags = [NSString stringWithFormat:@"%@%d", rectFlags, !area.nullRect];
             }
+            allFlags = [NSString stringWithFormat:@"%@ID<%lu, %lu>=>[%@]\n", allFlags, rectId, signalArea.signalId, rectFlags];
             
             debugDes = [NSString stringWithFormat:@"%@%d[%d]=>ID:%lu\n[%@]\n%@", debugDes, i+1, rectCount, signalArea.signalId, rectFlags, rectStr];
         }
         info.des = debugDes;
+        info.pattern = allFlags;
     }
     
     //    [Log debug:@"=== detect end ==="];
@@ -866,6 +903,17 @@ using namespace cv;
     se.testInRange(&orgImage, SE_COLOR_SPACE_RGB);
     
     return MatToUIImage(orgImage);
+}
+
++(void)testMatching:(UIImage*)image1 withImage:(UIImage*)image2 color:(int)color
+{
+    Mat mat1, mat2;
+    
+    UIImageToMat(image1, mat1);
+    UIImageToMat(image2, mat2);
+    
+    SmartEye se = SmartEye::getInstance();
+    se.testMatching(&mat1, &mat2, color);
 }
 
 @end

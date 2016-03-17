@@ -259,6 +259,18 @@ static CameraCapture *sharedInstance = nil;
     }
     else if (context == ExposureTargetOffsetContext)
     {
+        // memo:bias(露出補正)はssとisoに影響がある(両方を調整して適正露出にするため。今後絞りもできた場合、絞りにも影響がある)。manualの場合、ss/isoは変わらない
+        // offsetの値も変わる。適正露出までの差分?適正露出の場合0になるはず。もちろん(manualの場合)ssとisoを変えるとoffsetも変わる(適正露出になるまで)。(autoの場合、biasの変更によって)ssとisoが変わるとoffsetも変わる(biasの変更時と同じ。同上)。bias/ss/isoが固定になっても実環境が変わるとoffsetも変わる(適正露出にならないので)
+        // ※offsetはbias(露出補正)のレベルによって0の意味が変わる。基本0の場合その露出レベルの適正露出になる。
+        //  biasを[-](暗くする)にした場合、autoモードではoffsetが0(適正露出になるまで)ss/isoを調整する(ss早く、iso下げる)
+        //  biasを[+](明るくする)にした場合、autoモードではoffsetが0(適正露出になるまで)ss/isoを調整する(ss遅く、isoあげる)
+        //  manualの場合、[-/+]にしてもss/isoは自動で変わらないので、-biasの値になる(biasと反対方向)。手動でss/isoを調整して適正露出になると、offsetも0になる。あるいは、環境が変わった場合、適正露出になった時点でoffsetが0になる
+        // ※露出を変更するには最終的にss/iso/aptureを変更する必要がある。biasはあくまでautoモードの場合、ss/iso/(apture)を自動で調整してくれる(manualの場合特に意味がないかも)。
+        // ※offsetは適正露出(biasよってレベルが変わる)になるまでの差分になる(EV単位)ので、manualモードでoffsetを参考に(適正露出[offset:0]になるまで)ss/iso/(apture)を変更できる
+        // つまり、ssを速く、少し暗くする場合、manualモードでssを必要な値に(1/1000など)に固定して、ISOを調整すれば良いが、ISOを調整するには以下の方法を取る。現状方法②
+        //  ①biasを[-]レベルに固定し、offsetが0になるようにISOを調整(基本EV単位で下げる。環境が暗すぎる場合、ISOが上がるかも)。環境によってISOが随時変わる。ただ、常に変わるのはよくないので、変動範囲(閾値)を調整する。
+        //  ②biasを[-]にした値レベルにISOを調整。ただ、調整分はわかるが、ベースのISOはわからない。且つ、環境が変わった場合も変わらないので、この方法はよくないかも
+        
         float newExposureTargetOffset = [change[NSKeyValueChangeNewKey] floatValue];
         
         if(self.videoDevice) {
@@ -864,26 +876,6 @@ static CameraCapture *sharedInstance = nil;
                     }
                     activeSettings.fps = currentFps;
                     
-                    // check ISO
-                    float currentISO = activeSettings.iso;
-                    // todo:差分？
-                    float currentOffset = activeSettings.offset;
-                    float newISO = powf(2, 0 - currentOffset) * currentISO;
-                    DEBUGLOG(@"ISO:[%.1f-%.1f]", format.minISO, format.maxISO);
-                    if (newISO < format.minISO) {
-                        newISO = format.minISO;
-                    } else if (newISO > format.maxISO) {
-                        newISO = format.maxISO;
-                    }
-                    activeSettings.iso = newISO;
-                    
-                    // check Bias
-                    if (currentSettings.bias < self.videoDevice.minExposureTargetBias) {
-                        activeSettings.bias = self.videoDevice.minExposureTargetBias;
-                    } else if (currentSettings.bias > self.videoDevice.maxExposureTargetBias) {
-                        activeSettings.bias = self.videoDevice.maxExposureTargetBias;
-                    }
-                    
                     // check exposureDuration
                     DEBUGLOG(@"SS:[%.6f-%.6f]", CMTimeGetSeconds(format.minExposureDuration), CMTimeGetSeconds(format.maxExposureDuration));
                     //float minValue = [self calculateExposureDurationValue:CMTimeGetSeconds(format.minExposureDuration)];
@@ -898,7 +890,29 @@ static CameraCapture *sharedInstance = nil;
                     }
                     //activeSettings.exposureDuration = [self calculateExposureDurationSecond:activeSettings.exposureValue];
                     
+                    // check Bias
+                    if (currentSettings.bias < self.videoDevice.minExposureTargetBias) {
+                        activeSettings.bias = self.videoDevice.minExposureTargetBias;
+                    } else if (currentSettings.bias > self.videoDevice.maxExposureTargetBias) {
+                        activeSettings.bias = self.videoDevice.maxExposureTargetBias;
+                    }
+                    
                     activeSettings.offset = self.videoDevice.exposureTargetOffset;
+                    
+                    // check ISO
+                    float currentISO = activeSettings.iso;
+                    // todo:差分？
+                    float currentOffset = activeSettings.offset;
+                    float newISO = powf(2, 0 - currentOffset) * currentISO;
+                    DEBUGLOG(@"ISO:[%.1f-%.1f]", format.minISO, format.maxISO);
+                    if (newISO < format.minISO) {
+                        newISO = format.minISO;
+                    } else if (newISO > format.maxISO) {
+                        newISO = format.maxISO;
+                    }
+                    activeSettings.iso = newISO;
+                    
+                    
                     // 最大光学倍率の半分か1
                     // memo:最大光学倍率よりも出力映像サイズがセンサーサイズより小さい場合、どうscalingするか。
                     //      センサーサイズより小さい場合、中心から出力サイズ分切り取って、zoomに縮小する(thresholdの場合、縮小なし。以上の場合拡大->画質落ちる)
@@ -933,7 +947,8 @@ static CameraCapture *sharedInstance = nil;
                     
                     DEBUGLOG(@"sessionPreset:%@", self.session.sessionPreset);
                     
-                    //[self changeExposureBias:activeSettings.bias];
+                    // todo:offsetが変わる(ISOも変わる)ので、offset/isoより先に設定?
+                    [self changeExposureBias:activeSettings.bias];
                     
                     //[self changeExposureDuration:activeSettings.exposureValue];
                     //[self changeISO:activeSettings.iso];
@@ -1348,7 +1363,7 @@ static CameraCapture *sharedInstance = nil;
 {
     CameraFormat format = { 0 };
     format.minExposureOffset = self.videoDevice.minExposureTargetBias;
-    format.maxExposureOffset = self.videoDevice.minExposureTargetBias;
+    format.maxExposureOffset = self.videoDevice.maxExposureTargetBias;
     format.minExposureBias = self.videoDevice.minExposureTargetBias;
     format.maxExposureBias = self.videoDevice.maxExposureTargetBias;
     format.minISO = self.videoDevice.activeFormat.minISO;
@@ -1409,7 +1424,8 @@ static CameraCapture *sharedInstance = nil;
     
     CMTime presTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     //DEBUGLOG(@"<<*********************>>");
-    ////DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value);
+    //DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value);
+    //NSLog(@"presTimestamp:%lld", presTimestamp.value);
     ////DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value / presTimestamp.timescale);// int64 / int32 = int
     ////DEBUGLOG(@"presTimestamp:%f", (float)presTimestamp.value / presTimestamp.timescale);
 //    DEBUGLOG(@"presTimestamp:%fs", CMTimeGetSeconds(presTimestamp));
@@ -1490,7 +1506,9 @@ static CameraCapture *sharedInstance = nil;
     //self.image = info.image;
     //DEBUGLOG(@"UIImage orientation:%ld width:%f height:%f", (long)self.image.imageOrientation, self.image.size.width, self.image.size.height);
     //[self.cameraObserver imageCaptured:self.image];
+    //NSLog(@"proc start");
     [self.cameraObserver captureImageInfo:info];
+    //NSLog(@"prooc end");
 
     
     

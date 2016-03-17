@@ -56,7 +56,7 @@
                                 <rect key="frame" x="0.0" y="380" width="375" height="200"/>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QD6-gl-7mk">
-                                <rect key="frame" x="146" y="108" width="83" height="21"/>
+                                <rect key="frame" x="20" y="108" width="335" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -64,6 +64,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="KMC-eB-rwZ" appends="YES" id="Fz5-IR-JZg"/>
+                            <outletCollection property="gestureRecognizers" destination="SkN-Dm-Ox8" appends="YES" id="KkR-IG-Bev"/>
+                        </connections>
                     </view>
                     <toolbarItems>
                         <barButtonItem title="Map" id="zSt-Yu-tJc" userLabel="Map"/>
@@ -123,6 +127,18 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="KMC-eB-rwZ">
+                    <connections>
+                        <action selector="longGestureForDebug:" destination="BYZ-38-t0r" id="aCH-ln-D80"/>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="voa-vn-YlH"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="SkN-Dm-Ox8">
+                    <connections>
+                        <action selector="panGestureForDebug:" destination="BYZ-38-t0r" id="Puc-eK-wrW"/>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="E8X-2C-Tcg"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="783.5" y="-239.5"/>
         </scene>

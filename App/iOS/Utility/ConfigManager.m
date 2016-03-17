@@ -48,6 +48,7 @@
     if (self = [super init]) {
         _colorSpaceRed = [[ColorSpace alloc] init];
         _colorSpaceGreen = [[ColorSpace alloc] init];
+        _colorSpaceCenter = [[ColorSpace alloc] init];
     }
     
     return self;
@@ -195,7 +196,7 @@
 {
     NSString *des = @"";
     
-    NSString *colorSpaceDes = [NSString stringWithFormat: @"Red -> H[%d, %d], S[%d, %d], V[%d, %d]¥nGreen -> H[%d, %d], S[%d, %d], V[%d, %d]",
+    NSString *colorSpaceDes = [NSString stringWithFormat: @"Red -> H[%d, %d], S[%d, %d], V[%d, %d]¥nGreen -> H[%d, %d], S[%d, %d], V[%d, %d]¥nCenter -> H[%d, %d], S[%d, %d], V[%d, %d]",
                                _confSettings.colorSettings.colorSpaceRed.h.lower,
                                _confSettings.colorSettings.colorSpaceRed.h.upper,
                                _confSettings.colorSettings.colorSpaceRed.s.lower,
@@ -207,7 +208,13 @@
                                _confSettings.colorSettings.colorSpaceGreen.s.lower,
                                _confSettings.colorSettings.colorSpaceGreen.s.upper,
                                _confSettings.colorSettings.colorSpaceGreen.v.lower,
-                               _confSettings.colorSettings.colorSpaceGreen.v.upper];
+                               _confSettings.colorSettings.colorSpaceGreen.v.upper,
+                               _confSettings.colorSettings.colorSpaceCenter.h.lower,
+                               _confSettings.colorSettings.colorSpaceCenter.h.upper,
+                               _confSettings.colorSettings.colorSpaceCenter.s.lower,
+                               _confSettings.colorSettings.colorSpaceCenter.s.upper,
+                               _confSettings.colorSettings.colorSpaceCenter.v.lower,
+                               _confSettings.colorSettings.colorSpaceCenter.v.upper];
     des = [NSString stringWithFormat:@"ColorSpace:¥n[¥n%@¥n]¥n", colorSpaceDes];
     
     return des;
@@ -383,6 +390,48 @@
                         num = [rangeDic valueForKey:@"Upper"];
                         if (num != nil) {
                             _confSettings.colorSettings.colorSpaceGreen.v.upper = [num intValue];
+                        }
+                    }
+                }
+                
+                csDic = [dic valueForKey:@"ColorSpaceCenter"];
+                if (csDic != nil) {
+                    NSDictionary *rangeDic = [csDic valueForKey:@"H"];
+                    if (rangeDic != nil) {
+                        num = [rangeDic valueForKey:@"Lower"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.h.lower = [num intValue];
+                        }
+                        
+                        num = [rangeDic valueForKey:@"Upper"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.h.upper = [num intValue];
+                        }
+                    }
+                    
+                    rangeDic = [csDic valueForKey:@"S"];
+                    if (rangeDic != nil) {
+                        num = [rangeDic valueForKey:@"Lower"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.s.lower = [num intValue];
+                        }
+                        
+                        num = [rangeDic valueForKey:@"Upper"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.s.upper = [num intValue];
+                        }
+                    }
+                    
+                    rangeDic = [csDic valueForKey:@"V"];
+                    if (rangeDic != nil) {
+                        num = [rangeDic valueForKey:@"Lower"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.v.lower = [num intValue];
+                        }
+                        
+                        num = [rangeDic valueForKey:@"Upper"];
+                        if (num != nil) {
+                            _confSettings.colorSettings.colorSpaceCenter.v.upper = [num intValue];
                         }
                     }
                 }
@@ -565,6 +614,21 @@
         [greenVDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceGreen.v.upper] forKey:@"Upper"];
         [colorSpaceGreen setValue:greenVDic forKey:@"V"];
         [colorSettingsDic setValue:colorSpaceGreen forKey:@"ColorSpaceGreen"];
+        
+        NSMutableDictionary *colorSpaceCenter = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *centerHDic = [[NSMutableDictionary alloc] init];
+        [centerHDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.h.lower] forKey:@"Lower"];
+        [centerHDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.h.upper] forKey:@"Upper"];
+        [colorSpaceCenter setValue:centerHDic forKey:@"H"];
+        NSMutableDictionary *centerSDic = [[NSMutableDictionary alloc] init];
+        [centerSDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.s.lower] forKey:@"Lower"];
+        [centerSDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.s.upper] forKey:@"Upper"];
+        [colorSpaceCenter setValue:centerSDic forKey:@"S"];
+        NSMutableDictionary *centerVDic = [[NSMutableDictionary alloc] init];
+        [centerVDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.v.lower] forKey:@"Lower"];
+        [centerVDic setValue:[NSNumber numberWithInt:_confSettings.colorSettings.colorSpaceCenter.v.upper] forKey:@"Upper"];
+        [colorSpaceCenter setValue:centerVDic forKey:@"V"];
+        [colorSettingsDic setValue:colorSpaceCenter forKey:@"ColorSpaceCenter"];
         
         [self.confDic setValue:colorSettingsDic forKey:@"ColorSettings"];
         
