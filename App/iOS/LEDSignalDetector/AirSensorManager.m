@@ -109,7 +109,8 @@
 @property (nonatomic) CMMotionActivityManager *activityMan;
 @property (nonatomic) AirSensorInfo *info;
 @property (nonatomic) AirSensorType activeSensorType;
-@property (nonatomic) dispatch_queue_t motionQueue;
+//@property (nonatomic) dispatch_queue_t motionQueue;
+@property (nonatomic) NSOperationQueue *motionQueue;
 
 @end
 
@@ -136,7 +137,10 @@
         _activityMan = [[CMMotionActivityManager alloc] init];
         
         _info = [[AirSensorInfo alloc] init];
-        _motionQueue = dispatch_queue_create(QUEUE_SERIAL_SENSOR_MOTION, DISPATCH_QUEUE_SERIAL);
+        //_motionQueue = dispatch_queue_create(QUEUE_SERIAL_SENSOR_MOTION, DISPATCH_QUEUE_SERIAL);
+        
+        _motionQueue = [[NSOperationQueue alloc] init];
+        [_motionQueue setMaxConcurrentOperationCount:1]; // Serial queue
     }
     
     return self;
@@ -237,7 +241,7 @@
             [self notifySensorInfo:AirSensorTypeAcceleration];
         };
         
-        [_motionMan startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [_motionMan startAccelerometerUpdatesToQueue:_motionQueue withHandler:handler];
     }
     
     // ジャイロスコープ (X軸・Y軸・Z軸を中心にしてどの方向に"回転"したか)
@@ -254,7 +258,7 @@
             [self notifySensorInfo:AirSensorTypeGyro];
         };
         
-        [_motionMan startGyroUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [_motionMan startGyroUpdatesToQueue:_motionQueue withHandler:handler];
     }
     
     // 磁力センサー (X軸・Y軸・Z軸で計測される磁力の強さ)
@@ -271,7 +275,7 @@
             [self notifySensorInfo:AirSensorTypeMagnetometer];
         };
         
-        [_motionMan startMagnetometerUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [_motionMan startMagnetometerUpdatesToQueue:_motionQueue withHandler:handler];
     }
     
     // デバイスの姿勢に関する情報 (オイラー角(ロール・ピッチ・ヨー)や行列(マトリックス)の形)
@@ -312,7 +316,7 @@
             [self notifySensorInfo:AirSensorTypeAttitude | AirSensorTypeAccelerationHigh];
         };
         
-        [_motionMan startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [_motionMan startDeviceMotionUpdatesToQueue:_motionQueue withHandler:handler];
         //[_motionMan startDeviceMotionUpdatesToQueue:_motionQueue withHandler:handler];
     }
     
@@ -332,7 +336,7 @@
             [self notifySensorInfo:AirSensorTypeActivity];
         };
         
-        [_activityMan startActivityUpdatesToQueue:[NSOperationQueue currentQueue] withHandler:handler];
+        [_activityMan startActivityUpdatesToQueue:_motionQueue withHandler:handler];
     }
 }
 

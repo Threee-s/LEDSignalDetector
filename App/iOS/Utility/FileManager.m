@@ -11,27 +11,6 @@
 #import "FileManager.h"
 #import "Log.h"
 
-@interface Log : NSObject
-
-+(void)debug:(NSString*)log;
-
-@end
-
-@implementation Log
-
-+(void)debug:(NSString*)log
-{
-    // macroで制御
-#define DEBUG_LOG
-#ifdef DEBUG_LOG
-    NSLog(@"%@", log);
-#endif
-}
-
-@end
-
-
-
 @interface FileManager()
 
 +(BOOL)createFolder:(NSString*)folderDir;
@@ -84,13 +63,14 @@ static NSString *dirPath_ = nil;
         // 存在したら削除
         if ([fileManager fileExistsAtPath:folderDir]) {
             if ([fileManager removeItemAtPath:folderDir error:&error] == YES) {
-                [Log debug:[NSString stringWithFormat:@"[%@] deleted.", folderDir]];
+                //[Log debug:[NSString stringWithFormat:@"[%@] deleted.", folderDir]];
+                DEBUGLOG(@"[%@] deleted.", folderDir);
             }
         }
     }
 }
 
-+(void)createRootFolder:(NSString*)rootDir
++(NSString*)createRootFolder:(NSString*)rootDir
 {
     // ホームディレクトリを取得
     NSString *homeDir = NSHomeDirectory();
@@ -100,18 +80,26 @@ static NSString *dirPath_ = nil;
     
     if ([FileManager createFolder:dirPath] == YES) {
         dirPath_ = [dirPath copy];
-        [Log debug:dirPath_];
+        //[Log debug:dirPath_];
+        DEBUGLOG(dirPath_);
+        return dirPath;
     }
+    
+    return nil;
 }
 
-+(void)createSubFolder:(NSString*)subDir
++(NSString*)createSubFolder:(NSString*)subDir
 {
     if (dirPath_ != nil) {
         NSString *dirPath = [NSString stringWithFormat:@"%@/%@", dirPath_, subDir];
         if ([FileManager createFolder:dirPath] == YES) {
-            [Log debug:dirPath];
+            //[Log debug:dirPath];
+            DEBUGLOG(dirPath_);
+            return dirPath;
         }
     }
+    
+    return nil;
 }
 
 +(void)deleteRootFolder
@@ -127,11 +115,18 @@ static NSString *dirPath_ = nil;
     }
 }
 
++(void)deleteFolderWithAbsolutePath:(NSString*)path
+{
+    if (path != nil) {
+        [FileManager deleteFolder:path];
+    }
+}
+
 +(NSData*)readDataFromFile:(NSString*)fileName inFolder:(NSString*)folderDir
 {
     NSData *data = nil;
     if (dirPath_ != nil && folderDir != nil && fileName != nil) {
-        NSString *filePath = [NSString stringWithFormat:@"%@%@/%@", dirPath_, folderDir, fileName];
+        NSString *filePath = [NSString stringWithFormat:@"%@/%@/%@", dirPath_, folderDir, fileName];
         data = [[NSData alloc] initWithContentsOfFile:filePath];
     }
     
@@ -157,9 +152,11 @@ static NSString *dirPath_ = nil;
         NSString *filePath = [NSString stringWithFormat:@"%@/%@", dirPath_, fileName];
         if ([data writeToFile:filePath atomically:YES]) {
             ret = YES;
-            [Log debug:[NSString stringWithFormat:@"[%@] saved.", filePath]];
+            //[Log debug:[NSString stringWithFormat:@"[%@] saved.", filePath]];
+            DEBUGLOG(@"[%@] saved.", filePath);
         } else {
-            [Log debug:[NSString stringWithFormat:@"[%@] could not save.", filePath]];
+            //[Log debug:[NSString stringWithFormat:@"[%@] could not save.", filePath]];
+            DEBUGLOG(@"[%@] could not save.", filePath);
         }
     }
     
@@ -171,16 +168,20 @@ static NSString *dirPath_ = nil;
     BOOL ret = NO;
     
     if (dirPath_ != nil && folderDir != nil && fileName != nil && data != nil) {
-        NSString *filePath = [NSString stringWithFormat:@"%@%@/%@", dirPath_, folderDir, fileName];
-        [Log debug:[NSString stringWithFormat:@"filePath:[%@]", filePath]];
+        NSString *filePath = [NSString stringWithFormat:@"%@/%@/%@", dirPath_, folderDir, fileName];
+        //[Log debug:[NSString stringWithFormat:@"filePath:[%@]", filePath]];
+        DEBUGLOG(@"filePath:[%@]", filePath);
         if ([data writeToFile:filePath atomically:YES]) {
             ret = YES;
-            [Log debug:[NSString stringWithFormat:@"[%@] saved.", filePath]];
+            //[Log debug:[NSString stringWithFormat:@"[%@] saved.", filePath]];
+            DEBUGLOG(@"[%@] saved.", filePath);
         } else {
-            [Log debug:[NSString stringWithFormat:@"[%@] could not save.", filePath]];
+            //[Log debug:[NSString stringWithFormat:@"[%@] could not save.", filePath]];
+            DEBUGLOG(@"[%@] could not save.", filePath);
         }
     } else {
-        [Log debug: @"param error"];
+        //[Log debug: @"param error"];
+        DEBUGLOG(@"param error");
     }
     
     return ret;
@@ -193,6 +194,18 @@ static NSString *dirPath_ = nil;
     if (str != nil) {
         NSData *data = [str dataUsingEncoding: NSASCIIStringEncoding];
         ret = [FileManager saveData:data toFile:fileName inFolder:folderDir];
+    }
+    
+    return ret;
+}
+
+// todo: NSData? UIImagePNGRepresentation(image)
++(BOOL)saveImage:(UIImage*)image toFolder:(NSString*)folderDir
+{
+    BOOL ret = NO;
+    
+    if (image != nil) {
+        ret = YES;
     }
     
     return ret;
@@ -215,8 +228,9 @@ static NSString *dirPath_ = nil;
     NSString* subDirPath = nil;
     
     if (dirPath_ != nil && subDir != nil) {
-        subDirPath = [NSString stringWithFormat:@"%@%@/", dirPath_, subDir];
-        [Log debug:[NSString stringWithFormat:@"subDirPath[%@]", subDirPath]];
+        subDirPath = [NSString stringWithFormat:@"%@/%@", dirPath_, subDir];
+        //[Log debug:[NSString stringWithFormat:@"subDirPath[%@]", subDirPath]];
+        DEBUGLOG(@"subDirPath[%@]", subDirPath);
     }
     
     return subDirPath;
@@ -228,7 +242,8 @@ static NSString *dirPath_ = nil;
     
     if (dirPath_ != nil && fileName != nil) {
         filePath = [NSString stringWithFormat:@"%@/%@", dirPath_, fileName];
-        [Log debug:[NSString stringWithFormat:@"filePath[%@] created.", filePath]];
+        //[Log debug:[NSString stringWithFormat:@"filePath[%@] created.", filePath]];
+        DEBUGLOG(@"filePath[%@] created.", filePath);
     }
     
     return filePath;
@@ -239,8 +254,9 @@ static NSString *dirPath_ = nil;
     NSString* filePath = nil;
     
     if (dirPath_ != nil && folderDir != nil && fileName != nil) {
-        filePath = [NSString stringWithFormat:@"%@%@/%@", dirPath_, folderDir, fileName];
-        [Log debug:[NSString stringWithFormat:@"filePath[%@] created.", filePath]];
+        filePath = [NSString stringWithFormat:@"%@/%@/%@", dirPath_, folderDir, fileName];
+        //[Log debug:[NSString stringWithFormat:@"filePath[%@] created.", filePath]];
+        DEBUGLOG(@"filePath[%@] created.", filePath);
     }
     
     return filePath;
@@ -264,7 +280,8 @@ static NSString *dirPath_ = nil;
     NSString *directory = [paths objectAtIndex:0];
     NSString *filePath = [directory stringByAppendingPathComponent:fileName];
     
-    [Log debug:filePath];
+    //[Log debug:filePath];
+    DEBUGLOG(filePath);
     
     [dic writeToFile:filePath atomically:NO];
 }
@@ -307,6 +324,49 @@ static NSString *dirPath_ = nil;
     return fileNames;
 }
 
++(NSArray*)getFilePathsInSubDir:(NSString*)subDir
+{
+    NSMutableArray *filePaths = [[NSMutableArray alloc] init];
+    // ファイルマネージャを作成
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSError *error;
+    
+    if (dirPath_ != nil && subDir != nil) {
+        NSString *dirPath = [FileManager getSubDirectoryPath:subDir];
+        if (dirPath != nil) {
+            // file of folder name (not a path)
+            NSArray *contents = [fileManager contentsOfDirectoryAtPath:dirPath error:&error];
+            if (contents != nil) {
+                for (int i = 0; i < contents.count; i++) {
+                    NSString *content = [contents objectAtIndex:i];
+                    NSString *contentPath = [FileManager getPathWithFileName:content fromFolder:subDir];
+                    [filePaths addObject:contentPath];
+                }
+            }
+        }
+    }
+    
+    return filePaths;
+}
+
++(int)getFileCountInSubDir:(NSString *)subDir
+{
+    int count = 0;
+    
+    if (dirPath_ != nil && subDir != nil) {
+        NSString *dirPath = [FileManager getSubDirectoryPath:subDir];
+        if (dirPath != nil) {
+            NSArray *fileNames = [FileManager getFileNamesAtPath:dirPath];
+            if (fileNames != nil) {
+                count = (int)[fileNames count];
+            }
+        }
+    }
+    
+    return count;
+}
+
 +(int)getFileCountInFolder:(NSString*)folderDir
 {
     int count = 0;
@@ -319,6 +379,35 @@ static NSString *dirPath_ = nil;
     }
     
     return count;
+}
+
++(NSString*)getFileNameFromPath:(NSString*)path
+{
+    NSString *fileName = nil;
+    
+    NSString *lastComp = [path lastPathComponent];
+    if (lastComp != nil) {
+        fileName = [lastComp stringByDeletingPathExtension];
+    }
+    
+    return fileName;
+}
+
++(BOOL)copyFromPath:(NSString*)srcPath toPath:(NSString*)dstPath
+{
+    BOOL ret = NO;
+    NSError *error;
+    
+    if (dirPath_ != nil && srcPath != nil && dstPath !=nil) {
+        NSString *srcFullPath = [FileManager getSubDirectoryPath:srcPath];
+        NSString *dstFullPath = [FileManager getSubDirectoryPath:dstPath];
+        if (srcFullPath != nil && dstFullPath != nil) {
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            ret = [fileManager copyItemAtPath:srcFullPath toPath:dstFullPath error:&error];
+        }
+    }
+    
+    return ret;
 }
 
 @end

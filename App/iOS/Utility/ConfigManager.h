@@ -98,6 +98,10 @@ typedef struct {
 } ConfigSettings;
  */
 
+@interface Settings : NSObject
+@property (nonatomic) int userMode;
+@property (nonatomic) int dispMode;
+@end
 
 @interface SignalInfo : NSObject
 @property (nonatomic) int ledFreq;
@@ -130,15 +134,15 @@ typedef struct {
 @property (nonatomic) int time;
 @end
 
-@interface Range : NSObject
+@interface Scope : NSObject
 @property (nonatomic) int lower;
 @property (nonatomic) int upper;
 @end
 
 @interface ColorSpace : NSObject 
-@property (nonatomic) Range* h;
-@property (nonatomic) Range* s;
-@property (nonatomic) Range* v;
+@property (nonatomic) Scope* h;
+@property (nonatomic) Scope* s;
+@property (nonatomic) Scope* v;
 @end
 
 @interface ColorSettings : NSObject
@@ -203,6 +207,7 @@ typedef struct {
 @end
 
 @interface ConfigSettings : NSObject
+@property (nonatomic) Settings* settings;
 @property (nonatomic) SignalInfo* signalInfo;
 @property (nonatomic) DebugMode* debugMode;
 @property (nonatomic) CameraSettings* cameraSettings;

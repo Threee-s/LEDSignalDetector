@@ -98,10 +98,11 @@
     [DBRequest setNetworkRequestDelegate:self];
     
     if (errorMsg != nil) {
-        [[[UIAlertView alloc]
-           initWithTitle:@"Error Configuring Session" message:errorMsg
-           delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil]
-         show];
+        if (self.observer != nil) {
+            if ([self.observer respondsToSelector:@selector(uploader:configErrorWithMessage:)]) {
+                [self.observer uploader:self configErrorWithMessage:errorMsg];
+            }
+        }
     }
     
     if (self.restClient == nil) {
@@ -143,22 +144,38 @@
 
 - (void)sessionDidReceiveAuthorizationFailure:(DBSession*)session userId:(NSString *)userId {
     self.relinkUserId = userId;
-    [[[UIAlertView alloc]
+    /*[[[UIAlertView alloc]
        initWithTitle:@"Dropbox Session Ended" message:@"Do you want to relink?" delegate:self
        cancelButtonTitle:@"Cancel" otherButtonTitles:@"Relink", nil]
-     show];
+     show];*/
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Dropbox Session Ended" message:@"Do you want to relink?" preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *relinkButton = [UIAlertAction actionWithTitle:@"Relink" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [[DBSession sharedSession] linkUserId:self.relinkUserId fromController:self.srcViewController];
+    }];
+    UIAlertAction *cancelButton = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        self.relinkUserId = nil;
+    }];
+    
+    [alertController addAction:relinkButton];
+    [alertController addAction:cancelButton];
+    
+    [self.srcViewController presentViewController:alertController animated:YES completion:^{
+        
+    }];
 }
 
 
 #pragma mark -
 #pragma mark UIAlertViewDelegate methods
-
+/*
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)index {
     if (index != alertView.cancelButtonIndex) {
         [[DBSession sharedSession] linkUserId:self.relinkUserId fromController:self.srcViewController];
     }
     self.relinkUserId = nil;
-}
+}*/
 
 
 #pragma mark -

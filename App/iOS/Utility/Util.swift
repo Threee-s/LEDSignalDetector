@@ -12,20 +12,23 @@ import AVFoundation
 
 
 class SEUtil {
-    class func gcd(var x: Int, var y: Int) -> Int {
+    class func gcd(x: Int, y: Int) -> Int {
         if (x == 0 || y == 0) {// 引数チェック
             return 0
         }
+        
+        var a = x
+        var b = y
     
         // ユーグリッドの互除法
-        var r: Int = x % y
+        var r: Int = a % b
         while (r != 0) {// yで割り切れるまでループ
-            x = y
-            y = r
-            r = x % y
+            a = b
+            b = r
+            r = a % b
         }
     
-        return y
+        return b
     }
     
     class func lcm(x: Int, y: Int) -> Int {

@@ -19,6 +19,8 @@
 static void *ExposureDurationContext = &ExposureDurationContext;
 static void *ISOContext = &ISOContext;
 static void *ExposureTargetOffsetContext = &ExposureTargetOffsetContext;
+static void *ExposureTargetBiasContext = &ExposureTargetBiasContext;
+static void *FocusAdjustingFocus = &FocusAdjustingFocus;
 
 typedef NS_ENUM( NSInteger, CameraManualSetupResult ) {
     CameraManualSetupResultSuccess,
@@ -51,7 +53,7 @@ typedef NS_ENUM( NSInteger, CameraManualSetupResult ) {
 @property (nonatomic, strong) AVCaptureMovieFileOutput* movieOutput;
 @property (nonatomic) CameraManualSetupResult setupResult;
 @property (nonatomic, retain) UIImage* image;
-@property (nonatomic) BOOL exposureCheanged;// 露出変更完了後キャプチャする
+@property (nonatomic) BOOL exposureChanged;// 露出変更完了後キャプチャする
 @property (nonatomic) CameraSetting currentSettings;
 @property (nonatomic) BOOL record;
 
@@ -73,12 +75,12 @@ typedef NS_ENUM( NSInteger, CameraManualSetupResult ) {
 @synthesize session;
 @synthesize videoOutput;
 @synthesize movieOutput;
-@synthesize exposureCheanged;
+@synthesize exposureChanged;
 @synthesize currentSettings;
 
 @synthesize videoViewController;
 @synthesize imageView;
-@synthesize record;
+//@synthesize record;
 @synthesize validRect;
 //@synthesize dataUpdater;
 @synthesize cameraObserver;
@@ -102,7 +104,7 @@ static CameraCapture *sharedInstance = nil;
 -(id)init
 {
     if (self = [super init]) {
-        self.record = NO;
+        _record = NO;
         currentSettings.fps = 30;
         _isCalibrating = YES;
     }
@@ -137,6 +139,43 @@ static CameraCapture *sharedInstance = nil;
     return (float)value;
 }
 
+-(void)adjustExprosure:(float)offset
+{
+    DEBUGLOG(@"currentSettings bias:%f", currentSettings.bias);
+    DEBUGLOG(@"currentSettings offset:%f", currentSettings.offset);
+    DEBUGLOG(@"currentSettings iso:%f", currentSettings.iso);
+    
+    DEBUGLOG(@"device exposureTargetBias(before):%f", self.videoDevice.exposureTargetBias);
+    DEBUGLOG(@"device exposureTargetOffset(before):%f", self.videoDevice.exposureTargetOffset);
+    DEBUGLOG(@"device ISO(before):%f", self.videoDevice.ISO);
+    
+    DEBUGLOG(@"new offset:%f", offset);
+    
+    // todo:ss/isoが固定になっている場合、環境によって、EVが大幅(とりあえず適当に+/-2EV)変わった時調整
+    if (fabsf(offset) >= 2) {
+        float currentISO = self.videoDevice.ISO;
+        // todo:差分？0の時が適正露出なので、0との差分で調整
+        // -1?多少暗くする?逆光などで明るすぎる場合、biasを下げる(ISOを適正露出以上下げる)。
+        //    ただ、実際の露出値を計算しないとわからないので、難しいかも。offsetはただ、biasによる適正露出と差分。
+        float newISO = powf(2, -1 - offset) * currentISO;
+        newISO = newISO > self.videoDevice.activeFormat.maxISO? self.videoDevice.activeFormat.maxISO : newISO;
+        newISO = newISO < self.videoDevice.activeFormat.minISO? self.videoDevice.activeFormat.minISO : newISO;
+        
+        CMTime expDuration = CMTimeMakeWithSeconds(currentSettings.exposureDuration, 1000*1000*1000);
+        NSError *error = nil;
+        if ([self.videoDevice lockForConfiguration:&error]) {
+            // memo:AVCaptureExposureDurationCurrentの場合、実際SSが変わってしまう
+            //[self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:newISO completionHandler:^(CMTime syncTime) {}];
+            [self.videoDevice setExposureModeCustomWithDuration:expDuration ISO:newISO completionHandler:^(CMTime syncTime) {}];
+            [self.videoDevice unlockForConfiguration];
+        }
+    }
+    
+    DEBUGLOG(@"device exposureTargetBias(after):%f", self.videoDevice.exposureTargetBias);
+    DEBUGLOG(@"device exposureTargetOffset(after):%f", self.videoDevice.exposureTargetOffset);
+    DEBUGLOG(@"device ISO(after):%f", self.videoDevice.ISO);
+}
+
 -(void)setCameraCurrentSetting:(CameraSetting)settings
 {
     DEBUGLOG(@"setCameraCurrentSetting");
@@ -158,7 +197,7 @@ static CameraCapture *sharedInstance = nil;
 
 #pragma mark Device Configuration
 
-- (void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
+-(void)focusWithMode:(AVCaptureFocusMode)focusMode exposeWithMode:(AVCaptureExposureMode)exposureMode atDevicePoint:(CGPoint)point monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
 {
     dispatch_async([self sessionQueue], ^{
         AVCaptureDevice *device = [self videoDevice];
@@ -190,6 +229,10 @@ static CameraCapture *sharedInstance = nil;
     [self addObserver:self forKeyPath:@"videoDevice.exposureDuration" options:NSKeyValueObservingOptionNew context:ExposureDurationContext];
     [self addObserver:self forKeyPath:@"videoDevice.ISO" options:NSKeyValueObservingOptionNew context:ISOContext];
     [self addObserver:self forKeyPath:@"videoDevice.exposureTargetOffset" options:NSKeyValueObservingOptionNew context:ExposureTargetOffsetContext];
+    [self addObserver:self forKeyPath:@"videoDevice.exposureTargetBias" options:NSKeyValueObservingOptionNew context:ExposureTargetBiasContext];
+    [self addObserver:self forKeyPath:@"videoDevice.adjustingFocus" options:NSKeyValueObservingOptionNew context:FocusAdjustingFocus];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRuntimeError:) name:AVCaptureSessionRuntimeErrorNotification object:self.session];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subjectAreaDidChange:) name:AVCaptureDeviceSubjectAreaDidChangeNotification object:self.videoDevice];
 }
@@ -199,6 +242,8 @@ static CameraCapture *sharedInstance = nil;
     [self removeObserver:self forKeyPath:@"videoDevice.exposureDuration" context:ExposureDurationContext];
     [self removeObserver:self forKeyPath:@"videoDevice.ISO" context:ISOContext];
     [self removeObserver:self forKeyPath:@"videoDevice.exposureTargetOffset" context:ExposureTargetOffsetContext];
+    [self removeObserver:self forKeyPath:@"videoDevice.exposureTargetBias" context:ExposureTargetBiasContext];
+    [self removeObserver:self forKeyPath:@"videoDevice.adjustingFocus" context:FocusAdjustingFocus];
 }
 
 // for auto mode
@@ -206,11 +251,10 @@ static CameraCapture *sharedInstance = nil;
 {
     if (context == ExposureDurationContext)
     {
-        NSString *duration = nil;
         double newDurationSeconds = CMTimeGetSeconds([change[NSKeyValueChangeNewKey] CMTimeValue]);
-        //NSLog(@"exposureMode: %ld", self.videoDevice.exposureMode);
-        //NSLog(@"newDurationSeconds:%f", newDurationSeconds);
-        //NSLog(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
+        //DEBUGLOG(@"exposureMode: %ld", self.videoDevice.exposureMode);
+        //DEBUGLOG(@"newDurationSeconds:%f", newDurationSeconds);
+        //DEBUGLOG(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
         DEBUGLOG(@"newDurationSeconds:%f", newDurationSeconds);
         DEBUGLOG(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
         
@@ -218,12 +262,14 @@ static CameraCapture *sharedInstance = nil;
         if (currentSettings.mode == CameraModeAuto || currentSettings.mode == CameraModePv) {
             double durationSeconds = [self calculateExposureDurationSecond:newDurationSeconds];
             // todo:別方法で返す
+            /*
+            NSString *duration = nil;
             if ( newDurationSeconds < 1 ) {
                 int digits = MAX( 0, 2 + floor( log10( newDurationSeconds ) ) );
                 duration = [NSString stringWithFormat:@"1/%.*f", digits, 1/newDurationSeconds];
             } else {
                 duration = [NSString stringWithFormat:@"%.2f", newDurationSeconds];
-            }
+            }*/
             
             // todo:return by observer method
             if (self.cameraObserver != nil) {
@@ -238,11 +284,11 @@ static CameraCapture *sharedInstance = nil;
     else if (context == ISOContext)
     {
         float newISO = [change[NSKeyValueChangeNewKey] floatValue];
-        //NSLog(@"exposureMode: %ld", self.videoDevice.exposureMode);
-        //NSLog(@"newISO: %f", newISO);
-        //NSLog(@"ISO: %f", self.videoDevice.ISO);
-        //NSLog(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
-        //NSLog(@"current exposureDuration:%f", CMTimeGetSeconds(AVCaptureExposureDurationCurrent));
+        //DEBUGLOG(@"exposureMode: %ld", self.videoDevice.exposureMode);
+        //DEBUGLOG(@"newISO: %f", newISO);
+        //DEBUGLOG(@"ISO: %f", self.videoDevice.ISO);
+        //DEBUGLOG(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
+        //DEBUGLOG(@"current exposureDuration:%f", CMTimeGetSeconds(AVCaptureExposureDurationCurrent));
         DEBUGLOG(@"newISO: %f", newISO);
         DEBUGLOG(@"device ISO: %f", self.videoDevice.ISO);
         //if (self.videoDevice.exposureMode != AVCaptureExposureModeCustom) {
@@ -257,14 +303,32 @@ static CameraCapture *sharedInstance = nil;
             }
         }
     }
+    else if (context == ExposureTargetBiasContext) {
+        // 自動で変わる?
+        DEBUGLOG(@"ExposureTargetBiasContext");
+        float newBias = [change[NSKeyValueChangeNewKey] floatValue];
+        DEBUGLOG(@"newBias:%f", newBias);
+        DEBUGLOG(@"device exposureTargetBias:%f", self.videoDevice.exposureTargetBias);
+        DEBUGLOG(@"device exposureTargetOffset:%f", self.videoDevice.exposureTargetOffset);
+        DEBUGLOG(@"device ISO:%f", self.videoDevice.ISO);
+        
+        // なぜか途中(start後すぐ)self.videoDevice.exposureTargetBiasがcurrentSettings.bias -> 0になってしまう
+        //  ->biasが変わった時呼ばれるので、ここで設定すると無限ループに入ってしまう。
+        //  ->上位で設定
+        //if (newBias != currentSettings.bias) {
+        //    [self changeExposureBias:currentSettings.bias];
+        //}
+        
+        [self adjustExprosure:self.videoDevice.exposureTargetOffset];
+    }
     else if (context == ExposureTargetOffsetContext)
     {
-        // memo:bias(露出補正)はssとisoに影響がある(両方を調整して適正露出にするため。今後絞りもできた場合、絞りにも影響がある)。manualの場合、ss/isoは変わらない
-        // offsetの値も変わる。適正露出までの差分?適正露出の場合0になるはず。もちろん(manualの場合)ssとisoを変えるとoffsetも変わる(適正露出になるまで)。(autoの場合、biasの変更によって)ssとisoが変わるとoffsetも変わる(biasの変更時と同じ。同上)。bias/ss/isoが固定になっても実環境が変わるとoffsetも変わる(適正露出にならないので)
+        // memo:bias(露出補正)はssとisoに影響がある(両方を調整して適正露出にするため。今後絞りもできた場合、絞りにも影響があるかも)。manualの場合、ss/isoは変わらない
+        // offsetの値も変わる。適正露出までの差分?適正露出の場合0になるはず。もちろん(manualの場合)ssとisoを変えるとoffsetも変わる(適正露出になるまで)。(autoの場合、biasの変更によって)ssとisoが変わるとoffsetも変わる(biasの変更時と同じ。同上)。bias/ss/isoが固定になっても実環境が変わるとoffsetも変わる(適正露出にならないので)。適正露出にするにはbias/ss/isoを変更する必要がある。
         // ※offsetはbias(露出補正)のレベルによって0の意味が変わる。基本0の場合その露出レベルの適正露出になる。
-        //  biasを[-](暗くする)にした場合、autoモードではoffsetが0(適正露出になるまで)ss/isoを調整する(ss早く、iso下げる)
-        //  biasを[+](明るくする)にした場合、autoモードではoffsetが0(適正露出になるまで)ss/isoを調整する(ss遅く、isoあげる)
-        //  manualの場合、[-/+]にしてもss/isoは自動で変わらないので、-biasの値になる(biasと反対方向)。手動でss/isoを調整して適正露出になると、offsetも0になる。あるいは、環境が変わった場合、適正露出になった時点でoffsetが0になる
+        //  biasを[-](暗くする)にした場合、autoモードではoffsetが0(適正露出)になるまでss/isoを調整する(ss早く、iso下げる)
+        //  biasを[+](明るくする)にした場合、autoモードではoffsetが0(適正露出)になるまでss/isoを調整する(ss遅く、isoあげる)
+        //  manualの場合、biasを[-/+]にしてもss/isoは自動で変わらないので、-biasの値になる(biasと反対方向)。手動でss/isoを調整して適正露出になると、offsetも0になる。あるいは、環境が変わった場合、適正露出になった時点でoffsetが0になる
         // ※露出を変更するには最終的にss/iso/aptureを変更する必要がある。biasはあくまでautoモードの場合、ss/iso/(apture)を自動で調整してくれる(manualの場合特に意味がないかも)。
         // ※offsetは適正露出(biasよってレベルが変わる)になるまでの差分になる(EV単位)ので、manualモードでoffsetを参考に(適正露出[offset:0]になるまで)ss/iso/(apture)を変更できる
         // つまり、ssを速く、少し暗くする場合、manualモードでssを必要な値に(1/1000など)に固定して、ISOを調整すれば良いが、ISOを調整するには以下の方法を取る。現状方法②
@@ -277,23 +341,19 @@ static CameraCapture *sharedInstance = nil;
             if ( self.videoDevice.exposureMode == AVCaptureExposureModeCustom ) {
                 if (_isCalibrating) {// todo: delete?
                     // todo: not here. use timer?
+                    
+                    // todo(2016/04/27):
+                    // 適正露出にするより、信号検出しやすい露出にする。isoを変更するより、biasを変更した方が良いかも
+                    // biasを設定(デフォルト0)->実環境によってoffsetが変わる->offset分?biasを調整(-の場合biasを減らす->offset+方向)->isoが変わる->offsetが目標値になる
+                    // offsetの目標値は実写で確定。検出しやすいoffset<->biasのテーブルを作る
+                    // 多少暗くする（biasを下げる）
+                    // ->custom modeの場合,iso/durationが変わらないので、いくらbiasを変更しても露出は変わらない。offsetは変わるが、意味がない(bias-適正露出差分なので)
+                    // ->下記の方法で良い(ただ、明るすぎ/暗すぎる場合、baisを変更して、適正露出基準も変更した方が良い。)
 #if true
                     // todo:ISO上限値によって、暗すぎる場合、もっと高い値のformatに切り替えるd
                     if (currentSettings.mode == CameraModeATv) {// change ISO
-                        float currentISO = self.videoDevice.ISO;
-                        // todo:差分？0の時が適正露出なので、0との差分で調整
-                        float newISO = powf(2, 0 - newExposureTargetOffset) * currentISO;
-                        newISO = newISO > self.videoDevice.activeFormat.maxISO? self.videoDevice.activeFormat.maxISO : newISO;
-                        newISO = newISO < self.videoDevice.activeFormat.minISO? self.videoDevice.activeFormat.minISO : newISO;
-                        
-                        CMTime expDuration = CMTimeMakeWithSeconds(currentSettings.exposureDuration, 1000*1000*1000);
-                        NSError *error = nil;
-                        if ([self.videoDevice lockForConfiguration:&error]) {
-                            // memo:AVCaptureExposureDurationCurrentの場合、実際SSが変わってしまう
-                            //[self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:newISO completionHandler:^(CMTime syncTime) {}];
-                            [self.videoDevice setExposureModeCustomWithDuration:expDuration ISO:newISO completionHandler:^(CMTime syncTime) {}];
-                            [self.videoDevice unlockForConfiguration];
-                        }
+                        DEBUGLOG(@"_isCalibrating");
+                        [self adjustExprosure:newExposureTargetOffset];
                     } else if (currentSettings.mode == CameraModePv) {// change exposure duration
                     }
 #else
@@ -321,23 +381,8 @@ static CameraCapture *sharedInstance = nil;
 #endif
                 } else {
                     if (currentSettings.mode == CameraModeATv) {// change ISO
-                        // todo:ss/isoが固定になっている場合、環境によって、EVが大幅(とりあえず適当に+/-2EV)変わった時調整
-                        if (fabsf(newExposureTargetOffset) >= 2) {
-                            float currentISO = self.videoDevice.ISO;
-                            // todo:差分？0の時が適正露出なので、0との差分で調整
-                            float newISO = powf(2, 0 - newExposureTargetOffset) * currentISO;
-                            newISO = newISO > self.videoDevice.activeFormat.maxISO? self.videoDevice.activeFormat.maxISO : newISO;
-                            newISO = newISO < self.videoDevice.activeFormat.minISO? self.videoDevice.activeFormat.minISO : newISO;
-                            
-                            CMTime expDuration = CMTimeMakeWithSeconds(currentSettings.exposureDuration, 1000*1000*1000);
-                            NSError *error = nil;
-                            if ([self.videoDevice lockForConfiguration:&error]) {
-                                // memo:AVCaptureExposureDurationCurrentの場合、実際SSが変わってしまう
-                                //[self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:newISO completionHandler:^(CMTime syncTime) {}];
-                                [self.videoDevice setExposureModeCustomWithDuration:expDuration ISO:newISO completionHandler:^(CMTime syncTime) {}];
-                                [self.videoDevice unlockForConfiguration];
-                            }
-                        }
+                        DEBUGLOG(@"CameraModeATv");
+                        [self adjustExprosure:newExposureTargetOffset];
                     }
                 }
             }
@@ -349,6 +394,12 @@ static CameraCapture *sharedInstance = nil;
                 [self.cameraObserver currentSettingChanged:currentSettings];
             }
         }
+    }
+    else if (context == FocusAdjustingFocus)
+    {
+        NSLog(@"FocusAdjustingFocus");
+        BOOL newAdjustingFocus = [change[NSKeyValueChangeNewKey] boolValue];
+        NSLog(@"newAdjustingFocus: %d", newAdjustingFocus);
     }
     else
     {
@@ -362,12 +413,25 @@ static CameraCapture *sharedInstance = nil;
     [self focusWithMode:AVCaptureFocusModeContinuousAutoFocus exposeWithMode:AVCaptureExposureModeContinuousAutoExposure atDevicePoint:devicePoint monitorSubjectAreaChange:NO];
 }
 
+- (void)sessionRuntimeError:(NSNotification *)notification
+{
+    NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
+    NSLog( @"Capture session runtime error: %@", error );
+    
+    if ( error.code == AVErrorMediaServicesWereReset ) {
+        dispatch_async( self.sessionQueue, ^{
+            // If we aren't trying to resume the session running, then try to restart it since it must have been stopped due to an error. See also -[resumeInterruptedSession:].
+            
+        });
+    }
+}
+
 -(void)setupCaptureDevice
 {
     // test
     self.record = NO;
     
-    self.exposureCheanged = NO;
+    self.exposureChanged = NO;
     
     
     
@@ -545,7 +609,7 @@ static CameraCapture *sharedInstance = nil;
                     double exposureDuration = [self calculateExposureDurationSecond:self.cameraSettings.exposureDuration];
                     [self.videoDevice setExposureModeCustomWithDuration:CMTimeMakeWithSeconds(exposureDuration, 1000*1000*1000) ISO:AVCaptureISOCurrent completionHandler:^(CMTime syncTime) {
                         // todo:スレッドが違うので、方法検討
-                        self.exposureCheanged = YES;
+                        self.exposureChanged = YES;
                     }];
                      */
                 }
@@ -827,6 +891,9 @@ static CameraCapture *sharedInstance = nil;
 
 -(void)exposureCalibrated:(NSTimer*)timer
 {
+    if (self.videoDevice.exposureTargetBias != currentSettings.bias) {
+        [self changeExposureBias:currentSettings.bias];
+    }
     _isCalibrating = NO;
 }
 
@@ -841,6 +908,7 @@ static CameraCapture *sharedInstance = nil;
             for (int i = 0; i < [[self.videoDevice formats] count]; i++) {
                 // todo:check format and current settings
                 if (i == index) {
+                    NSLog(@"localizedName:%@", self.videoDevice.localizedName);
                     CameraSetting activeSettings = currentSettings;
                     AVCaptureDeviceFormat *format = (AVCaptureDeviceFormat*)[[self.videoDevice formats] objectAtIndex:index];
                     DEBUGLOG(@"format[%d]:%@", i, format);
@@ -853,9 +921,9 @@ static CameraCapture *sharedInstance = nil;
                     DEBUGLOG(@"device exposureTargetBias:%f", self.videoDevice.exposureTargetBias);
                     DEBUGLOG(@"device exposureDuration:%f", CMTimeGetSeconds(self.videoDevice.exposureDuration));
                     DEBUGLOG(@"device ISO:%f", self.videoDevice.ISO);
-                    CMFormatDescriptionRef desc = format.formatDescription;
+                //    CMFormatDescriptionRef desc = format.formatDescription;
                     // AVCaptureDeviceFormatに映像サイズがないので(静止サイズはある)、下記の方法で取得
-                    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
+                //    CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(desc);
                     //DEBUGLOG(@"format:%@ dimensions:(%d x %d)", format, dimensions.width, dimensions.height);
                     
                     float currentFps = activeSettings.fps;
@@ -955,9 +1023,18 @@ static CameraCapture *sharedInstance = nil;
                     // @memo:ISOとssは設定完了まで時間がかかるので、お互いの現在値で別々に設定すると、
                     // 両方共現在値(現activeFormatデフォルト値)になるので、設定が反映されない。
                     // 同時に設定するか、それぞれ設定完了(ハンドルあり)してから設定する必要がある。とりあえず前者で対応
+                    //  ->adjustExprosureで上書きされるので、ここで不要。
+                    //    ここで設定すると反映途中にまた変わってしまう可能性がある。
+                    //    変更途中でoffsetで再計算すると良くないかも。
+                    //  ->ssが反映されないので、やっぱり設定する。
+                    //    adjustExprosureをやめる。key-value通知で呼ばれるようにする
                     [self changeExposureWithDuration:activeSettings.exposureValue ISO:activeSettings.iso];
                     [self changeVideoZoom:activeSettings.zoom withRate:0];
                     //[self switchFPS:activeSettings.fps];// todo:activeFormatと同時設定。現状固定で良いので、とりあえず設定しない
+                    
+                    // biasを反映
+                    //DEBUGLOG(@"format");
+                    //[self adjustExprosure:self.videoDevice.exposureTargetOffset];
                     
                     //[self.session commitConfiguration];
                     
@@ -1044,13 +1121,16 @@ static CameraCapture *sharedInstance = nil;
 {
     NSError *error = nil;
     
+    //NSLog(@"changeExposureBias %f", value);
     if (self.videoDevice != nil) {
         if (self.videoDevice.exposureMode == AVCaptureExposureModeCustom) {
             if ([self.videoDevice lockForConfiguration:&error]) {
-                [self.videoDevice setExposureTargetBias:value completionHandler:nil];
+                [self.videoDevice setExposureTargetBias:value completionHandler:^(CMTime syncTime) {
+                    // 最終的にcurrentSettings.biasの値になるので、完了まで待たずにcurrentSettings.biasに設定
+                }];
                 [self.videoDevice unlockForConfiguration];
-                DEBUGLOG(@"exposureTargetBias: %f changed.", self.videoDevice.exposureTargetBias);
                 currentSettings.bias = value;
+                //DEBUGLOG(@"exposureTargetBias: %f changed.", self.videoDevice.exposureTargetBias);
             } else {
                 DEBUGLOG(@"%@", error);
             }
@@ -1068,8 +1148,11 @@ static CameraCapture *sharedInstance = nil;
         if (self.videoDevice.exposureMode == AVCaptureExposureModeCustom) {
             //float isoValue = self.videoDevice.activeFormat.minISO + (self.videoDevice.activeFormat.maxISO - self.videoDevice.activeFormat.minISO) * value;
             if ([self.videoDevice lockForConfiguration:&error]) {
-                [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:value completionHandler:nil];
+                [self.videoDevice setExposureModeCustomWithDuration:AVCaptureExposureDurationCurrent ISO:value completionHandler:^(CMTime syncTime) {
+                    // 最終的にcurrentSettings.isoの値になるので、完了まで待たずにcurrentSettings.isoに設定
+                }];
                 [self.videoDevice unlockForConfiguration];
+                
                 DEBUGLOG(@"ISO: %f changed.", self.videoDevice.ISO);
                 currentSettings.iso = value;
                 strISO = [NSString stringWithFormat:@"ISO: %f changed.", self.videoDevice.ISO];
@@ -1097,7 +1180,9 @@ static CameraCapture *sharedInstance = nil;
         if (self.videoDevice.exposureMode == AVCaptureExposureModeCustom) {
             if ([self.videoDevice lockForConfiguration:&error]) {
                 CMTime expDuration = CMTimeMakeWithSeconds(durationSeconds, 1000*1000*1000);
-                [self.videoDevice setExposureModeCustomWithDuration:expDuration ISO:AVCaptureISOCurrent completionHandler:nil];
+                [self.videoDevice setExposureModeCustomWithDuration:expDuration ISO:AVCaptureISOCurrent completionHandler:^(CMTime syncTime) {
+                    
+                }];
                 [self.videoDevice unlockForConfiguration];
                 DEBUGLOG(@"exposureDuration: %f changed.", CMTimeGetSeconds(self.videoDevice.exposureDuration));
                 
@@ -1168,6 +1253,7 @@ static CameraCapture *sharedInstance = nil;
 // todo:activeFormatと同時に設定
 -(void)switchFPS:(float)fps
 {
+    NSError *error = nil;
     // sessionの設定などがないので、わざわざ停止する必要はない？
     //if (self.session.isRunning) {
     //    [self.session stopRunning];
@@ -1180,7 +1266,7 @@ static CameraCapture *sharedInstance = nil;
         //CGFloat fps = strFPS.doubleValue;
 #if true
         // todo:シャッタースピードに影響が出る可能性があるば、fps優先なので、問題無い。ただ、SSが変わった時、通知/表示?する
-        if ([self.videoDevice lockForConfiguration:nil]) {
+        if ([self.videoDevice lockForConfiguration:&error]) {
             self.videoDevice.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)fps);
             self.videoDevice.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)fps);
             [self.videoDevice unlockForConfiguration];
@@ -1234,12 +1320,16 @@ static CameraCapture *sharedInstance = nil;
 -(void)setFocusPoint:(CGPoint)point
 {
     //AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    NSError *error = nil;
     
     if (self.videoDevice != nil) {
         DEBUGLOG(@"active format:%@", self.videoDevice.activeFormat);
         if (self.videoDevice.isFocusPointOfInterestSupported) {
-            if ([self.videoDevice lockForConfiguration:nil]) {
+            if ([self.videoDevice lockForConfiguration:&error]) {
                 [self.videoDevice setFocusPointOfInterest:point];
+                if ([self.videoDevice isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
+                    self.videoDevice.focusMode = AVCaptureFocusModeContinuousAutoFocus;
+                }
                 [self.videoDevice unlockForConfiguration];
             }
         }
@@ -1425,12 +1515,12 @@ static CameraCapture *sharedInstance = nil;
     CMTime presTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     //DEBUGLOG(@"<<*********************>>");
     //DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value);
-    //NSLog(@"presTimestamp:%lld", presTimestamp.value);
+    //DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value);
     ////DEBUGLOG(@"presTimestamp:%lld", presTimestamp.value / presTimestamp.timescale);// int64 / int32 = int
     ////DEBUGLOG(@"presTimestamp:%f", (float)presTimestamp.value / presTimestamp.timescale);
 //    DEBUGLOG(@"presTimestamp:%fs", CMTimeGetSeconds(presTimestamp));
-    //NSLog(@"presTimestamp:%f", (float)presTimestamp.value / presTimestamp.timescale);
-    //NSLog(@"presTimestamp:%fs", CMTimeGetSeconds(presTimestamp));
+    //DEBUGLOG(@"presTimestamp:%f", (float)presTimestamp.value / presTimestamp.timescale);
+    //DEBUGLOG(@"presTimestamp:%fs", CMTimeGetSeconds(presTimestamp));
     
     /*
     DEBUGLOG(@"<<*********************>>");
@@ -1501,14 +1591,15 @@ static CameraCapture *sharedInstance = nil;
         info.transfrom = CGAffineTransformMakeRotation(90.0 * M_PI / 180.0f);
         info.orientation = UIImageOrientationRight;
     }
+    info.timeStamp = presTimestamp;
     
     //info.image = [self imageFromSampleBufferRef:sampleBuffer];
     //self.image = info.image;
     //DEBUGLOG(@"UIImage orientation:%ld width:%f height:%f", (long)self.image.imageOrientation, self.image.size.width, self.image.size.height);
     //[self.cameraObserver imageCaptured:self.image];
-    //NSLog(@"proc start");
+    //DEBUGLOG(@"proc start");
     [self.cameraObserver captureImageInfo:info];
-    //NSLog(@"prooc end");
+    //DEBUGLOG(@"prooc end");
 
     
     
@@ -1593,13 +1684,13 @@ static CameraCapture *sharedInstance = nil;
 
 - (unsigned char*)createPixelDataFromSampleBufferRef:(CMSampleBufferRef)sampleBuffer
 {
-    unsigned char* pixelData = nil;
     CVPixelBufferRef buffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     
     CVPixelBufferLockBaseAddress(buffer, 0);
     unsigned char* base = (unsigned char*)CVPixelBufferGetBaseAddress(buffer);
     int width = (int)CVPixelBufferGetWidth(buffer);
     int height = (int)CVPixelBufferGetHeight(buffer);
+    unsigned char* pixelData = malloc(width * height);
     memcpy(pixelData, base, width * height);
     
     return pixelData;
@@ -1649,7 +1740,7 @@ static CameraCapture *sharedInstance = nil;
         grayscaleBufferSize = bufferSize/2;
         grayscaleBuffer = malloc(grayscaleBufferSize);
         if (grayscaleBuffer == NULL) {
-            NSLog(@"ERROR in %@:%@:%d: couldn't allocate memory for grayscaleBuffer!", NSStringFromClass([self class]), NSStringFromSelector(_cmd), __LINE__);
+            DEBUGLOG(@"ERROR in %@:%@:%d: couldn't allocate memory for grayscaleBuffer!", NSStringFromClass([self class]), NSStringFromSelector(_cmd), __LINE__);
             return nil; }
         memset(grayscaleBuffer, 0, grayscaleBufferSize);
         void *sourceMemPos = base + 1;
@@ -1674,7 +1765,7 @@ static CameraCapture *sharedInstance = nil;
         grayscaleBufferSize = resolution.height * bytesPerRow;
         grayscaleBuffer = malloc(grayscaleBufferSize);
         if (grayscaleBuffer == NULL) {
-            NSLog(@"ERROR in %@:%@:%d: couldn't allocate memory for grayscaleBuffer!", NSStringFromClass([self class]), NSStringFromSelector(_cmd), __LINE__);
+            DEBUGLOG(@"ERROR in %@:%@:%d: couldn't allocate memory for grayscaleBuffer!", NSStringFromClass([self class]), NSStringFromSelector(_cmd), __LINE__);
             return nil; }
         memset(grayscaleBuffer, 0, grayscaleBufferSize);
         memcpy (grayscaleBuffer, base, grayscaleBufferSize);

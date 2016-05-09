@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Settings</key>
+	<dict>
+		<key>UserMode</key>
+		<integer>1</integer>
+		<key>DispMode</key>
+		<integer>1</integer>
+	</dict>
 	<key>SignalInfo</key>
 	<dict>
 		<key>Frequency</key>
@@ -30,6 +37,8 @@
 		<key>Area</key>
 		<false/>
 		<key>Signal</key>
+		<false/>
+		<key>Collection</key>
 		<false/>
 	</dict>
 	<key>CameraSettings</key>

@@ -50,7 +50,7 @@ class VideoOperator {
         //let allFrame = (1.0 * fps) - 10//OK 取りあえず発生しない
         print("allFrame: \(allFrame)")
         
-        for var currentFrame = 0.0; currentFrame < allFrame; ++currentFrame {
+        for var currentFrame = 0.0; currentFrame < allFrame; currentFrame += 1 {
             //println("currentFrame: \(currentFrame)")
             let currentTime = (currentFrame / fps)
             //println("currentTime: \(currentTime)")

@@ -138,6 +138,7 @@ typedef struct {
 -(void)changeExposureBias:(float)value;
 -(NSString*)changeISO:(float)value;
 -(float)changeExposureDuration:(float)value;
+//-(void)adjustFocus:(CGPoint)point;
 -(void)setFocusPoint:(CGPoint)point;
 //-(void)setValidRect:(CGRect)rect;// NG.propertyのsetterなので、無限loopになる可能性がある。
 -(void)startCapture;

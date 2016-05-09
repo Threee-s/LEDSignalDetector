@@ -693,7 +693,7 @@ class DebugModeViewController: UIViewController {
     }
     
     func saveCapturedImageInfo(captureImageInfo cInfo: CaptureImageInfo!) {
-        self.saveImageCount++
+        self.saveImageCount += 1
         let capturedImage = SEUtil.imageFromSampleBuffer(cInfo.sampleBuffer, imageOrientation: cInfo.orientation)
         self.capturedImages.append((capturedImage, self.saveImageCount))
         //self.capturedImages.append(cInfo)
@@ -757,7 +757,7 @@ class DebugModeViewController: UIViewController {
                         //self.logger?.addLog("no info")
                     }
                 //})
-                self.saveLogCount++
+                self.saveLogCount += 1
             } else {
                 self.saveLog = false
                 self.confManager.confSettings.debugMode.log = false

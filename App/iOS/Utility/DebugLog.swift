@@ -65,6 +65,7 @@ class SignalLogger {
 }
 
 #if false
+/*
 extension DDFileReader
 {
     func readLogLine(index: Int) -> NSString!
@@ -417,4 +418,5 @@ extension NSData
         return foundRange
     }
 }
+*/
 #endif

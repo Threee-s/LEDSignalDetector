@@ -25,6 +25,9 @@ enum ImageDatabase: Int {
 /* @memo  UICollectionViewDelegateFlowLayoutはcontrollerで適用(layoutの動作を委譲)。
 必要であれば、UICollectionViewFlowLayoutのサブクラスを作ってカスタマイズ(storyboardのlayoutにサブクラスを設定)*/
 class RecordCollectionViewController : UICollectionViewController, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UploadObserver, QBImagePickerControllerDelegate {
+    
+    let identifierAirFolderNavigationController = "AirFolderNavigationController"
+    
     @IBOutlet weak var progressView: UIProgressView?
     @IBOutlet weak var organizeBarItem: UIBarButtonItem?
     @IBOutlet weak var actionBarItem: UIBarButtonItem?
@@ -413,12 +416,24 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
             self.loadImages(self.imgDb)
         }
         
+        let collectionButtonAction = UIAlertAction(title: "Collection", style: UIAlertActionStyle.Default) { (action) in
+            let airFolderNavigationController: UINavigationController = self.storyboard!.instantiateViewControllerWithIdentifier(self.identifierAirFolderNavigationController) as! UINavigationController
+            let airFolderCollectionViewController: AirFolderCollectionViewController = airFolderNavigationController.topViewController as! AirFolderCollectionViewController
+            airFolderCollectionViewController.parentDir = "/collection"
+            
+            // memo: not folderviewcontroller
+            self.presentViewController(airFolderNavigationController, animated: true) { () -> Void in
+                print("AirFolderNavigationController")
+            }
+        }
+        
         let cancelButtonAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
             print("Cancel")
         }
         
         actionSheet.addAction(photosButtonAction)
         actionSheet.addAction(localButtonAction)
+        actionSheet.addAction(collectionButtonAction)
         actionSheet.addAction(cancelButtonAction)
         
         self.presentViewController(actionSheet, animated: true) { () -> Void in
@@ -608,6 +623,11 @@ class RecordCollectionViewController : UICollectionViewController, UICollectionV
         if (gesRec.state == UIGestureRecognizerState.Ended) {
             // todo:Pageスクロールにする。アニメーション
         }
+    }
+    
+    @IBAction func unwindBackToRecordCollectionViewController(unwindSegue: UIStoryboardSegue) {
+        // todo:unwindSegue.sourceViewController.isKindOfClass()
+        
     }
     
     func uploadFile(file: String!, currentProgress progress: Float) {

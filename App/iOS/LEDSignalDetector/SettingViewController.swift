@@ -71,7 +71,7 @@ class SettingViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func saveSetting() {
-        var confDic: NSMutableDictionary = FileManager.loadConfigFromPlist("SmartEyeConfig.plist")
+        //var confDic: NSMutableDictionary = FileManager.loadConfigFromPlist("SmartEyeConfig.plist")
         self.configMan!.confSettings.detectParams.combinePoint.threshold = Int32(Int(self.combineThreshold.text!)!)
         self.configMan!.confSettings.detectParams.combinePoint.offset = Int32(Int(self.combineOffset.text!)!)
         self.configMan!.confSettings.detectParams.integrateRect.prop = Int32(Int(self.integrateProp.text!)!)

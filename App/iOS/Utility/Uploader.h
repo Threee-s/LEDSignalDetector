@@ -9,11 +9,15 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
+@class Uploader;
+
 @protocol UploadObserver <NSObject>
 
 @optional
 
+-(void)uploader:(Uploader*)uploader configErrorWithMessage:(NSString*)message;
 -(void)uploadFile:(NSString*)file currentProgress:(float)progress;
+-(void)uploader:(Uploader*)uploder progress:(float)progress;
 
 @end
 

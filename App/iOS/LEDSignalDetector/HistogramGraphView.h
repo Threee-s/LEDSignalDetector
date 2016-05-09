@@ -11,6 +11,8 @@
 
 @interface HistogramGraphView : UIView
 
+-(void)setBinData:(NSArray*)bins;
+
 @end
 
 #endif

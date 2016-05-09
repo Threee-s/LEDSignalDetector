@@ -32,6 +32,7 @@
 @property (nonatomic) unsigned long rectId;// 矩形を一意に識別するため、同じ矩形の場合、既存矩形idに統合
 @property (nonatomic) unsigned long signalId;// 信号矩形を一時に識別するため。ただの矩形の場合0
 @property (nonatomic) NSMutableArray *currentRects;// 現在保存中の矩形一覧(デバッグ用)
+@property (nonatomic) double procTime;// 処理時間
 
 - (NSString *)description;
 
@@ -41,6 +42,7 @@
 
 @property (nonatomic, copy) NSString *des;
 @property (nonatomic, copy) NSString *pattern;
+@property (nonatomic) double procTime;// 処理時間
 //@property (nonatomic) NSMutableArray *currentRects;// 現在保存中の矩形一覧(デバッグ用)
 
 - (NSString *)description;
@@ -48,6 +50,26 @@
 
 @end
 
+@interface ContourPoint: NSObject
+
+@property (nonatomic) CGFloat x;
+@property (nonatomic) CGFloat y;
+
+- (id)initWithX:(float)x andY:(float)y;
+- (NSDictionary*)jsonDic;
+
+@end
+
+@interface CollectionInfoW : NSObject
+
+@property (nonatomic) NSMutableArray *imageContours;
+@property (nonatomic) NSMutableArray *pattern;
+@property (nonatomic, copy) NSString *des;
+
+- (NSString*)description;
+- (NSDictionary*)jsonDic;
+
+@end
 
 
 #else
@@ -97,6 +119,8 @@ struct SignalW {
 // todo:信号リストを返す。取りあえずログで判断
 +(UIImage*)detectSignal:(UIImage*)image inRect:(CGRect)rect signals:(NSMutableArray*)signalList debugInfo:(DebugInfoW*)info/*TBD*/;
 +(void)detectSignalWithSampleBuffer:(CMSampleBufferRef)sampleBuffer inRect:(CGRect)rect signals:(NSMutableArray*)signalList debugInfo:(DebugInfoW*)info/*TBD*/;
++(void)getCollectionInfo:(CollectionInfoW*)info;
++(int)getExposureLevelWithSampleBuffer:(CMSampleBufferRef)sampleBuffer inRect:(CGRect)rect biasRangeMin:(int)minBias max:(int)maxBias drawFlag:(BOOL)flag;
 
 +(UIImage*)loadImage:(NSString*)fileName;
 +(UIImage*)loadVideoFromFile:(NSString*)fileName;

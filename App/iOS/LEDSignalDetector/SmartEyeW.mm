@@ -72,6 +72,59 @@ using namespace cv;
 
 @end
 
+@implementation ContourPoint
+
+- (id)initWithX:(float)x andY:(float)y
+{
+    if (self = [super init]) {
+        _x = x;
+        _y = y;
+    }
+    
+    return self;
+}
+
+- (NSDictionary*)jsonDic
+{
+    NSMutableDictionary* dic = [[NSMutableDictionary alloc] init];
+    [dic setValue:[NSNumber numberWithFloat:_x] forKey:@"x"];
+    [dic setValue:[NSNumber numberWithFloat:_y] forKey:@"y"];
+    
+    return dic;
+}
+
+@end
+
+@implementation CollectionInfoW
+
+- (id)init
+{
+    if (self = [super init]) {
+        _imageContours = [[NSMutableArray alloc] init];
+        _pattern = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
+- (NSDictionary*)jsonDic
+{
+    //NSDictionary* dic = @{@"contours": _imageContours, @"pattern": _pattern};
+    NSMutableDictionary* dic = [[NSMutableDictionary alloc] init];
+    [dic setValue:_imageContours forKey:@"contours"];
+    [dic setValue:_pattern forKey:@"pattern"];
+    
+    return dic;
+}
+
+- (NSString*)description
+{
+    return _des;
+}
+
+@end
+
+
 @interface SmartEyeW()
 
 // todo:内部関数化
@@ -174,7 +227,7 @@ using namespace cv;
                                                  (CGBitmapInfo)kCGImageAlphaNoneSkipFirst);
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
     // カラースペースとコンテキストを解放
-    CGColorSpaceRelease(rgbColorSpace);
+    //CGColorSpaceRelease(rgbColorSpace);
     CGContextRelease(context);
     
     mat = Mat((int)width, (int)height, CV_8UC4, base);
@@ -511,7 +564,7 @@ using namespace cv;
 {
     Mat dstImage;
     vector<SEColorSpaceRange> areas;
-    int vCount;
+    //int vCount;
     SmartEye se = SmartEye::getInstance();
     
     
@@ -570,7 +623,7 @@ using namespace cv;
     areas.push_back({100, 255});
     areas.push_back({70, 255});
     
-    vCount = se.getLightness(&orgImage, CV_RGB2HSV, areas, &dstImage);
+    se.getLightness(&orgImage, CV_RGB2HSV, areas, &dstImage);
     //vCount = se.getLightness(&orgImage, COLOR_BGR2HSV, areas, &dstImage);
     //vCount = se.getLightness(&orgImage, CV_BGR2HSV, areas, &dstImage);
 
@@ -594,6 +647,7 @@ using namespace cv;
         conf.centerDrawFlag = cm.confSettings.debugMode.center;
         conf.frameDrawFlag = cm.confSettings.debugMode.collection;
         conf.debugInfoFlag = cm.confSettings.debugMode.log;
+        conf.collectionInfoFlag = cm.confSettings.debugMode.collection;
     } else {
         conf.binImageDrawFlag = false;
         conf.pointDrawFlag = false;
@@ -667,6 +721,7 @@ using namespace cv;
 {
 //    [Log debug:@"=== detect start ==="];
     
+    double startTime = CFAbsoluteTimeGetCurrent();
     Mat dstImage;
     std::vector<SESignal> signals;
     SEDebugInfo debugInfo;
@@ -766,6 +821,8 @@ using namespace cv;
         info.pattern = allFlags;
     }
     
+    info.procTime = CFAbsoluteTimeGetCurrent() - startTime;
+    
 //    [Log debug:@"=== detect end ==="];
     
     return MatToUIImage(dstImage);
@@ -773,6 +830,7 @@ using namespace cv;
 
 +(void)detectSignalWithSampleBuffer:(CMSampleBufferRef)sampleBuffer inRect:(CGRect)rect signals:(NSMutableArray*)signalList debugInfo:(DebugInfoW*)info
 {
+    double startTime = CFAbsoluteTimeGetCurrent();
     Mat dstImage;
     std::vector<SESignal> signals;
     SEDebugInfo debugInfo;
@@ -789,7 +847,7 @@ using namespace cv;
     // イメージバッファ情報の取得
     unsigned char* base = (uint8_t*)CVPixelBufferGetBaseAddress(buffer);
     // Get the pixel buffer width and height
-    size_t width = CVPixelBufferGetWidth(buffer);
+    //size_t width = CVPixelBufferGetWidth(buffer);
     size_t height = CVPixelBufferGetHeight(buffer);
     // Get the number of bytes per row for the pixel buffer
     size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer);
@@ -808,6 +866,7 @@ using namespace cv;
     // memo:bufferの場合、色空間がBGRになる(kCVPixelFormatType_32BGRAでキャプチャしているので)
     count = se.getLEDSignalPedestrian(&orgImage, &dstImage, signals, &debugInfo, SE_COLOR_SPACE_BGR, CV_BGR2HSV, &framInfo);
     //    cout << "signal count:" << count << endl;
+    double endTime = CFAbsoluteTimeGetCurrent() - startTime;
     
     NSMutableArray* signalArray = (NSMutableArray*)signalList;
     
@@ -832,6 +891,7 @@ using namespace cv;
         signalW.time = signal.guideInfo.time;
         signalW.position = signal.guideInfo.position;
         signalW.rect = CGRectMake(signal.rect.x, signal.rect.y, signal.rect.width, signal.rect.height);
+        signalW.procTime = endTime;
         
         [signalArray addObject:signalW];
     }
@@ -864,9 +924,108 @@ using namespace cv;
         info.pattern = allFlags;
     }
     
+    info.procTime = CFAbsoluteTimeGetCurrent() - startTime;
+    
     //    [Log debug:@"=== detect end ==="];
     
     //return MatToUIImage(dstImage);
+}
+
++(int)getExposureLevelWithSampleBuffer:(CMSampleBufferRef)sampleBuffer inRect:(CGRect)rect biasRangeMin:(int)minBias max:(int)maxBias drawFlag:(BOOL)flag
+{
+    int level = 0;
+    double startTime = CFAbsoluteTimeGetCurrent();
+    SmartEye se = SmartEye::getInstance();
+    cv::Rect detectRect = cv::Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    
+    CVPixelBufferRef buffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    // イメージバッファのロック
+    CVPixelBufferLockBaseAddress(buffer, 0);
+    
+    // todo:LandscapeRightでキャプチャーしているので、デバッグなどで結果画像表示時回転が必要。検出矩形も必要であれば回転
+    // イメージバッファ情報の取得
+    unsigned char* base = (uint8_t*)CVPixelBufferGetBaseAddress(buffer);
+    // Get the pixel buffer width and height
+    //size_t width = CVPixelBufferGetWidth(buffer);
+    size_t height = CVPixelBufferGetHeight(buffer);
+    // Get the number of bytes per row for the pixel buffer
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer);
+    size_t extendedWidth = bytesPerRow / sizeof( uint32_t ); // each pixel is 4 bytes/32 bits
+    
+    // メモリはCVPixelと同じ
+    Mat orgImage((int)height, (int)extendedWidth, CV_8UC4, base);// 8 bits per component, 4 channels
+    
+    CVPixelBufferUnlockBaseAddress(buffer, 0);
+    
+    level = se.getExposureLevel(&orgImage, detectRect, minBias, maxBias, flag);
+    //double endTime = CFAbsoluteTimeGetCurrent() - startTime;
+    DEBUGLOG(@"getExposureLevel time:%f", CFAbsoluteTimeGetCurrent() - startTime);
+    
+    return level;
+}
+
++(void)getCollectionInfo:(CollectionInfoW*)info
+{
+    SECollectionInfo collectionInfo;
+    SEDebugInfo debugInfo;
+    SmartEye se = SmartEye::getInstance();
+    
+    se.getCollectionInfo(&collectionInfo);
+    se.getDebugInfo(&debugInfo);
+    
+    int contourListSize = (int)collectionInfo.imageContours.size();
+    for (int i = 0; i < contourListSize; i++) {
+        NSMutableArray *contourPoints = [NSMutableArray array];
+        vector<cv::Point> points = collectionInfo.imageContours[i];
+        int pointCount = (int)points.size();
+        for (int j = 0; j < pointCount; j++) {
+            cv::Point point = points[j];
+            ContourPoint *contourPoint = [[ContourPoint alloc] initWithX:point.x andY:point.y];
+            [contourPoints addObject:[contourPoint jsonDic]];
+        }
+        [info.imageContours addObject:contourPoints];
+    }
+
+    int rectsCount = (int)debugInfo.currentRectsList.size();
+    for (int i = 0; i < rectsCount; i++) {
+        SESignalArea signalArea = debugInfo.currentRectsList.at(i);
+        int rectCount = (int)signalArea.rects.size();
+        NSMutableArray *patternFlag = [NSMutableArray array];
+        for (int j = 0; j < rectCount; j++) {
+            SERectArea area = signalArea.rects.at(j);
+            [patternFlag addObject:[NSNumber numberWithBool:!area.nullRect]];
+        }
+        [info.pattern addObject:patternFlag];
+    }
+}
+
++(void)getCollectionInfo_1:(CollectionInfoW*)info
+{
+    SECollectionInfo collectionInfo;
+    SmartEye se = SmartEye::getInstance();
+    
+    se.getCollectionInfo(&collectionInfo);
+    
+    NSString *strContours = @"[";
+    int contourListSize = (int)collectionInfo.imageContours.size();
+    for (int i = 0; i < contourListSize; i++) {
+        NSString *strPoints = @"[";
+        //NSMutableArray *contourPoints = [NSMutableArray array];
+        vector<cv::Point> points = collectionInfo.imageContours[i];
+        int pointCount = (int)points.size();
+        for (int j = 0; j < pointCount; j++) {
+            cv::Point point = points[j];
+            //ContourPoint *contourPoint = [[ContourPoint alloc] initWithX:point.x andY:point.y];
+            //[contourPoints addObject:contourPoint];
+            NSString *strPoint = [NSString stringWithFormat:@"{x:%d, y:%d}", point.x, point.y];
+            strPoints = [NSString stringWithFormat:@"%@,%@", strPoints, strPoint];
+        }
+        strPoints = [NSString stringWithFormat:@"%@]", strPoints];
+        strContours = [NSString stringWithFormat:@"%@,[%@]", strContours, strPoints];
+        //[info.imageContours addObject:contourPoints];
+    }
+    strContours = [NSString stringWithFormat:@"%@]", strContours];
+    info.des = strContours;
 }
 
 +(void)testRecognize

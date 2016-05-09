@@ -113,8 +113,8 @@ class CameraOperator {
             }
             
             // JPEG画像取得
-            let imgData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imgBuf)
-            let videoImage: UIImage = UIImage(data: imgData)!
+            //let imgData: NSData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(imgBuf)
+            //let videoImage: UIImage = UIImage(data: imgData)!
             
             // 画像処理
         })

@@ -39,6 +39,20 @@
 
 @end
 
+@implementation LEDMapInfo
+
+-(id)init
+{
+    if (self = [super init]) {
+        _location = [[LEDMapLocation alloc] init];
+        _heading = [[LEDMapHeading alloc] init];
+    }
+    
+    return self;
+}
+
+@end
+
 
 @interface LEDMapManager() <CLLocationManagerDelegate>
 
@@ -182,13 +196,28 @@
     }
 }
 
+-(LEDMapLocation*)getCurrentLocation
+{
+    return _location;
+}
+
 -(LEDMapHeading*)getCurrentHeading
 {
-    LEDMapHeading *heading = [[LEDMapHeading alloc] init];
-    CLLocationDirection magneticHeading = _locationMan.heading.magneticHeading;
-    heading.magneticHeading = magneticHeading;
+    //LEDMapHeading *heading = [[LEDMapHeading alloc] init];
+    //CLLocationDirection magneticHeading = _locationMan.heading.magneticHeading;
+    //heading.magneticHeading = magneticHeading;
     
-    return heading;
+    //return heading;
+    return _heading;
+}
+
+-(LEDMapInfo*)getCurrentMapInfo
+{
+    LEDMapInfo *mapInfo = [[LEDMapInfo alloc] init];
+    mapInfo.location = _location;
+    mapInfo.heading = _heading;
+    
+    return mapInfo;
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading

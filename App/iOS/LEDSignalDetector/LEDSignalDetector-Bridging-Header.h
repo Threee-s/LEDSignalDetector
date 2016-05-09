@@ -4,6 +4,7 @@
 
 #import <UIKit/UIKit.h>
 #import <DropboxSDK/DropboxSDK.h>
+#import <MBCircularProgressBar/MBCircularProgressBarView.h>
 //#import <CorePlot-CocoaTouch.h>
 #import "CorePlot-CocoaTouch.h"
 #import "CameraCapture.h"
@@ -11,12 +12,17 @@
 #import "LEDMapManager.h"
 #import "SmartEyeW.h"
 #import "QBImagePickerController.h"
+//#import <QBImagePickerController/QBImagePickerController.h>
 #import "SignalGraphView.h"
 #import "Uploader.h"
 #import "FileManager.h"
 #import "ConfigManager.h"
 #import "Log.h"
 #import "AirGraphView.h"
+#import "MSWeakTimer.h"
+#import "GCDAsyncSocket.h"
+//#import "MBCircularProgressBarLayer.h"
+//#import "MBCircularProgressBarView.h"
 
 
 /*

@@ -20,6 +20,7 @@ typedef enum {
 @interface LEDMapLocation : NSObject
 
 @property (nonatomic) CLLocationCoordinate2D coor;
+@property (nonatomic) double timestamp;
 
 @end
 
@@ -27,6 +28,15 @@ typedef enum {
 
 @property (nonatomic) double magneticHeading;
 @property (nonatomic) double trueHeading;
+@property (nonatomic) double timestamp;
+
+@end
+
+@interface LEDMapInfo : NSObject
+
+@property (nonatomic) LEDMapLocation *location;
+@property (nonatomic) LEDMapHeading *heading;
+@property (nonatomic) double timestamp;
 
 @end
 
@@ -55,7 +65,9 @@ typedef enum {
 -(void)stop;
 -(void)startWithType:(LEDMapType)type;
 -(void)stopWithType:(LEDMapType)type;
+-(LEDMapLocation*)getCurrentLocation;
 -(LEDMapHeading*)getCurrentHeading;
+-(LEDMapInfo*)getCurrentMapInfo;
 
 @end
 

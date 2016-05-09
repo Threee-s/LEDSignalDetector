@@ -12,11 +12,16 @@ import MobileCoreServices//for kUTTypeImage
 import MapKit
 import AudioToolbox
 
+enum UserMode: Int {
+    case Product = 0
+    case Test = 1 // 主にβ版までのテスト
+}
 
-enum DisplayMode {
-    case Normal // 画面表示(設定無効)
-    case Blindness // 画面非表示(設定無効)
-    case Setting // 画面表示(設定有効)
+enum DisplayMode: Int { // for debug
+    case Blindness = 0 // 画面非表示(設定無効)
+    case Normal = 1 // 画面表示(設定無効)
+    case Setting = 2 // 画面表示(設定有効)
+    case Collection = 3 // 画面表示(情報収集)
 }
 
 enum GesturePosition {
@@ -45,7 +50,7 @@ enum CaptureMode {
 }
 
 enum SignalColor {
-    case None, Green, Red
+    case None, Green, Red, Yellow
 }
 
 struct SignalDetectResult {
@@ -55,14 +60,15 @@ struct SignalDetectResult {
 }
 
 // todo:(01/06)　すべての音声(シンプル、必要最小限)。シナリオ検討.
-
-class SignalSpeaker: NSObject, AVSpeechSynthesizerDelegate {
+// RECAIUSの音声合成を使用。あるいは取得した音声ファイルを再生
+class SignalSpeaker: NSObject, AVSpeechSynthesizerDelegate, AVAudioPlayerDelegate {
     
     let SPEECH_SIGNAL_GREEN = "青"
     let SPEECH_SIGNAL_RED = "赤"
     // todo:
     
     var speaker: AVSpeechSynthesizer?
+    var audioPlayer: AVAudioPlayer?
     
     override init() {
         super.init()
@@ -91,6 +97,57 @@ class SignalSpeaker: NSObject, AVSpeechSynthesizerDelegate {
         // same with system language
         //utterance.voice = AVSpeechSynthesisVoice(language: "ja-JP")
         self.speaker?.speakUtterance(utterance)
+    }
+    
+    func speakWithFile(voiceFile: String) {
+        let voiceUrl = NSURL(string: voiceFile)
+        speakWithUrl(voiceUrl!)
+    }
+    
+    func speakWithUrl(voiceUrl: NSURL) {
+        do {
+            self.audioPlayer = try AVAudioPlayer(contentsOfURL: voiceUrl)
+            //self.audioPlayer.prepareToPlay()
+            self.audioPlayer!.play()
+        } catch {
+            
+        }
+    }
+    
+    func speakWithData(data: NSData) {
+        do {
+            self.audioPlayer = try AVAudioPlayer(data: data)
+            self.audioPlayer!.play()
+        } catch {
+            
+        }
+    }
+    
+    func pauseSpeak() {
+        if (self.audioPlayer!.playing) {
+            self.audioPlayer!.stop()
+        }
+    }
+    
+    func stopSpeak() {
+        if (self.audioPlayer!.playing) {
+            self.audioPlayer!.stop()
+            self.audioPlayer!.prepareToPlay()
+        }
+    }
+    
+    // MARK: - AVAudioPlayerDelegate protocol
+    
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+        print("audio finished.")
+    }
+    
+    func audioPlayerBeginInterruption(player: AVAudioPlayer) {
+        print("audio stopping...")
+    }
+    
+    func audioPlayerEndInterruption(player: AVAudioPlayer) {
+        print("audio stopped.")
     }
     
     // MARK: - AVSpeechSynthesizerDelegate protocol
@@ -137,7 +194,7 @@ class SignalDetectResultManager: NSObject {
     private func startTracking() {
         if (self.trackStart == false) {
             self.trackStart = true
-            self.trackingTimer = NSTimer.scheduledTimerWithTimeInterval(self.trackingInterval, target: self, selector: Selector("checkTracking:"), userInfo: nil, repeats: true)
+            self.trackingTimer = NSTimer.scheduledTimerWithTimeInterval(self.trackingInterval, target: self, selector: #selector(SignalDetectResultManager.checkTracking(_:)), userInfo: nil, repeats: true)
         }
     }
     
@@ -162,22 +219,22 @@ class SignalDetectResultManager: NSObject {
     
     func analyzeSignal(signal: SignalW, direction: Double) -> SignalDetectResult {
         if (self.detectCount == 0) {
-            self.detectCount++
+            self.detectCount += 1
             self.direction = direction
             
             self.startTracking()
             
-            result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: "")
+            self.result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: "")
             
         } else {
             if (fabs(self.direction - direction) < 5) {
-                self.detectCount++
+                self.detectCount += 1
                 self.direction = direction
             }
             
             if (self.detectCount == 2) {
                 // vibratのみ
-                result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: "")
+                self.result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: "")
             } else if (self.detectCount % 3 == 0) {// TBD:3s毎?
                 var signalColor = SignalColor.None
                 var signalDistance: Float = 0
@@ -189,12 +246,12 @@ class SignalDetectResultManager: NSObject {
                 signalDistance = signal.distance
                 
                 let content = self.getSpeechContent(signalColor, distance: signalDistance)
-                result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: content)
+                self.result = SignalDetectResult(vibrateCount: 1, systemSoundId: 0, speechContent: content)
             }
         }
         
         
-        return result
+        return self.result
     }
     
     func checkTracking(timer: NSTimer) {
@@ -211,15 +268,23 @@ class SignalDetectResultManager: NSObject {
 // CameraCaptureをViewControllerにする？カメラ関連操作を行う。カメラviewをmainviewのlayerにする。
 // ViewControllerにした場合、別途画面追加が必要かな
 // とりあえず、debugモードとしてすべて本Controllerで制御。カメラ設定変更が変わった時の処理をdelegeteで通知
-class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapManagerDelegate, DebugModeObserver, AirSensorObserver {
+class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapManagerDelegate, DebugModeObserver, AirSensorObserver, UploadObserver, CollectionDataManagerDelegate {
 
     let QUEUE_SERIAL_SIGNAL_DETECT = "com.threees.tre.led.signal-detect"
+    let QUEUE_SERIAL_SIGNAL_COLLECT = "com.threees.tre.led.signal-collect"
+    
+    let identifierProgressViewController = "ProgressViewController"
     
     @IBOutlet weak var mapView: MKMapView! = nil
     @IBOutlet weak var captureImageView: UIImageView! = nil
     @IBOutlet weak var debugButton: UIBarButtonItem! = nil
     @IBOutlet weak var startButton: UIBarButtonItem! = nil
     @IBOutlet weak var camFormatLabel: UILabel! = nil
+    @IBOutlet weak var collectSwitch: UISwitch!
+    @IBOutlet weak var collectButton: UIButton!
+    @IBOutlet weak var exposureImageView: UIImageView!
+    @IBOutlet weak var exposureBiasDecButton: UIButton!
+    @IBOutlet weak var exposureBiasIncButton: UIButton!
     
     @IBOutlet weak var dummySignalRed: UIImageView! = nil
     @IBOutlet weak var dummySignalGreen: UIImageView! = nil
@@ -227,7 +292,10 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     @IBOutlet weak var dummySignalGreenCount: UILabel! = nil
     @IBOutlet weak var dummySignalDistance: UILabel!
     
-    var selectedImageView: UIImageView?
+    var progressViewController: ProgressViewController!
+    
+    var validDetectionView: ValidDetectionView!
+    var selectedImageView: UIImageView!
     //var drawPath: UIBezierPath?
     
     var capturedImages: [AnyObject] = []
@@ -236,7 +304,9 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var speaker: SignalSpeaker?
     var audio: SignalAudio?
     
-    var dispMode: DisplayMode = .Setting
+    var userMode: UserMode = .Test
+    
+    var dispMode: DisplayMode = .Normal
     var gesturePosition: GesturePosition = .None
     var panMoveDirection: PanMoveDirection = .None
     
@@ -245,6 +315,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var captureMode: CaptureMode = .Normal
     var captureSetup: Bool = false
     var captureRunning: Bool = false
+    var captureCount: Int = 0;
     
     var procDetect: Bool = false
     
@@ -270,16 +341,28 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var velocityDeltaY: Double = 0.0
     var motionClock: CMClockRef?
     
+    // todo:selectedはdebug用 validはcollection用 分ける
     var selectedMode: Bool = false
     var selectedRect: CGRect = CGRectZero
+    var validDetectionRect: CGRect = CGRectZero
     
     //var signalDetected: Bool = false
     
-    var signalDetectQueue: dispatch_queue_t?
+    var signalDetectQueue: dispatch_queue_t!
     var signalNoticeTimer: NSTimer?
     var noticeInterval: NSTimeInterval = 3//TBD
     
     var detectRstMan: SignalDetectResultManager?
+    
+    var collectionDataMan: CollectionDataManager!
+    var signalCollectQueue: dispatch_queue_t!
+    var collectionCount: Int = 0
+    var collecting: Bool = false
+    var collectionCountMax = 0
+    var collectionTime = 5
+    var currentRectColor: SignalColor = .None
+    
+    var progressView:UIProgressView!
     
     var dummyGreenCount = 0
     var dummyRedCount = 0
@@ -351,16 +434,20 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         self.captureType = .Camera
         
         self.signalDetectQueue = dispatch_queue_create(QUEUE_SERIAL_SIGNAL_DETECT, DISPATCH_QUEUE_SERIAL)
+        self.signalCollectQueue = dispatch_queue_create(QUEUE_SERIAL_SIGNAL_COLLECT, DISPATCH_QUEUE_SERIAL)
         
         self.detectRstMan = SignalDetectResultManager()
         
-        self.setupSelectMode()
+        
+        self.loadConfig()
+        self.setupUI()
         // cameraより先にsetup(カメラからのformat通知をdebugに設定するので)
         self.setupDebugMode()
         self.setupLocation()
         self.setupSensor()
         self.setupSpeaker()
         self.setupAudio()
+        self.setupConnection()
         
         if (self.captureType == .Camera) {
             self.setupCamera()
@@ -410,6 +497,29 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         }
     }
     
+    private func loadConfig() {
+        self.loadMode()
+        self.setupCollectionCount()
+    }
+    
+    private func loadMode() {
+        self.userMode = UserMode(rawValue: Int(self.confManager.confSettings.settings.userMode))!
+        self.dispMode = DisplayMode(rawValue: Int(self.confManager.confSettings.settings.dispMode))!
+    }
+    
+    private func setupCollectionCount() {
+        self.collectionCountMax = Int(self.confManager.confSettings.cameraSettings.fps) * self.collectionTime
+    }
+    
+    private func setupUI() {
+        // viewの生成と追加
+        self.setupSelectView()
+        self.setupValidDetectionView()
+        
+        self.updateUserMode()
+        self.updateDispMode()
+    }
+    
     private func setupLocation() {
         self.mapManager = LEDMapManager.getInstance()
         self.mapManager!.delegate = self
@@ -421,12 +531,22 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
 //        self.view.bringSubviewToFront(self.mapView)
     }
     
-    private func setupSelectMode() {
-        self.selectedRect = CGRectMake(self.captureImageView.bounds.size.width / 10, self.captureImageView.bounds.size.height / 8, self.captureImageView.bounds.size.width * 3 / 4, self.captureImageView.bounds.size.height * 2 / 5)
-        self.selectedImageView = UIImageView(frame: self.selectedRect)
-        self.selectedImageView?.hidden = true
-        self.selectedImageView?.contentMode = UIViewContentMode.ScaleToFill
-        self.view.addSubview(self.selectedImageView!)
+    private func setupSelectView() {
+        self.selectedRect = self.createSelectedRect()
+        //let rect = self.createValidDispRect()
+        self.selectedImageView = UIImageView(frame: self.selectedRect)// smarteyeで描画時、selectedRectと一致しない
+        self.selectedImageView.hidden = true
+        //self.selectedImageView.contentMode = UIViewContentMode.ScaleToFill
+        self.selectedImageView.contentMode = UIViewContentMode.ScaleAspectFit
+        self.view.addSubview(self.selectedImageView)
+    }
+    
+    private func setupValidDetectionView() {
+        self.validDetectionView = ValidDetectionView(frame: self.selectedRect)
+        self.validDetectionView.hidden = true
+        self.validDetectionView.opaque = false
+        self.validDetectionView.contentMode = UIViewContentMode.ScaleToFill
+        self.view.addSubview(self.validDetectionView)
     }
     
     private func setupDebugMode() {
@@ -442,6 +562,10 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         
         // todo:adjust size?
         self.view.addSubview(self.debugView!)
+    }
+    
+    private func resetDebugMode() {
+        
     }
     
     private func setupCamera() {
@@ -497,10 +621,26 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         self.audio = SignalAudio()
     }
     
+    //
+    private func setupConnection() {
+    }
+    
+    private func enableCollectionUI(flag: Bool) {
+        self.validDetectionView?.hidden = !flag
+        self.collectSwitch.hidden = !flag
+        //self.collectButton.hidden = !flag
+        self.exposureImageView.hidden = !flag
+        self.exposureBiasDecButton.hidden = !flag
+        self.exposureBiasIncButton.hidden = !flag
+    }
+    
     private func startCapture() {
         if (self.captureType == .Camera) {
             SmartEyeW.setConfig()
+            //let currentSettings = self.cameraCap?.getCameraCurrentSettings()
+            //let bias = Float((currentSettings?.bias)!)
             self.cameraCap?.startCapture()
+            //self.cameraCap?.changeExposureBias(bias)
             self.captureRunning = true
         }
     }
@@ -604,7 +744,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     }
     
     private func needToDisplayView() -> Bool {
-        if ((self.dispMode == .Normal || self.dispMode == .Setting) && !self.saveCapturedImage) {
+        if ((self.dispMode == .Normal || self.dispMode == .Setting || self.dispMode == .Collection) && !self.saveCapturedImage) {
             return true
         }
         
@@ -619,8 +759,9 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         return false
     }
     
-    private func needToValidDebug() -> Bool {
-        if (self.dispMode == .Setting) {
+    private func needToCollect() -> Bool {
+        if (self.userMode == .Test) {
+        //if (self.dispMode == .Collection) {
             return true
         }
         
@@ -640,6 +781,117 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         }
     }
     
+    private func updateSelectArea(rect: CGRect, valid: Bool) {
+        self.selectedRect = rect
+        self.selecting = false
+        self.setting = false
+        
+        if (valid) {
+            // todo:self.selectedImageViewにもimageを設定(modeはfit?)
+            self.selectedMode = valid
+            //self.captureImageView.alpha = 0.8
+            self.view.bringSubviewToFront(self.selectedImageView!)
+        }
+    }
+    
+    private func updateUserMode() {
+        if (self.userMode == .Product) {
+            self.updateDetectArea(CGRectZero, valid: false)
+        } else if (self.userMode == .Test) {
+            // default
+            self.dispMode = .Normal
+
+            //let detectRect: CGRect = self.createValidDispRect()
+            self.updateDetectArea(self.selectedRect, valid: true)
+        }
+        
+        self.confManager.confSettings.settings.userMode = Int32(self.userMode.rawValue)
+        self.confManager.confSettings.debugMode.collection = true
+        
+        SmartEyeW.setConfig()
+    }
+    
+    private func updateDetectViewFrame(rect: CGRect) {
+        self.validDetectionView.changeFrame(rect)
+    }
+    
+    private func updateDetectArea(rect: CGRect, valid: Bool) {
+        self.selectedRect = rect// TBD
+        // 1回しか描画されないので、意味がないかな
+        //self.drawRectangle(self.selectedRect, mode: 1)
+        //self.validDetectionView?.frame = self.selectedRect
+        //self.validDetectionView.changeFrame(rect)
+        self.selecting = false
+        self.setting = false
+        self.selectedMode = valid
+        //self.validDetectionView?.hidden = !self.selectedMode
+        //self.captureImageView.alpha = 0.8
+        
+        self.updateDetectViewFrame(self.validDetectionRect)
+        self.enableCollectionUI(valid)
+        
+        if (valid) {
+            // todo:self.selectedImageViewにもimageを設定(modeはfit?)
+            //self.validDetectionView?.backgroundColor = UIColor.redColor()
+            //self.validDetectionView?.alpha = 0
+            //self.view.bringSubviewToFront(self.selectedImageView!)
+            self.view.bringSubviewToFront(self.validDetectionView!)
+        } else {
+            //self.captureImageView.alpha = 1.0
+            self.view.layer.contents = nil
+        }
+    }
+    
+    // createValidDispRect使用
+    private func createSelectedRect() -> CGRect {
+        let maxValidSizeWidh = CGFloat(confManager.confSettings.detectParams.validRectMax.width) * 2
+        let maxValidSizeHeight = CGFloat(confManager.confSettings.detectParams.validRectMax.height) * 2
+        let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+        let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+        //let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+        //let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+        /*
+         let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+         let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+         let startPos: CGPoint = CGPointMake(startPosX, startPosY)
+         let endPos: CGPoint = CGPointMake(startPosX + maxValidSizeWidh, startPosY + maxValidSizeHeight)
+         self.observer?.selectRectStart!(startPos)
+         self.observer?.selectRectChanged!(endPos)
+         self.observer?.selectRectEnd!()
+         */
+        return CGRectMake(startPosX, startPosY, maxValidSizeWidh, maxValidSizeHeight)
+    }
+    
+    private func createValidDispRect() -> CGRect {
+        // todo:ValidDetectionView.frameはiPhone画面サイズを基準にしているが、smarteyeは実際の画像のバッファーを基準にしている。
+        // なので、同じselectedRectでもviewとimageview(camera sensorによる)でのサイズが異なる。
+        // cameraからformatのsize(frameバッファーサイズ)を取得して、selectedRectを変換後viewに描画
+        // ->selectedRectのwidthとheightは同じなので、それぞれバッファーサイズをベースに変換すると、長方形になってしまう。
+        //   maxWidthとmaxHeightの小さい方をベースに変換
+        let cameraFormat = self.cameraCap!.getVideoActiveFormatInfo()
+        var retioWidth = cameraFormat.maxHeight
+        if (cameraFormat.maxWidth < cameraFormat.maxHeight) {
+            retioWidth = cameraFormat.maxWidth
+        }
+        let retio = self.view.bounds.size.width / CGFloat(retioWidth)
+        let validWith = self.selectedRect.size.width * retio
+        let validHeight = self.selectedRect.size.height * retio
+        let startPosX = (self.view.bounds.size.width - validWith) / 2
+        let startPosY = (self.view.bounds.size.height - validHeight) / 2
+        //let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+        //let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+        /*
+         let startPosX = (self.view.bounds.size.width - maxValidSizeWidh) / 2
+         let startPosY = (self.view.bounds.size.height - maxValidSizeHeight) / 2
+         let startPos: CGPoint = CGPointMake(startPosX, startPosY)
+         let endPos: CGPoint = CGPointMake(startPosX + maxValidSizeWidh, startPosY + maxValidSizeHeight)
+         self.observer?.selectRectStart!(startPos)
+         self.observer?.selectRectChanged!(endPos)
+         self.observer?.selectRectEnd!()
+         */
+        return CGRectMake(startPosX, startPosY, validWith, validHeight)
+    }
+    
     private func voiceNotice(color: SignalColor) {
         if (color == .Green) {
             self.speaker?.speech(.Green)
@@ -652,13 +904,25 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         self.speaker?.speechWord(content)
     }
     
+    private func updateValidDetectionRectLine(color: SignalColor) {
+        if (color == .Green) {
+            self.validDetectionView.changeLineColor(UIColor.greenColor(), lineWidth: 5.0)
+        } else if (color == .Red) {
+            self.validDetectionView.changeLineColor(UIColor.redColor(), lineWidth: 5.0)
+        } else if (color == .Yellow) {
+            self.validDetectionView.changeLineColor(UIColor.yellowColor())
+        } else {
+            self.validDetectionView.changeLineColor(UIColor.whiteColor())
+        }
+    }
+    
     private func updateSignalImage(color: SignalColor) {
         if (color == .Green) {
-            self.dummyGreenCount++
+            self.dummyGreenCount += 1
             self.dummySignalGreen.backgroundColor = UIColor.greenColor()
             self.dummySignalGreenCount.text = String(format: "%d", self.dummyGreenCount)
         } else if (color == .Red) {
-            self.dummyRedCount++
+            self.dummyRedCount += 1
             self.dummySignalRed.backgroundColor = UIColor.redColor()
             self.dummySignalRedCount.text = String(format: "%d", self.dummyRedCount)
         } else {
@@ -667,18 +931,135 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         }
     }
     
+    private func collectSignalData(capInfo: CaptureImageInfo, signals: NSMutableArray, collectionInfo: CollectionInfoW) {
+        //let location: LEDMapLocation! = self.mapManager?.getCurrentLocation()
+        //let heading: LEDMapHeading! = self.mapManager?.getCurrentHeading()
+        let mapInfo: LEDMapInfo! = self.mapManager?.getCurrentMapInfo()
+        //let cameraFormat: CameraFormat! = self.cameraCap?.getVideoActiveFormatInfo()
+        let cameraSetting: CameraSetting = (self.cameraCap?.getCameraCurrentSettings())!
+        let deviceData: DeviceData = DeviceData("", mapInfo.location.coor.latitude, mapInfo.location.coor.longitude, mapInfo.heading.magneticHeading, mapInfo.heading.trueHeading, mapInfo.timestamp)
+        let cameraData: CameraData = CameraData(Int(cameraSetting.format), cameraSetting.exposureDuration, cameraSetting.exposureValue, cameraSetting.iso, cameraSetting.bias, cameraSetting.offset, Int(cameraSetting.fps))
+        let frameData: FrameData = FrameData(CMTimeGetSeconds(capInfo.timeStamp), capInfo.orientation)
+        let detectData: DetectData = DetectData(collectionInfo.imageContours, collectionInfo.pattern)
+        var results: [DetectResult] = []
+        for signal in signals {
+            let signalData: SignalW = signal as! SignalW
+            let result: DetectResult = DetectResult(true, Int(signalData.kind), Int(signalData.color), signalData.rect, signalData.distance, signalData.matching, signalData.circleLevel, signalData.procTime)
+            results.append(result)
+        }
+        
+        //dispatch_async(self.signalCollectQueue) { () -> Void in
+        //if (self.collectionCount < self.collectionCountMax) {
+            let collectionData: CollectionData = CollectionData(self.collectionCount, deviceData, cameraData, frameData, detectData, results)
+            self.collectionCount = self.collectionCount + 1
+            
+            self.collectionDataMan.addData(collectionData)
+            
+            // TBD: output log
+            if (self.needToSetting()) {
+                do {
+                    if (NSJSONSerialization.isValidJSONObject(collectionData.json())) {
+                        let data:NSData? = try NSJSONSerialization.dataWithJSONObject(collectionData.json(), options: NSJSONWritingOptions.PrettyPrinted)
+                        let payload:NSString = NSString(data:data!, encoding:NSUTF8StringEncoding)!
+                        // todo:MQTT
+                        let logger = SignalLogger.sharedInstance
+                        logger.addLog(payload as String)
+                    }
+                } catch let error as NSError {
+                    // Handle any errors
+                    print(error)
+                }
+            }
+        //}
+        //}
+    }
+    
+    private func uploadCollection() {
+        let alertMsg = ""
+        let actionSheet = UIAlertController(title: "Upload", message: alertMsg, preferredStyle: UIAlertControllerStyle.Alert)
+        
+        let viewButtonAction = UIAlertAction(title: "View", style: UIAlertActionStyle.Default) { (action) in
+            
+        }
+        let uploadButtonAction = UIAlertAction(title: "Upload", style: UIAlertActionStyle.Default) { (action) -> Void in
+            print("Upload")
+            
+#if false
+            self.progressViewController = self.storyboard!.instantiateViewControllerWithIdentifier(self.identifierProgressViewController) as! ProgressViewController
+            // todo:custom segue
+            self.presentViewController(self.progressViewController!, animated: true) { () -> Void in
+                print("ProgressViewController")
+#if false
+                let localPath = FileManager.getSubDirectoryPath("/collection")
+                let now = NSDate()
+                let dateFormatter = NSDateFormatter()
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US") // ロケールの設定
+                dateFormatter.dateFormat = "yyyy_MM_dd_HH_mm_ss" // 日付フォーマットの設定
+                let remotePath = "/SmartEye/collection/" + dateFormatter.stringFromDate(now) + "/"
+                Uploader.getInstance().observer = self;
+                Uploader.getInstance().save(localPath, toDropBox: remotePath, returnViewController: self)
+    
+#else
+                // 30 * 5 = 150大きすぎる?()
+                //self.collectionDataMan.sendBlockData(published後mqttDidDisconnectが呼ばれる。実際pushされていない)
+                self.collectionDataMan.sendAllData()
+#endif
+            }
+            
+#else
+            self.progressView = UIProgressView(progressViewStyle: UIProgressViewStyle.Default)
+            self.progressView.layer.position = CGPoint(x: self.view.frame.width/2, y: self.view.frame.height/2 + self.validDetectionRect.size.height)
+            self.progressView.progress = 0.0
+            self.view.addSubview(self.progressView)
+    
+            self.collectionDataMan.sendAllData()
+#endif
+        }
+        
+        let cancelButtonAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in
+            print("Cancel")
+            
+            // todo: save to local file
+            self.collectionDataMan.clearAllData()
+            self.collectionDataMan.disconnect()
+        }
+        
+        if (self.needToSetting()) {
+            actionSheet.addAction(viewButtonAction)
+        }
+        actionSheet.addAction(uploadButtonAction)
+        actionSheet.addAction(cancelButtonAction)
+        
+        self.presentViewController(actionSheet, animated: true) { () -> Void in
+            print("Action Sheet")
+        }
+    }
+    
+    private func getFocusPoint(point: CGPoint) -> CGPoint {
+        var focusPoint: CGPoint = point
+        let cameraSetting = self.cameraCap?.getCameraCurrentSettings()
+        
+        if (cameraSetting?.orientaion == .Landscape) {
+            focusPoint = CGPointMake(point.y / self.view.bounds.size.height, 1.0 - point.x / self.view.bounds.size.width)
+        }
+        
+        return focusPoint
+    }
+    
     
     // MARK: - CameraCaptureObserver protocol
     
     func captureImageInfo(info: CaptureImageInfo!) {
         var detectedImage: UIImage?// = info.image
         var signalDetected = false
-        var signalColor = SignalColor.None
+        var signalColor = SignalColor.Yellow
         var signalDistance: Float = 0
         var signalCircleLevel: Float = 0
         var signalMatching: Float = -1
-        var detectTime: Double = 0
+        //var detectTime: Double = 0
+        var signalData: SignalW!
         
+        self.captureCount += 1
         
         // todo:非同期で処理する場合、専用キューに入れる(むやみに別キューに入れると、その分コストがかかるので)
         //dispatch_sync(self.signalDetectQueue!, { () -> Void in // @memo:非同期の場合、キューで待機されるとき、メモリが増え続ける。警告発生して落ちる!?
@@ -686,22 +1067,24 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         let debugInfo: DebugInfoW = DebugInfoW()
         let signals: NSMutableArray = NSMutableArray()
         //var detectedImage: UIImage? = nil
+        
+        var detectRect = CGRectZero
+        if (self.selectedMode) {
+            // todo:直接selectedRectを渡して、smarteyeで計算したほうがパフォーマンスが良いかも
+            detectRect = SEUtil.detectRectOfSelecting(info.sampleBuffer, imageOrientation: info.orientation, selectedRect: self.selectedRect)
+        } else {
+            // memo:現状映像サイズによって実際detectする映像サイズが変わる。範囲は変わらない(解像度による画角が変わらないので)
+            //      解像度が高ければdetectのサイズが大きくなるので、その分負荷がかかる
+            //      640x480 x zoomFactor/2で上半分でdetectしている。表示しなければこのサイズで良いかも
+            //        ただ、輪郭検出に多少影響が出るかも(点の情報が少なくなる->matching時情報が落ちる)。todo:必要ならサイズ調整
+            //        todo:AR対応の場合、高解像度低範囲(rect)で行う
+            detectRect = SEUtil.detectRectOfSampleBuffer(info.sampleBuffer, imageOrientation: info.orientation)
+        }
+        
         if (self.needToDetect()) {
-            let detectStartTime = CFAbsoluteTimeGetCurrent()
+            //let detectStartTime = CFAbsoluteTimeGetCurrent()
             
-            var rect = CGRectZero
-            if (self.selectedMode) {
-                // todo:直接selectedRectを渡して、smarteyeで計算したほうがパフォーマンスが良いかも
-                rect = SEUtil.detectRectOfSelecting(info.sampleBuffer, imageOrientation: info.orientation, selectedRect: self.selectedRect)
-            } else {
-                // memo:現状映像サイズによって実際detectする映像サイズが変わる。範囲は変わらない(解像度による画角が変わらないので)
-                //      解像度が高ければdetectのサイズが大きくなるので、その分負荷がかかる
-                //      640x480 x zoomFactor/2で上半分でdetectしている。表示しなければこのサイズで良いかも
-                //        ただ、輪郭検出に多少影響が出るかも(点の情報が少なくなる->matching時情報が落ちる)。todo:必要ならサイズ調整
-                //        todo:AR対応の場合、高解像度低範囲(rect)で行う
-                rect = SEUtil.detectRectOfSampleBuffer(info.sampleBuffer, imageOrientation: info.orientation)
-            }
-            SmartEyeW.detectSignalWithSampleBuffer(info.sampleBuffer, inRect: rect, signals: signals, debugInfo: debugInfo)
+            SmartEyeW.detectSignalWithSampleBuffer(info.sampleBuffer, inRect: detectRect, signals: signals, debugInfo: debugInfo)
             
             // memo:大体0.01s前後(信号があった時)。背景に障害物がある場合、もっとかかるかも。>0.033sの場合、点滅のパターンが崩れる可能性がある
             // todo:非同期シリアルキューで処理したほうが良い。最大５枚(適度)分のバッファー(array)を用意してframeをコピーし、直ちにcaptureのコンテキストを返す。
@@ -717,8 +1100,8 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
             //        信号の矩形エリアを追跡できれば、矩形検出部分の処理がなくなるので、パフォーマンスがよくなるかも？点滅パターンさえ正常にできれば
             //        あるいは、検出エリアを絞るので(上下左右1.5倍のエリア)、fullの検知処理を行ってもパフォーマンスは上がるはず
             //      ->VideoSnakeを参照。media/motion配列バッファー、clock同期、sync処理(captureとmotionの同期)
-            let detectEndTime = CFAbsoluteTimeGetCurrent()
-            detectTime = detectEndTime - detectStartTime
+            //let detectEndTime = CFAbsoluteTimeGetCurrent()
+            //detectTime = detectEndTime - detectStartTime
             
             if (signals.count > 0) {// 一番確率が高い信号(基本1個)
                 
@@ -732,16 +1115,23 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                     }
                     signalDistance = signalData.distance
                 }*/
-                let signalData: SignalW = signals[0] as! SignalW
+                signalData = signals[0] as! SignalW
                 signalCircleLevel = signalData.circleLevel
                 signalMatching = signalData.matching
+                signalDistance = signalData.distance
+                if (signalData.color == 1) {
+                    signalColor = .Green
+                } else if (signalData.color == 4) {
+                    signalColor = .Red
+                }
                 // test
                 if (signalData.kind == 1) {
 
-                    signalDistance = signalData.distance
-                    let detectResult = self.detectRstMan?.analyzeSignal(signalData, direction: self.mapManager!.getCurrentHeading().magneticHeading)
-                    self.audio?.vibrate((detectResult?.vibrateCount)!)
-                    self.voiceNavigation((detectResult?.speechContent)!)
+                    if (self.userMode == .Product) {
+                        let detectResult = self.detectRstMan?.analyzeSignal(signalData, direction: self.mapManager!.getCurrentHeading().magneticHeading)
+                        self.audio?.vibrate((detectResult?.vibrateCount)!)
+                        self.voiceNavigation((detectResult?.speechContent)!)
+                    }
                     
                     // todo:音声/振動案内->
                     //self.voiceNotice(signalColor)
@@ -753,6 +1143,41 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                     // test
                     //signalDistance = 1
                     //signalDetected = true
+                }
+            }
+            
+            if (self.needToCollect()) {
+                if (self.collectionCount < self.collectionCountMax) {
+                    let collW: CollectionInfoW = CollectionInfoW()
+                    SmartEyeW.getCollectionInfo(collW)
+                    self.collectSignalData(info, signals: signals, collectionInfo: collW)
+                }
+                
+                // 変わっ時設定
+                if (self.currentRectColor != signalColor) {
+                    self.currentRectColor = signalColor
+                    // @memo: queue in UI thread
+                    dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                        self.updateValidDetectionRectLine(self.currentRectColor)
+                    }
+                }
+            }
+        } else { // detect時は行わない
+            var adjustExpLevel: Int32 = 0
+            
+            // 表示モード(Normal/Setting)の場合、リアルタイムで描画
+            if (self.needToDisplayView()) {
+                adjustExpLevel = SmartEyeW.getExposureLevelWithSampleBuffer(info.sampleBuffer, inRect: detectRect, biasRangeMin: -6, max: 6, drawFlag: true)
+            } else {// 非表示の場合、3秒毎にチェック。描画しない
+                if (self.captureCount % (self.detectFps * 3) == 0) {
+                    adjustExpLevel = SmartEyeW.getExposureLevelWithSampleBuffer(info.sampleBuffer, inRect: detectRect, biasRangeMin: -6, max: 6, drawFlag: false)
+                }
+            }
+            
+            if (self.captureCount % (self.detectFps * 3) == 0) {
+                // todo:
+                if (adjustExpLevel != 0) {
+                    
                 }
             }
         }
@@ -770,9 +1195,9 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                 //}
                 
                 if (signalDetected) {
-                    self.dummySignalDistance.text = String(format: "%f/%f/%f", signalDistance, signalCircleLevel, signalMatching)
+                    self.dummySignalDistance.text = String(format: "%.2f/%.2f/%.2f", signalDistance, signalCircleLevel, signalMatching)
                 }
-                self.updateSignalImage(signalColor)
+                //self.updateSignalImage(signalColor)
             }
         } else {
             self.captureImageView.image = nil
@@ -803,15 +1228,18 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                 // todo: create queue for saving in DebugModeView -> ok
                 // todo: save image in debug view controller      -> ok
                 // todo: always update signal graph data
-                self.debugViewController?.updateDetectedImageData(signals as [AnyObject], captureImageInfo: info, debugInfo: debugInfo, detectTime: detectTime)
+                self.debugViewController?.updateDetectedImageData(signals as [AnyObject], captureImageInfo: info, debugInfo: debugInfo, detectTime: debugInfo.procTime)
             }
         }
     }
     
     func activeFormatChanged(format: CameraFormat) {
-        if (self.dispMode == .Setting) {
+        // memo:集計(test)モードの場合、矩形表示を更新
+        if (self.dispMode == .Setting || self.userMode == .Test) {
+            self.validDetectionRect = self.createValidDispRect()
             // @memo: queue in UI thread
             dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                self.updateDetectViewFrame(self.validDetectionRect)
                 self.debugViewController?.updateCameraActiveFormat(format)
             }
         }
@@ -824,6 +1252,28 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 self.debugViewController?.updateCameraCurrentSetting(settings)
             })
+        }
+    }
+    
+    // MARK: - UploadObserver
+    func uploadFile(file: String!, currentProgress progress: Float) {
+        
+    }
+    
+    func uploader(uploder: Uploader!, progress: Float) {
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.progressViewController?.updateProgress(progress)
+        }
+        if (progress == 100) {
+            dispatch_async(dispatch_get_main_queue()) {
+                self.dismissViewControllerAnimated(true, completion: { () -> Void in
+                    print("dismissProgressViewController")
+                    // todo:progress画面が表示されるのが原因？で追加されたShowが表示されない。
+                    // 実際見えないが、LocalCameraが表示されるな(viewWillAppearなど).unwindでshow一覧画面に戻るので、途中で自動的にImage一覧画面が消え、LocalCamera画面が表示されたかも。ただすぐLocalCamera画面も破棄されshow一覧が表示される(新規showはすでに追加されている)
+                    
+                    }
+                )
+            }
         }
     }
     
@@ -965,6 +1415,24 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         }
     }
     
+    // MARK: - CollectionDataManagerDelegate protocol
+    
+    func collectionDataManager(dataManager: CollectionDataManager, didSendProgress progress: Float) {
+        print("didSendProgress:\(progress)")
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            //self.progressViewController.updateProgress(progress)
+            self.progressView.setProgress(progress / 100, animated: true)
+            if (progress >= 100) {
+                self.progressView.removeFromSuperview()
+            }
+        }
+        
+        if (progress >= 100) {
+            self.collectionDataMan.disconnect()
+        }
+    }
+    
     // MARK: - DebugModeObserver protocol
     
     func settingState(state: Bool) {
@@ -1015,51 +1483,19 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     }
     
     func selectRectEnd() {
-        self.drawRectangle(self.selectedRect, mode: 1)
-        self.selectedImageView?.frame = self.selectedRect
-        self.selecting = false
-        self.setting = false
-        self.selectedMode = true
-        self.selectedImageView?.hidden = !self.selectedMode
-        self.captureImageView.alpha = 0.7
+        self.updateSelectArea(self.selectedRect, valid: true)
     }
     
     func selectRectCancel() {
-        self.view.layer.contents = nil
-        self.selectedRect = CGRectZero
-        self.selectedImageView?.frame = self.selectedRect
-        self.selecting = false
-        self.setting = false
-        self.selectedMode = false
-        self.selectedImageView?.hidden = !self.selectedMode
-        self.captureImageView.alpha = 1.0
+        self.updateSelectArea(CGRectZero, valid: false)
     }
     
     func detectRect(rect: CGRect) {
-        self.selectedRect = rect
-        // 1回しか描画されないので、意味がないかな
-        self.drawRectangle(self.selectedRect, mode: 1)
-        self.selectedImageView?.frame = self.selectedRect
-        self.selecting = false
-        self.setting = false
-        self.selectedMode = true
-        self.selectedImageView?.hidden = !self.selectedMode
-        self.captureImageView.alpha = 0.8
-        // todo:self.selectedImageViewにもimageを設定(modeはfit?)
-        //self.selectedImageView?.backgroundColor = UIColor.redColor()
-        //self.selectedImageView?.alpha = 0
-        self.view.bringSubviewToFront(self.selectedImageView!)
+        self.updateDetectArea(rect, valid: true)
     }
     
     func deleteDetectRect() {
-        self.view.layer.contents = nil
-        self.selectedRect = CGRectZero
-        self.selectedImageView?.frame = self.selectedRect
-        self.selecting = false
-        self.setting = false
-        self.selectedMode = false
-        self.selectedImageView?.hidden = !self.selectedMode
-        self.captureImageView.alpha = 1.0
+        self.updateDetectArea(CGRectZero, valid: false)
     }
     
     func cameraSettingChanged(exposureBias bias: Float) {
@@ -1143,7 +1579,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         // todo:animation
         self.tabBarController?.tabBar.hidden = dMode
         self.debugView?.hidden = !dMode
-        self.selectedImageView?.hidden = !dMode
+        //self.validDetectionView?.hidden = !dMode
 //        self.mapView.hidden = !dMode || self.debugState
         // todo:CaptureImageViewはTabbarまでではないので、viewの白い背景が表示される。伸ばそう
         // ->ImageViewをMainViewと同じサイズにした
@@ -1155,6 +1591,7 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
             self.navigationItem.title = ""
             self.debugButton.title = "Debug"
             self.captureImageView.alpha = 1.0
+            self.resetDebugMode()
         }
         
         self.debugMode = dMode
@@ -1171,6 +1608,76 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         } else {
             detectButton.title = "Start"
             //self.cameraCap?.changeCameraDataType(CameraDataType.Image)
+            self.collectionCount = 0
+        }
+    }
+    
+    @IBAction func collectAction(sender: AnyObject) {
+        let colSwitch = sender as! UISwitch
+        
+        self.collecting = colSwitch.on
+        self.procDetect = colSwitch.on
+        
+        if (colSwitch.on) {
+            self.collectionCount = 0
+            self.currentRectColor = .Yellow
+            //self.validDetectionView.changeLineColor(UIColor.yellowColor())
+            self.collectionDataMan = CollectionDataManager.sharedInstance
+            self.collectionDataMan.setDelegate(self)
+            self.collectionDataMan.connect()
+        } else {
+            self.currentRectColor = .None
+            //self.validDetectionView.changeLineColor(UIColor.whiteColor())
+            self.uploadCollection()
+        }
+        
+        self.updateValidDetectionRectLine(self.currentRectColor)
+    }
+    
+    @IBAction func collectionDetectAction(sender: AnyObject) {
+        self.collecting = !self.collecting
+        self.procDetect = !self.procDetect
+        
+        if (self.collecting) {
+            self.collectButton.setBackgroundImage(UIImage(named: "detect_start.png"), forState: UIControlState.Normal)
+            self.collectionCount = 0
+            self.currentRectColor = .Yellow
+            //self.validDetectionView.changeLineColor(UIColor.yellowColor())
+            self.collectionDataMan = CollectionDataManager.sharedInstance
+            self.collectionDataMan.setDelegate(self)
+            self.collectionDataMan.connect()
+        } else {
+            self.collectButton.setBackgroundImage(UIImage(named: "detect_stop.png"), forState: UIControlState.Normal)
+            self.currentRectColor = .None
+            //self.validDetectionView.changeLineColor(UIColor.whiteColor())
+            self.uploadCollection()
+        }
+        
+        self.updateValidDetectionRectLine(self.currentRectColor)
+    }
+    
+    @IBAction func exposureBiasDecAction(sender: AnyObject) {
+        let currentSettings = self.cameraCap?.getCameraCurrentSettings()
+        var bias = Float((currentSettings?.bias)!)
+        bias -= 0.5
+        self.cameraCap?.changeExposureBias(bias)
+    }
+    
+    @IBAction func exposureBiasIncAction(sender: AnyObject) {
+        let currentSettings = self.cameraCap?.getCameraCurrentSettings()
+        var bias = Float((currentSettings?.bias)!)
+        bias += 0.5
+        self.cameraCap?.changeExposureBias(bias)
+    }
+    
+    @IBAction func tapGestureForFocus(sender: AnyObject) {
+        let gesRec: UITapGestureRecognizer = sender as! UITapGestureRecognizer
+        let pos: CGPoint = gesRec.locationInView(self.view)
+        
+        if ((pos.x > self.validDetectionRect.origin.x && pos.x < self.validDetectionRect.origin.x + self.validDetectionRect.size.width) && (pos.y > self.validDetectionRect.origin.y && pos.y < self.validDetectionRect.origin.y + self.validDetectionRect.size.height)) {
+            let point = CGPointMake((self.validDetectionRect.origin.x + self.validDetectionRect.size.width / 2), self.validDetectionRect.origin.y + self.validDetectionRect.size.height / 2)
+            let focusPoint = self.getFocusPoint(point)
+            self.cameraCap?.setFocusPoint(focusPoint)
         }
     }
     
@@ -1182,58 +1689,87 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         //print("long x:\(pos.x) y:\(pos.y)")
         
         let left: CGFloat = 50
-        let top: CGFloat = 0
         let right: CGFloat = self.view.bounds.size.width - 50
+        
+        // for userMode
+        let top: CGFloat = self.view.bounds.size.height - 50 - 49 // TabBar:49?
+        // for dispMode
         let bottom: CGFloat = 50 + 44 // NavigationBar:44
         
-        print("pan x:\(pos.x) y:\(pos.y)")
+        
+        //print("pan x:\(pos.x) y:\(pos.y)")
         if (gesRec.state == UIGestureRecognizerState.Began) {// 設定秒数間押し続くとBeganになる。Endで処理する場合、手を離さないとdebugmodeが変わらない
-            print("pan began(\(gesRec.state))")
-            if ((pos.x < left) && (pos.y < bottom)) {
-                self.gesturePosition = .LeftTop
-            } else if ((pos.x > right) && (pos.y < bottom)) {
-                self.gesturePosition = .RightTop
+            //print("long began(\(gesRec.state))")
+            if (pos.y < bottom) {
+                if (pos.x < left) {
+                    self.gesturePosition = .LeftTop
+                } else if (pos.x > right) {
+                    self.gesturePosition = .RightTop
+                }
+            } else if (pos.y > top) {
+                if (pos.x < left) {
+                    self.gesturePosition = .LeftBottom
+                } else if (pos.x > right) {
+                    self.gesturePosition = .RightBottom
+                }
             }
         } else if (gesRec.state == UIGestureRecognizerState.Changed) {
-            print("pan changed(\(gesRec.state))")
-            if (((pos.x > left) && (pos.x <= right)) && (pos.y < bottom)) {
+            //print("long changed(\(gesRec.state))")
+            if (((pos.x > left) && (pos.x <= right)) && ((pos.y < bottom) || (pos.y > top))) {
                 if (self.gesturePosition != .Middle) {
-                    if (self.gesturePosition == .LeftTop) {
+                    if (self.gesturePosition == .LeftTop || self.gesturePosition == .LeftBottom) {
                         self.panMoveDirection = .LeftToRight
-                    } else if (self.gesturePosition == .RightTop) {
+                    } else if (self.gesturePosition == .RightTop || self.gesturePosition == .RightBottom) {
                         self.panMoveDirection = .RightToLeft
                     }
-                    
                     self.gesturePosition = .Middle
                 }
             }
             
         } else if (gesRec.state == UIGestureRecognizerState.Ended) {
-            print("pan ended(\(gesRec.state))")
-            if ((pos.x > right) && (pos.y < bottom)) {
-                if (self.panMoveDirection == .LeftToRight) {
-                    if (self.dispMode == .Blindness) {
-                        self.dispMode = .Normal
-                    } else if (self.dispMode == .Normal) {
-                        self.dispMode = .Setting
+            //print("long ended(\(gesRec.state))")
+            if (pos.y < bottom) {
+                if (pos.x > right) {
+                    if (self.panMoveDirection == .LeftToRight) {
+                        if (self.dispMode == .Blindness) {
+                            self.dispMode = .Normal
+                        } else if (self.dispMode == .Normal) {
+                            self.dispMode = .Setting
+                        }
+                    }
+                } else if (pos.x < left) {
+                    if (self.panMoveDirection == .RightToLeft) {
+                        if (self.dispMode == .Setting) {
+                            self.dispMode = .Normal
+                        } else if (self.dispMode == .Normal) {
+                            self.dispMode = .Blindness
+                        }
                     }
                 }
-            } else if ((pos.x < left) && (pos.y < bottom)) {
-                if (self.panMoveDirection == .RightToLeft) {
-                    if (self.dispMode == .Setting) {
-                        self.dispMode = .Normal
-                    } else if (self.dispMode == .Normal) {
-                        self.dispMode = .Blindness
+                
+                self.updateDispMode()
+            } else if (pos.y > top) {
+                if (pos.x > right) {
+                    if (self.panMoveDirection == .LeftToRight) {
+                        if (self.userMode == .Product) {
+                            self.userMode = .Test
+                        }
+                    }
+                } else if (pos.x < left) {
+                    if (self.panMoveDirection == .RightToLeft) {
+                        if (self.userMode == .Test) {
+                            self.userMode = .Product
+                        }
                     }
                 }
+                
+                self.updateUserMode()
             }
-            
-            self.updateDispMode()
             
             self.gesturePosition = .None
             self.panMoveDirection = .None
         } else {// cancelなど
-            print("pan others(\(gesRec.state))")
+            //print("pan others(\(gesRec.state))")
             self.gesturePosition = .None
             self.panMoveDirection = .None
         }
@@ -1245,59 +1781,87 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         let pos: CGPoint = gesRec.locationInView(self.view)
         
         //if (self.gesturePosition != .None) {
-            let left: CGFloat = 50
-            let top: CGFloat = 0
-            let right: CGFloat = self.view.bounds.size.width - 50
-            let bottom: CGFloat = 50 + 44 // NavigationBar:44
-            
-            print("pan x:\(pos.x) y:\(pos.y)")
+        let left: CGFloat = 50
+        let right: CGFloat = self.view.bounds.size.width - 50
+        
+        // for userMode
+        let top: CGFloat = self.view.bounds.size.height - 50 - 49 // TabBar:49?
+        // for dispMode
+        let bottom: CGFloat = 50 + 44 // NavigationBar:44
+        
+            //print("pan x:\(pos.x) y:\(pos.y)")
             if (gesRec.state == UIGestureRecognizerState.Began) {
-                print("pan began(\(gesRec.state))")
-                if ((pos.x < left) && (pos.y < bottom)) {
-                    self.gesturePosition = .LeftTop
-                } else if ((pos.x > right) && (pos.y < bottom)) {
-                    self.gesturePosition = .RightTop
+                //print("pan began(\(gesRec.state))")
+                if (pos.y < bottom) {
+                    if (pos.x < left) {
+                        self.gesturePosition = .LeftTop
+                    } else if (pos.x > right) {
+                        self.gesturePosition = .RightTop
+                    }
+                } else if (pos.y > top) {
+                    if (pos.x < left) {
+                        self.gesturePosition = .LeftBottom
+                    } else if (pos.x > right) {
+                        self.gesturePosition = .RightBottom
+                    }
                 }
             } else if (gesRec.state == UIGestureRecognizerState.Changed) {
-                print("pan changed(\(gesRec.state))")
-                if (((pos.x > left) && (pos.x <= right)) && (pos.y < bottom)) {
+                //print("pan changed(\(gesRec.state))")
+                if (((pos.x > left) && (pos.x <= right)) && ((pos.y < bottom) || (pos.y > top))) {
                     if (self.gesturePosition != .Middle) {
-                        if (self.gesturePosition == .LeftTop) {
+                        if (self.gesturePosition == .LeftTop || self.gesturePosition == .LeftBottom) {
                             self.panMoveDirection = .LeftToRight
-                        } else if (self.gesturePosition == .RightTop) {
+                        } else if (self.gesturePosition == .RightTop || self.gesturePosition == .RightBottom) {
                             self.panMoveDirection = .RightToLeft
                         }
-                        
                         self.gesturePosition = .Middle
                     }
                 }
 
             } else if (gesRec.state == UIGestureRecognizerState.Ended) {
-                print("pan ended(\(gesRec.state))")
-                if ((pos.x > right) && (pos.y < bottom)) {
-                    if (self.panMoveDirection == .LeftToRight) {
-                        if (self.dispMode == .Blindness) {
-                            self.dispMode = .Normal
-                        } else if (self.dispMode == .Normal) {
-                            self.dispMode = .Setting
+                //print("pan ended(\(gesRec.state))")
+                if (pos.y < bottom) {
+                    if (pos.x > right) {
+                        if (self.panMoveDirection == .LeftToRight) {
+                            if (self.dispMode == .Blindness) {
+                                self.dispMode = .Normal
+                            } else if (self.dispMode == .Normal) {
+                                self.dispMode = .Setting
+                            }
+                        }
+                    } else if (pos.x < left) {
+                        if (self.panMoveDirection == .RightToLeft) {
+                            if (self.dispMode == .Setting) {
+                                self.dispMode = .Normal
+                            } else if (self.dispMode == .Normal) {
+                                self.dispMode = .Blindness
+                            }
                         }
                     }
-                } else if ((pos.x < left) && (pos.y < bottom)) {
-                    if (self.panMoveDirection == .RightToLeft) {
-                        if (self.dispMode == .Setting) {
-                            self.dispMode = .Normal
-                        } else if (self.dispMode == .Normal) {
-                            self.dispMode = .Blindness
+                    
+                    self.updateDispMode()
+                } else if (pos.y > top) {
+                    if (pos.x > right) {
+                        if (self.panMoveDirection == .LeftToRight) {
+                            if (self.userMode == .Product) {
+                                self.userMode = .Test
+                            }
+                        }
+                    } else if (pos.x < left) {
+                        if (self.panMoveDirection == .RightToLeft) {
+                            if (self.userMode == .Test) {
+                                self.userMode = .Product
+                            }
                         }
                     }
+                    
+                    self.updateUserMode()
                 }
-                
-                self.updateDispMode()
                 
                 self.gesturePosition = .None
                 self.panMoveDirection = .None
             } else {// cancelなど
-                print("pan others(\(gesRec.state))")
+                //print("pan others(\(gesRec.state))")
                 self.gesturePosition = .None
                 self.panMoveDirection = .None
             }

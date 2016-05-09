@@ -10,6 +10,8 @@
 #import "FileManager.h"
 #import "Log.h"
 
+@implementation Settings
+@end
 
 @implementation SignalInfo
 @end
@@ -23,7 +25,7 @@
 @implementation RecordMode
 @end
 
-@implementation Range
+@implementation Scope
 @end
 
 @implementation ColorSpace
@@ -31,9 +33,9 @@
 -(id)init
 {
     if (self = [super init]) {
-        _h = [[Range alloc] init];
-        _s = [[Range alloc] init];
-        _v = [[Range alloc] init];
+        _h = [[Scope alloc] init];
+        _s = [[Scope alloc] init];
+        _v = [[Scope alloc] init];
     }
     
     return self;
@@ -112,6 +114,7 @@
 -(id)init
 {
     if (self = [super init]) {
+        _settings = [[Settings alloc] init];
         _signalInfo = [[SignalInfo alloc] init];
         _debugMode = [[DebugMode alloc] init];
         _cameraSettings = [[CameraSettings alloc] init];
@@ -224,9 +227,23 @@
 {
     self.confFile = confFile;
     if (self.confFile != nil) {
+        // todo:更新configファイルがあるチェック
         self.confDic = [FileManager loadConfigFromPlist:self.confFile];
         if (self.confDic != nil) {
-            NSDictionary* dic = [self.confDic valueForKey:@"SignalInfo"];
+            NSDictionary* dic = [self.confDic valueForKey:@"Settings"];
+            if (dic != nil) {
+                NSNumber *num = [dic valueForKey:@"UserMode"];
+                if (num != nil) {
+                    _confSettings.settings.userMode = [num intValue];
+                }
+                
+                num = [dic valueForKey:@"DispMode"];
+                if (num != nil) {
+                    _confSettings.settings.dispMode = [num intValue];
+                }
+            }
+            
+            dic = [self.confDic valueForKey:@"SignalInfo"];
             if (dic != nil) {
                 NSNumber *num = [dic valueForKey:@"Frequency"];
                 if (num != nil) {
@@ -238,32 +255,38 @@
             if (dic != nil) {
                 NSNumber *num = [dic valueForKey:@"Flag"];
                 if (num != nil) {
-                    _confSettings.debugMode.flag = [num boolValue];
+                    //_confSettings.debugMode.flag = [num boolValue];
+                    _confSettings.debugMode.flag = NO;
                 }
                 
                 num = [dic valueForKey:@"Binary"];
                 if (num != nil) {
-                    _confSettings.debugMode.binary = [num boolValue];
+                    //_confSettings.debugMode.binary = [num boolValue];
+                    _confSettings.debugMode.binary = NO;
                 }
                 
                 num = [dic valueForKey:@"Point"];
                 if (num != nil) {
-                    _confSettings.debugMode.point = [num boolValue];
+                    //_confSettings.debugMode.point = [num boolValue];
+                    _confSettings.debugMode.point = NO;
                 }
                 
                 num = [dic valueForKey:@"Rect"];
                 if (num != nil) {
-                    _confSettings.debugMode.rect = [num boolValue];
+                    //_confSettings.debugMode.rect = [num boolValue];
+                    _confSettings.debugMode.rect = NO;
                 }
                 
                 num = [dic valueForKey:@"Area"];
                 if (num != nil) {
-                    _confSettings.debugMode.area = [num boolValue];
+                    //_confSettings.debugMode.area = [num boolValue];
+                    _confSettings.debugMode.area = NO;
                 }
                 
                 num = [dic valueForKey:@"Signal"];
                 if (num != nil) {
-                    _confSettings.debugMode.signal = [num boolValue];
+                    //_confSettings.debugMode.signal = [num boolValue];
+                    _confSettings.debugMode.signal = NO;
                 }
             }
             
@@ -558,6 +581,11 @@
 -(void)saveConf
 {
     if (self.confFile != nil && self.confDic != nil) {
+        NSMutableDictionary *settingsDic = [[NSMutableDictionary alloc] init];
+        [settingsDic setValue:[NSNumber numberWithInt:_confSettings.settings.userMode] forKey:@"UserMode"];
+        [settingsDic setValue:[NSNumber numberWithInt:_confSettings.settings.dispMode] forKey:@"DispMode"];
+        [self.confDic setValue:settingsDic forKey:@"Settings"];
+        
         NSMutableDictionary *signalInfoDic = [[NSMutableDictionary alloc] init];
         [signalInfoDic setValue:[NSNumber numberWithInt:_confSettings.signalInfo.ledFreq] forKey:@"Frequency"];
         [self.confDic setValue:signalInfoDic forKey:@"SignalInfo"];

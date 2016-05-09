@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		38BCFD3286FB452394125A76 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B050E182A954B6E938A3D58 /* libPods.a */; };
 		6522239A19E1855C00F1667A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6522239919E1855C00F1667A /* AppDelegate.swift */; };
 		6522239C19E1855C00F1667A /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6522239B19E1855C00F1667A /* CaptureViewController.swift */; };
 		6522239F19E1855C00F1667A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6522239D19E1855C00F1667A /* Main.storyboard */; };
@@ -26,8 +25,6 @@
 		65AA45FF19FFEAA300D0695C /* VehicleSignalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 65AA45FE19FFEAA300D0695C /* VehicleSignalView.m */; };
 		65AA460119FFEAE600D0695C /* PedestrianSignalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 65AA460019FFEAE600D0695C /* PedestrianSignalView.m */; };
 		65AA460319FFEB1600D0695C /* SignalGraphView.m in Sources */ = {isa = PBXBuildFile; fileRef = 65AA460219FFEB1600D0695C /* SignalGraphView.m */; };
-		65C59A6219E58A5B005A3F96 /* blue.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 65C59A5D19E58A5B005A3F96 /* blue.jpg */; };
-		65C59A6419E58A5B005A3F96 /* panel.png in Resources */ = {isa = PBXBuildFile; fileRef = 65C59A5F19E58A5B005A3F96 /* panel.png */; };
 		65C59A6F19E5907C005A3F96 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65C59A6A19E58DDB005A3F96 /* Photos.framework */; };
 		65C6C17219EAB345003518D0 /* CameraCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C6C17119EAB345003518D0 /* CameraCapture.m */; };
 		65D94FE219E9882E001B8D49 /* CameraOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652E646B19E2C38C002789DC /* CameraOperator.swift */; };
@@ -48,6 +45,22 @@
 		65F482D81A05F9960057D363 /* LEDPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482D71A05F9960057D363 /* LEDPanelView.swift */; };
 		65F482DA1A05F9FD0057D363 /* LEDPedestrianSignalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */; };
 		65F482DC1A05FA2F0057D363 /* LEDVehicleSignalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */; };
+		C71767DC1CBF56880026E322 /* CollectionDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767DB1CBF56880026E322 /* CollectionDataManager.swift */; };
+		C71767DE1CBF61DA0026E322 /* ValidDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767DD1CBF61DA0026E322 /* ValidDetectionView.swift */; };
+		C71767E11CC15FCF0026E322 /* AirImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767DF1CC15FCF0026E322 /* AirImageCell.swift */; };
+		C71767E21CC15FCF0026E322 /* AirImageCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767E01CC15FCF0026E322 /* AirImageCollectionViewController.swift */; };
+		C71767E51CC15FDE0026E322 /* AirFolderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767E31CC15FDE0026E322 /* AirFolderCell.swift */; };
+		C71767E61CC15FDE0026E322 /* AirFolderCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767E41CC15FDE0026E322 /* AirFolderCollectionViewController.swift */; };
+		C71767E81CC162440026E322 /* FrameCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767E71CC162440026E322 /* FrameCollectionViewController.swift */; };
+		C71767EA1CC1629B0026E322 /* FrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767E91CC1629B0026E322 /* FrameCell.swift */; };
+		C71767EC1CC164910026E322 /* CollectionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767EB1CC164910026E322 /* CollectionInfo.swift */; };
+		C71767EE1CC3B4190026E322 /* ConfigSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767ED1CC3B4190026E322 /* ConfigSetting.swift */; };
+		C71767F21CC3B4760026E322 /* CapabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767F11CC3B4760026E322 /* CapabilityManager.swift */; };
+		C71767F61CC3E7610026E322 /* AirNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767F31CC3E7610026E322 /* AirNetworkManager.swift */; };
+		C71767F71CC3E7610026E322 /* AirService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767F41CC3E7610026E322 /* AirService.swift */; };
+		C71767F81CC3E7610026E322 /* AirServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767F51CC3E7610026E322 /* AirServiceManager.swift */; };
+		C71767FA1CCA2A2E0026E322 /* AirImageDetailCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767F91CCA2A2E0026E322 /* AirImageDetailCollectionViewController.swift */; };
+		C71767FC1CCA2AC10026E322 /* AirImageDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71767FB1CCA2AC10026E322 /* AirImageDetailCell.swift */; };
 		C72157781BA715C70081467B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72157771BA715C70081467B /* MapKit.framework */; };
 		C721577A1BA719E50081467B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72157791BA719E50081467B /* CoreLocation.framework */; };
 		C72157811BAC27C50081467B /* LEDMapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C72157801BAC27C50081467B /* LEDMapManager.m */; };
@@ -64,16 +77,27 @@
 		C72CCC9E1C34DE9000369814 /* SmartEye.mm in Sources */ = {isa = PBXBuildFile; fileRef = C72CCC991C34DE9000369814 /* SmartEye.mm */; };
 		C730C1ED1B8455C600684588 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C730C1EC1B8455C600684588 /* AVFoundation.framework */; };
 		C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C730C1EE1B85F33000684588 /* RecordInfo.swift */; };
-		C79D82661C6BC4BA0070614B /* image_5.png in Resources */ = {isa = PBXBuildFile; fileRef = C79D82651C6BC4BA0070614B /* image_5.png */; };
+		C75BDE091CB6B8CB00FA136D /* CocoaMQTT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDDFD1CB6B8CB00FA136D /* CocoaMQTT.swift */; };
+		C75BDE0A1CB6B8CB00FA136D /* CocoaMQTTFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDDFE1CB6B8CB00FA136D /* CocoaMQTTFrame.swift */; };
+		C75BDE0B1CB6B8CB00FA136D /* CocoaMQTTMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDDFF1CB6B8CB00FA136D /* CocoaMQTTMessage.swift */; };
+		C75BDE0C1CB6B8CB00FA136D /* CollectionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE001CB6B8CB00FA136D /* CollectionData.swift */; };
+		C75BDE0D1CB6B8CB00FA136D /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE011CB6B8CB00FA136D /* DataStore.swift */; };
+		C75BDE0E1CB6B8CB00FA136D /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE031CB6B8CB00FA136D /* GCDAsyncSocket.m */; };
+		C75BDE0F1CB6B8CB00FA136D /* LEDMqttClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE041CB6B8CB00FA136D /* LEDMqttClient.swift */; };
+		C75BDE101CB6B8CB00FA136D /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE051CB6B8CB00FA136D /* LICENSE.md */; };
+		C75BDE111CB6B8CB00FA136D /* MilkCocoa.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE061CB6B8CB00FA136D /* MilkCocoa.swift */; };
+		C75BDE121CB6B8CB00FA136D /* MSWeakTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C75BDE081CB6B8CB00FA136D /* MSWeakTimer.m */; };
+		C7732AFA1CA1EC6100C3A079 /* CloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7732AF91CA1EC6100C3A079 /* CloudManager.swift */; };
+		C77E91371CDF949500918EB3 /* detect_start.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91351CDF949500918EB3 /* detect_start.png */; };
+		C77E91381CDF949500918EB3 /* detect_stop.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91361CDF949500918EB3 /* detect_stop.png */; };
+		C77E913A1CDF97B500918EB3 /* exposure.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91391CDF97B500918EB3 /* exposure.png */; };
 		C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */; };
 		C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */; };
 		C7B012221B402A5500539E4A /* ConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C7B012211B402A5500539E4A /* ConfigManager.m */; };
 		C7B012251B4FDD6100539E4A /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B012241B4FDD6100539E4A /* DebugLog.swift */; };
-		C7E9B11C1C4B55D5002165B6 /* pedestrian_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */; };
-		C7E9B11E1C4B55F2002165B6 /* pedestrian_red.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */; };
 		C7E9B1201C513E9B002165B6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7E9B11F1C513E9B002165B6 /* AudioToolbox.framework */; };
-		C7E9B1221C550A29002165B6 /* blue_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B1211C550A29002165B6 /* blue_2.jpg */; };
-		C7E9B1261C5526D3002165B6 /* image_1.png in Resources */ = {isa = PBXBuildFile; fileRef = C7E9B1251C5526D3002165B6 /* image_1.png */; };
+		C7EC02391CBAA9BE0020E5E2 /* ProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7EC02381CBAA9BE0020E5E2 /* ProgressViewController.swift */; };
+		F9F9958CA1B2BA5D216A03E0 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43F8E11280B3CC5493E0E9FE /* Pods.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +110,21 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		C71DC1DF1CB68E39009FB838 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		43F8E11280B3CC5493E0E9FE /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6522239419E1855C00F1667A /* LEDSignalDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LEDSignalDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6522239819E1855C00F1667A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6522239919E1855C00F1667A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -112,8 +150,6 @@
 		65AA45FE19FFEAA300D0695C /* VehicleSignalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VehicleSignalView.m; sourceTree = "<group>"; };
 		65AA460019FFEAE600D0695C /* PedestrianSignalView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PedestrianSignalView.m; sourceTree = "<group>"; };
 		65AA460219FFEB1600D0695C /* SignalGraphView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignalGraphView.m; sourceTree = "<group>"; };
-		65C59A5D19E58A5B005A3F96 /* blue.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blue.jpg; sourceTree = "<group>"; };
-		65C59A5F19E58A5B005A3F96 /* panel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = panel.png; sourceTree = "<group>"; };
 		65C59A6A19E58DDB005A3F96 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		65C6C17119EAB345003518D0 /* CameraCapture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraCapture.m; sourceTree = "<group>"; };
 		65F3B7971A9A09A0007CFC22 /* Util_C.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Util_C.m; path = Utility/Util_C.m; sourceTree = "<group>"; };
@@ -132,9 +168,25 @@
 		65F482D71A05F9960057D363 /* LEDPanelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDPanelView.swift; sourceTree = "<group>"; };
 		65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDPedestrianSignalView.swift; sourceTree = "<group>"; };
 		65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDVehicleSignalView.swift; sourceTree = "<group>"; };
+		6D87D4A594C76A97BECB067D /* Pods_LEDSignalDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LEDSignalDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B700469493E057F519CBF95 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		9B050E182A954B6E938A3D58 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB32CD7412067552F82C644C /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		C71767DB1CBF56880026E322 /* CollectionDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionDataManager.swift; sourceTree = "<group>"; };
+		C71767DD1CBF61DA0026E322 /* ValidDetectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidDetectionView.swift; sourceTree = "<group>"; };
+		C71767DF1CC15FCF0026E322 /* AirImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageCell.swift; sourceTree = "<group>"; };
+		C71767E01CC15FCF0026E322 /* AirImageCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageCollectionViewController.swift; sourceTree = "<group>"; };
+		C71767E31CC15FDE0026E322 /* AirFolderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirFolderCell.swift; sourceTree = "<group>"; };
+		C71767E41CC15FDE0026E322 /* AirFolderCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirFolderCollectionViewController.swift; sourceTree = "<group>"; };
+		C71767E71CC162440026E322 /* FrameCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameCollectionViewController.swift; sourceTree = "<group>"; };
+		C71767E91CC1629B0026E322 /* FrameCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameCell.swift; sourceTree = "<group>"; };
+		C71767EB1CC164910026E322 /* CollectionInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionInfo.swift; sourceTree = "<group>"; };
+		C71767ED1CC3B4190026E322 /* ConfigSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConfigSetting.swift; path = Utility/ConfigSetting.swift; sourceTree = "<group>"; };
+		C71767F11CC3B4760026E322 /* CapabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CapabilityManager.swift; path = Utility/CapabilityManager.swift; sourceTree = "<group>"; };
+		C71767F31CC3E7610026E322 /* AirNetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNetworkManager.swift; sourceTree = "<group>"; };
+		C71767F41CC3E7610026E322 /* AirService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirService.swift; sourceTree = "<group>"; };
+		C71767F51CC3E7610026E322 /* AirServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirServiceManager.swift; sourceTree = "<group>"; };
+		C71767F91CCA2A2E0026E322 /* AirImageDetailCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageDetailCollectionViewController.swift; sourceTree = "<group>"; };
+		C71767FB1CCA2AC10026E322 /* AirImageDetailCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageDetailCell.swift; sourceTree = "<group>"; };
 		C72157771BA715C70081467B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		C72157791BA719E50081467B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		C721577F1BAC27C50081467B /* LEDMapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDMapManager.h; sourceTree = "<group>"; };
@@ -165,18 +217,30 @@
 		C72CCC9B1C34DE9000369814 /* SmartEyeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartEyeType.h; sourceTree = "<group>"; };
 		C730C1EC1B8455C600684588 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C730C1EE1B85F33000684588 /* RecordInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordInfo.swift; sourceTree = "<group>"; };
-		C79D82651C6BC4BA0070614B /* image_5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_5.png; sourceTree = "<group>"; };
+		C75BDDFD1CB6B8CB00FA136D /* CocoaMQTT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CocoaMQTT.swift; path = LEDMqttClient/CocoaMQTT.swift; sourceTree = "<group>"; };
+		C75BDDFE1CB6B8CB00FA136D /* CocoaMQTTFrame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CocoaMQTTFrame.swift; path = LEDMqttClient/CocoaMQTTFrame.swift; sourceTree = "<group>"; };
+		C75BDDFF1CB6B8CB00FA136D /* CocoaMQTTMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CocoaMQTTMessage.swift; path = LEDMqttClient/CocoaMQTTMessage.swift; sourceTree = "<group>"; };
+		C75BDE001CB6B8CB00FA136D /* CollectionData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CollectionData.swift; path = LEDMqttClient/CollectionData.swift; sourceTree = "<group>"; };
+		C75BDE011CB6B8CB00FA136D /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataStore.swift; path = LEDMqttClient/DataStore.swift; sourceTree = "<group>"; };
+		C75BDE021CB6B8CB00FA136D /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GCDAsyncSocket.h; path = LEDMqttClient/GCDAsyncSocket.h; sourceTree = "<group>"; };
+		C75BDE031CB6B8CB00FA136D /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GCDAsyncSocket.m; path = LEDMqttClient/GCDAsyncSocket.m; sourceTree = "<group>"; };
+		C75BDE041CB6B8CB00FA136D /* LEDMqttClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LEDMqttClient.swift; path = LEDMqttClient/LEDMqttClient.swift; sourceTree = "<group>"; };
+		C75BDE051CB6B8CB00FA136D /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.md; path = LEDMqttClient/LICENSE.md; sourceTree = "<group>"; };
+		C75BDE061CB6B8CB00FA136D /* MilkCocoa.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MilkCocoa.swift; path = LEDMqttClient/MilkCocoa.swift; sourceTree = "<group>"; };
+		C75BDE071CB6B8CB00FA136D /* MSWeakTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MSWeakTimer.h; path = LEDMqttClient/MSWeakTimer.h; sourceTree = "<group>"; };
+		C75BDE081CB6B8CB00FA136D /* MSWeakTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MSWeakTimer.m; path = LEDMqttClient/MSWeakTimer.m; sourceTree = "<group>"; };
+		C7732AF91CA1EC6100C3A079 /* CloudManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudManager.swift; path = Utility/CloudManager.swift; sourceTree = "<group>"; };
+		C77E91351CDF949500918EB3 /* detect_start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detect_start.png; sourceTree = "<group>"; };
+		C77E91361CDF949500918EB3 /* detect_stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detect_stop.png; sourceTree = "<group>"; };
+		C77E91391CDF97B500918EB3 /* exposure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exposure.png; sourceTree = "<group>"; };
 		C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSettingViewController.swift; sourceTree = "<group>"; };
 		C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDTabBarViewController.swift; sourceTree = "<group>"; };
 		C7B012201B402A5500539E4A /* ConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigManager.h; path = Utility/ConfigManager.h; sourceTree = "<group>"; };
 		C7B012211B402A5500539E4A /* ConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ConfigManager.m; path = Utility/ConfigManager.m; sourceTree = "<group>"; };
 		C7B012231B4CFCF800539E4A /* HistogramGraphView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HistogramGraphView.h; sourceTree = "<group>"; };
 		C7B012241B4FDD6100539E4A /* DebugLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DebugLog.swift; path = Utility/DebugLog.swift; sourceTree = "<group>"; };
-		C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedestrian_green.png; sourceTree = "<group>"; };
-		C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pedestrian_red.png; sourceTree = "<group>"; };
 		C7E9B11F1C513E9B002165B6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		C7E9B1211C550A29002165B6 /* blue_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = blue_2.jpg; sourceTree = "<group>"; };
-		C7E9B1251C5526D3002165B6 /* image_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = image_1.png; sourceTree = "<group>"; };
+		C7EC02381CBAA9BE0020E5E2 /* ProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,7 +257,7 @@
 				C72164971B36FC6C003A472D /* DropboxSDK.framework in Frameworks */,
 				6563026B19EC22C700A7E401 /* MobileCoreServices.framework in Frameworks */,
 				65C59A6F19E5907C005A3F96 /* Photos.framework in Frameworks */,
-				38BCFD3286FB452394125A76 /* libPods.a in Frameworks */,
+				F9F9958CA1B2BA5D216A03E0 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,17 +283,19 @@
 		6522238B19E1855C00F1667A = {
 			isa = PBXGroup;
 			children = (
-				6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */,
+				C75BDDFC1CB6B8B200FA136D /* LEDMqttClient */,
+				6522239619E1855C00F1667A /* LEDSignalDetector */,
 				C72CCC931C34DE9000369814 /* smarteye */,
+				C7BA0E201CB0FACE002AAFA0 /* CloudService */,
 				6557474219EF3F4700429846 /* Utility */,
 				65C59A6719E58A6B005A3F96 /* Video */,
 				65C59A5C19E58A5B005A3F96 /* Image */,
-				652E646D19E2C525002789DC /* README.md */,
-				6522239619E1855C00F1667A /* LEDSignalDetector */,
 				652223AC19E1855D00F1667A /* LEDSignalDetectorTests */,
 				6522239519E1855C00F1667A /* Products */,
 				6C675835BB4941FB9601CF03 /* Frameworks */,
 				6358A5C3F7D5893CBF683D06 /* Pods */,
+				6524FE5D1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist */,
+				652E646D19E2C525002789DC /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -245,13 +311,16 @@
 		6522239619E1855C00F1667A /* LEDSignalDetector */ = {
 			isa = PBXGroup;
 			children = (
+				C71767F31CC3E7610026E322 /* AirNetworkManager.swift */,
+				C71767F41CC3E7610026E322 /* AirService.swift */,
+				C71767F51CC3E7610026E322 /* AirServiceManager.swift */,
+				C71767DB1CBF56880026E322 /* CollectionDataManager.swift */,
+				C71767EB1CC164910026E322 /* CollectionInfo.swift */,
 				C72CCC901C34DE5A00369814 /* SmartEyeW.h */,
 				C72CCC911C34DE5A00369814 /* SmartEyeW.mm */,
 				C72CCC8D1C34DE4D00369814 /* AirSensorManager.h */,
 				C72CCC8E1C34DE4D00369814 /* AirSensorManager.m */,
 				C72CCC8C1C31B80C00369814 /* LEDSignalDetector-Bridging-Header.h */,
-				C72CCC891C3192C700369814 /* AirGraphView.h */,
-				C72CCC8A1C3192C700369814 /* AirGraphView.m */,
 				C721577F1BAC27C50081467B /* LEDMapManager.h */,
 				C72157801BAC27C50081467B /* LEDMapManager.m */,
 				C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */,
@@ -259,6 +328,7 @@
 				65C6C17119EAB345003518D0 /* CameraCapture.m */,
 				6522239919E1855C00F1667A /* AppDelegate.swift */,
 				6522239B19E1855C00F1667A /* CaptureViewController.swift */,
+				C71767DD1CBF61DA0026E322 /* ValidDetectionView.swift */,
 				C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */,
 				6563026819EBEE6600A7E401 /* SettingViewController.swift */,
 				65F3B7AD1AA744BD007CFC22 /* DebugModeViewController.swift */,
@@ -267,11 +337,24 @@
 				652E646F19E2E854002789DC /* VideoOperator.swift */,
 				65AA45FE19FFEAA300D0695C /* VehicleSignalView.m */,
 				65AA460019FFEAE600D0695C /* PedestrianSignalView.m */,
+				C72CCC891C3192C700369814 /* AirGraphView.h */,
+				C72CCC8A1C3192C700369814 /* AirGraphView.m */,
 				C72164A01B3D6DEC003A472D /* SignalGraphView.h */,
 				65AA460219FFEB1600D0695C /* SignalGraphView.m */,
+				C7B012231B4CFCF800539E4A /* HistogramGraphView.h */,
+				657288B31AB319730003DD01 /* HistogramGraphView.m */,
 				65F482D71A05F9960057D363 /* LEDPanelView.swift */,
 				65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */,
 				65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */,
+				C7EC02381CBAA9BE0020E5E2 /* ProgressViewController.swift */,
+				C71767E41CC15FDE0026E322 /* AirFolderCollectionViewController.swift */,
+				C71767E31CC15FDE0026E322 /* AirFolderCell.swift */,
+				C71767E01CC15FCF0026E322 /* AirImageCollectionViewController.swift */,
+				C71767DF1CC15FCF0026E322 /* AirImageCell.swift */,
+				C71767F91CCA2A2E0026E322 /* AirImageDetailCollectionViewController.swift */,
+				C71767FB1CCA2AC10026E322 /* AirImageDetailCell.swift */,
+				C71767E71CC162440026E322 /* FrameCollectionViewController.swift */,
+				C71767E91CC1629B0026E322 /* FrameCell.swift */,
 				65A0BE281A90E6F5000F8850 /* RecordCollectionViewController.swift */,
 				65F3B79B1A9B6497007CFC22 /* RecordDetailCollectionViewController.swift */,
 				65F3B7A11A9B6CC5007CFC22 /* RecordDetailCell.swift */,
@@ -284,8 +367,6 @@
 				C728A7DB1B9DAE860009670C /* LogViewController.swift */,
 				65F3B7B11AA8A77A007CFC22 /* LEDSignalGraphViewController.swift */,
 				65F3B7B21AA8A77A007CFC22 /* LEDSignalGraphViewController.xib */,
-				C7B012231B4CFCF800539E4A /* HistogramGraphView.h */,
-				657288B31AB319730003DD01 /* HistogramGraphView.m */,
 				6522239D19E1855C00F1667A /* Main.storyboard */,
 				652223A019E1855C00F1667A /* Images.xcassets */,
 				652223A219E1855C00F1667A /* LaunchScreen.xib */,
@@ -322,6 +403,7 @@
 		6557474219EF3F4700429846 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				C71767ED1CC3B4190026E322 /* ConfigSetting.swift */,
 				C721649D1B386C97003A472D /* Log.h */,
 				6557474319EF3FAE00429846 /* Log.m */,
 				C721649C1B386AA0003A472D /* FileManager.h */,
@@ -335,6 +417,8 @@
 				C7B012201B402A5500539E4A /* ConfigManager.h */,
 				C7B012211B402A5500539E4A /* ConfigManager.m */,
 				C7B012241B4FDD6100539E4A /* DebugLog.swift */,
+				C7732AF91CA1EC6100C3A079 /* CloudManager.swift */,
+				C71767F11CC3B4760026E322 /* CapabilityManager.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -342,13 +426,9 @@
 		65C59A5C19E58A5B005A3F96 /* Image */ = {
 			isa = PBXGroup;
 			children = (
-				C79D82651C6BC4BA0070614B /* image_5.png */,
-				C7E9B1251C5526D3002165B6 /* image_1.png */,
-				C7E9B1211C550A29002165B6 /* blue_2.jpg */,
-				C7E9B11D1C4B55F2002165B6 /* pedestrian_red.png */,
-				C7E9B11B1C4B55D5002165B6 /* pedestrian_green.png */,
-				65C59A5D19E58A5B005A3F96 /* blue.jpg */,
-				65C59A5F19E58A5B005A3F96 /* panel.png */,
+				C77E91391CDF97B500918EB3 /* exposure.png */,
+				C77E91351CDF949500918EB3 /* detect_start.png */,
+				C77E91361CDF949500918EB3 /* detect_stop.png */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -372,7 +452,8 @@
 				C72164961B36FC6C003A472D /* DropboxSDK.framework */,
 				6563026A19EC22C600A7E401 /* MobileCoreServices.framework */,
 				65C59A6A19E58DDB005A3F96 /* Photos.framework */,
-				9B050E182A954B6E938A3D58 /* libPods.a */,
+				6D87D4A594C76A97BECB067D /* Pods_LEDSignalDetector.framework */,
+				43F8E11280B3CC5493E0E9FE /* Pods.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -400,6 +481,32 @@
 			path = Log;
 			sourceTree = "<group>";
 		};
+		C75BDDFC1CB6B8B200FA136D /* LEDMqttClient */ = {
+			isa = PBXGroup;
+			children = (
+				C75BDDFD1CB6B8CB00FA136D /* CocoaMQTT.swift */,
+				C75BDDFE1CB6B8CB00FA136D /* CocoaMQTTFrame.swift */,
+				C75BDDFF1CB6B8CB00FA136D /* CocoaMQTTMessage.swift */,
+				C75BDE001CB6B8CB00FA136D /* CollectionData.swift */,
+				C75BDE011CB6B8CB00FA136D /* DataStore.swift */,
+				C75BDE021CB6B8CB00FA136D /* GCDAsyncSocket.h */,
+				C75BDE031CB6B8CB00FA136D /* GCDAsyncSocket.m */,
+				C75BDE041CB6B8CB00FA136D /* LEDMqttClient.swift */,
+				C75BDE051CB6B8CB00FA136D /* LICENSE.md */,
+				C75BDE061CB6B8CB00FA136D /* MilkCocoa.swift */,
+				C75BDE071CB6B8CB00FA136D /* MSWeakTimer.h */,
+				C75BDE081CB6B8CB00FA136D /* MSWeakTimer.m */,
+			);
+			name = LEDMqttClient;
+			sourceTree = "<group>";
+		};
+		C7BA0E201CB0FACE002AAFA0 /* CloudService */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = CloudService;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -413,6 +520,7 @@
 				6522239219E1855C00F1667A /* Resources */,
 				1F92AE6CC08E409BB852A29D /* Copy Pods Resources */,
 				705D23AD94DAB8A185DF94B9 /* Embed Pods Frameworks */,
+				C71DC1DF1CB68E39009FB838 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -448,8 +556,8 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
-				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0600;
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = TrE;
 				TargetAttributes = {
 					6522239319E1855C00F1667A = {
@@ -486,21 +594,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C77E913A1CDF97B500918EB3 /* exposure.png in Resources */,
 				6522239F19E1855C00F1667A /* Main.storyboard in Resources */,
-				C7E9B1221C550A29002165B6 /* blue_2.jpg in Resources */,
 				65F3B7B41AA8A77A007CFC22 /* LEDSignalGraphViewController.xib in Resources */,
-				C79D82661C6BC4BA0070614B /* image_5.png in Resources */,
+				C77E91381CDF949500918EB3 /* detect_stop.png in Resources */,
 				65F3B7B01AA744BD007CFC22 /* DebugModeViewController.xib in Resources */,
 				65F3B7A41A9B6CC5007CFC22 /* RecordDetailCell.xib in Resources */,
 				652223A419E1855C00F1667A /* LaunchScreen.xib in Resources */,
-				65C59A6419E58A5B005A3F96 /* panel.png in Resources */,
 				6524FE5E1A2B03AD0073B0B3 /* SmartEyeConfig_Init.plist in Resources */,
+				C77E91371CDF949500918EB3 /* detect_start.png in Resources */,
 				65F3B7AC1A9B762C007CFC22 /* RecordCell.xib in Resources */,
 				652223A119E1855C00F1667A /* Images.xcassets in Resources */,
-				65C59A6219E58A5B005A3F96 /* blue.jpg in Resources */,
-				C7E9B11E1C4B55F2002165B6 /* pedestrian_red.png in Resources */,
-				C7E9B11C1C4B55D5002165B6 /* pedestrian_green.png in Resources */,
-				C7E9B1261C5526D3002165B6 /* image_1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -566,12 +670,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C75BDE0E1CB6B8CB00FA136D /* GCDAsyncSocket.m in Sources */,
 				C72CCC8F1C34DE4D00369814 /* AirSensorManager.m in Sources */,
 				65D94FE319E98836001B8D49 /* VideoOperator.swift in Sources */,
 				65D94FE219E9882E001B8D49 /* CameraOperator.swift in Sources */,
 				C72CCC8B1C3192C700369814 /* AirGraphView.m in Sources */,
+				C71767E21CC15FCF0026E322 /* AirImageCollectionViewController.swift in Sources */,
+				C75BDE091CB6B8CB00FA136D /* CocoaMQTT.swift in Sources */,
+				C75BDE0D1CB6B8CB00FA136D /* DataStore.swift in Sources */,
 				65F3B79C1A9B6497007CFC22 /* RecordDetailCollectionViewController.swift in Sources */,
+				C71767EC1CC164910026E322 /* CollectionInfo.swift in Sources */,
+				C71767EE1CC3B4190026E322 /* ConfigSetting.swift in Sources */,
 				65F482DC1A05FA2F0057D363 /* LEDVehicleSignalView.swift in Sources */,
+				C75BDE121CB6B8CB00FA136D /* MSWeakTimer.m in Sources */,
 				657288B41AB319730003DD01 /* HistogramGraphView.m in Sources */,
 				C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */,
 				C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */,
@@ -580,31 +691,52 @@
 				6557474619EFBE0100429846 /* FileManager.m in Sources */,
 				65F482DA1A05F9FD0057D363 /* LEDPedestrianSignalView.swift in Sources */,
 				65F3B7981A9A09A0007CFC22 /* Util_C.m in Sources */,
+				C7EC02391CBAA9BE0020E5E2 /* ProgressViewController.swift in Sources */,
 				658DDEC71A07D9BF004C41A8 /* Helper.m in Sources */,
+				C71767E61CC15FDE0026E322 /* AirFolderCollectionViewController.swift in Sources */,
 				6557474419EF3FAE00429846 /* Log.m in Sources */,
 				65F3B7A61A9B6EB3007CFC22 /* RecordDetailFlowLayout.swift in Sources */,
+				C75BDE101CB6B8CB00FA136D /* LICENSE.md in Sources */,
+				C71767EA1CC1629B0026E322 /* FrameCell.swift in Sources */,
 				65AA460319FFEB1600D0695C /* SignalGraphView.m in Sources */,
 				65AA460119FFEAE600D0695C /* PedestrianSignalView.m in Sources */,
+				C75BDE111CB6B8CB00FA136D /* MilkCocoa.swift in Sources */,
 				6563026919EBEE6600A7E401 /* SettingViewController.swift in Sources */,
 				C728A7DC1B9DAE860009670C /* LogViewController.swift in Sources */,
+				C71767DC1CBF56880026E322 /* CollectionDataManager.swift in Sources */,
+				C7732AFA1CA1EC6100C3A079 /* CloudManager.swift in Sources */,
+				C71767E11CC15FCF0026E322 /* AirImageCell.swift in Sources */,
 				65C6C17219EAB345003518D0 /* CameraCapture.m in Sources */,
 				C72CCC9D1C34DE9000369814 /* README.md in Sources */,
+				C75BDE0B1CB6B8CB00FA136D /* CocoaMQTTMessage.swift in Sources */,
 				65F3B79A1A9A09DB007CFC22 /* Util.swift in Sources */,
 				C72CCC9C1C34DE9000369814 /* SmartEyeLog.mm in Sources */,
 				C72CCC9E1C34DE9000369814 /* SmartEye.mm in Sources */,
+				C75BDE0F1CB6B8CB00FA136D /* LEDMqttClient.swift in Sources */,
+				C71767E81CC162440026E322 /* FrameCollectionViewController.swift in Sources */,
+				C71767FA1CCA2A2E0026E322 /* AirImageDetailCollectionViewController.swift in Sources */,
+				C71767E51CC15FDE0026E322 /* AirFolderCell.swift in Sources */,
+				C71767DE1CBF61DA0026E322 /* ValidDetectionView.swift in Sources */,
 				65F3B7B31AA8A77A007CFC22 /* LEDSignalGraphViewController.swift in Sources */,
+				C71767F21CC3B4760026E322 /* CapabilityManager.swift in Sources */,
+				C71767F81CC3E7610026E322 /* AirServiceManager.swift in Sources */,
 				C72164931B36ECB2003A472D /* Uploader.m in Sources */,
 				C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */,
 				65A0BE291A90E6F5000F8850 /* RecordCollectionViewController.swift in Sources */,
 				65F482D81A05F9960057D363 /* LEDPanelView.swift in Sources */,
 				6522239C19E1855C00F1667A /* CaptureViewController.swift in Sources */,
 				65F3B7A31A9B6CC5007CFC22 /* RecordDetailCell.swift in Sources */,
+				C71767F61CC3E7610026E322 /* AirNetworkManager.swift in Sources */,
+				C71767FC1CCA2AC10026E322 /* AirImageDetailCell.swift in Sources */,
 				6522239A19E1855C00F1667A /* AppDelegate.swift in Sources */,
 				C72157811BAC27C50081467B /* LEDMapManager.m in Sources */,
+				C75BDE0A1CB6B8CB00FA136D /* CocoaMQTTFrame.swift in Sources */,
+				C71767F71CC3E7610026E322 /* AirService.swift in Sources */,
 				65F3B7AF1AA744BD007CFC22 /* DebugModeViewController.swift in Sources */,
 				65F3B7A81A9B75A7007CFC22 /* RecordFlowLayout.swift in Sources */,
 				C7B012251B4FDD6100539E4A /* DebugLog.swift in Sources */,
 				65AA45FF19FFEAA300D0695C /* VehicleSignalView.m in Sources */,
+				C75BDE0C1CB6B8CB00FA136D /* CollectionData.swift in Sources */,
 				65A0BE271A8B2867000F8850 /* ConfigManager.swift in Sources */,
 				C7B012221B402A5500539E4A /* ConfigManager.m in Sources */,
 			);
@@ -668,6 +800,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -682,7 +815,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -719,7 +852,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -735,14 +868,16 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = LEDSignalDetector/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.meta.TrE.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -760,14 +895,23 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				HEADER_SEARCH_PATHS = (
+					"\"${PODS_ROOT}/Headers/Private/CorePlot/ios\"",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/OpenCV\"",
+					"\"${PODS_ROOT}/Headers/Private/QBImagePickerController",
+				);
 				INFOPLIST_FILE = LEDSignalDetector/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.meta.TrE.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -790,6 +934,7 @@
 				);
 				INFOPLIST_FILE = LEDSignalDetectorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.meta.TrE.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LEDSignalDetector.app/LEDSignalDetector";
 			};
@@ -805,6 +950,7 @@
 				);
 				INFOPLIST_FILE = LEDSignalDetectorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.meta.TrE.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LEDSignalDetector.app/LEDSignalDetector";
 			};

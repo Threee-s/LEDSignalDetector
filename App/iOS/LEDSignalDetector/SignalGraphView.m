@@ -24,8 +24,6 @@
 @property (nonatomic) bool initFlag;
 @property (nonatomic) int xyAxisXLen;
 
--(void)setupSignalGraph;
-
 @end
 
 @implementation SignalGraphView
@@ -45,7 +43,7 @@
         if (self.initFlag == false) {
             self.signalDataList = [NSMutableDictionary dictionary];
             //self.signalDataList = [NSMutableArray array];
-            [self setupSignalGraph];
+            [self setup];
             self.initFlag = true;
         }
     }
@@ -62,7 +60,7 @@
         if (self.initFlag == false) {
             self.signalDataList = [NSMutableDictionary dictionary];
             //self.signalDataList = [NSMutableArray array];
-            [self setupSignalGraph];
+            [self setup];
             self.initFlag = true;
         }
     }
@@ -70,7 +68,7 @@
     return self;
 }
 
--(void)setupSignalGraph
+-(void)setup
 {
     DEBUGLOG(@"SignalGraphView setupSignalGraph");
     
