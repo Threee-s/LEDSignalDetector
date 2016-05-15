@@ -318,6 +318,8 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var captureCount: Int = 0;
     
     var procDetect: Bool = false
+    // 一度検出後の検出保時回数(検出後のframe数:fps)
+    var detectedRetainCount: Int = 0
     
     var debugViewController: DebugModeViewController?
     var debugView: UIView?
@@ -342,6 +344,8 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     var motionClock: CMClockRef?
     
     // todo:selectedはdebug用 validはcollection用 分ける
+    //      debug画面でselectedを選択した場合、現出バッファー矩形(描画矩形)をselecteに合わせる。
+    //      selectedRect/validDetectionRect/バッファー描画矩形について再検討。合わせる。
     var selectedMode: Bool = false
     var selectedRect: CGRect = CGRectZero
     var validDetectionRect: CGRect = CGRectZero
@@ -499,7 +503,10 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     
     private func loadConfig() {
         self.loadMode()
-        self.setupCollectionCount()
+        
+        if (self.userMode == .Test) {
+            self.setupCollectionCount()
+        }
     }
     
     private func loadMode() {
@@ -797,16 +804,17 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
     private func updateUserMode() {
         if (self.userMode == .Product) {
             self.updateDetectArea(CGRectZero, valid: false)
+            self.confManager.confSettings.debugMode.collection = false
         } else if (self.userMode == .Test) {
             // default
             self.dispMode = .Normal
 
             //let detectRect: CGRect = self.createValidDispRect()
             self.updateDetectArea(self.selectedRect, valid: true)
+            self.confManager.confSettings.debugMode.collection = true
         }
         
         self.confManager.confSettings.settings.userMode = Int32(self.userMode.rawValue)
-        self.confManager.confSettings.debugMode.collection = true
         
         SmartEyeW.setConfig()
     }
@@ -1061,6 +1069,11 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         
         self.captureCount += 1
         
+        // 1frameずつ減らす
+        if (self.detectedRetainCount > 0) {
+            self.detectedRetainCount -= 1
+        }
+        
         // todo:非同期で処理する場合、専用キューに入れる(むやみに別キューに入れると、その分コストがかかるので)
         //dispatch_sync(self.signalDetectQueue!, { () -> Void in // @memo:非同期の場合、キューで待機されるとき、メモリが増え続ける。警告発生して落ちる!?
         //if (!self.signalDetected) {// todo: 実際はキューをクリアしたい
@@ -1127,6 +1140,9 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                 // test
                 if (signalData.kind == 1) {
 
+                    // 回数リセット
+                    self.detectedRetainCount = self.detectFps
+                    
                     if (self.userMode == .Product) {
                         let detectResult = self.detectRstMan?.analyzeSignal(signalData, direction: self.mapManager!.getCurrentHeading().magneticHeading)
                         self.audio?.vibrate((detectResult?.vibrateCount)!)
@@ -1153,12 +1169,14 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
                     self.collectSignalData(info, signals: signals, collectionInfo: collW)
                 }
                 
-                // 変わっ時設定
+                // 変わっ時且つ　検出時/検出保時回数が0の(一定期間検出されない)場合、設定
                 if (self.currentRectColor != signalColor) {
-                    self.currentRectColor = signalColor
-                    // @memo: queue in UI thread
-                    dispatch_async(dispatch_get_main_queue()) { () -> Void in
-                        self.updateValidDetectionRectLine(self.currentRectColor)
+                    if ((signalDetected == true && self.detectedRetainCount == self.detectFps) || (signalDetected == false && self.detectedRetainCount == 0)) {
+                        self.currentRectColor = signalColor
+                        // @memo: queue in UI thread
+                        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                            self.updateValidDetectionRectLine(self.currentRectColor)
+                        }
                     }
                 }
             }
@@ -1696,82 +1714,89 @@ class CaptureViewController: UIViewController, CameraCaptureObserver, LEDMapMana
         // for dispMode
         let bottom: CGFloat = 50 + 44 // NavigationBar:44
         
-        
-        //print("pan x:\(pos.x) y:\(pos.y)")
-        if (gesRec.state == UIGestureRecognizerState.Began) {// 設定秒数間押し続くとBeganになる。Endで処理する場合、手を離さないとdebugmodeが変わらない
-            //print("long began(\(gesRec.state))")
-            if (pos.y < bottom) {
-                if (pos.x < left) {
-                    self.gesturePosition = .LeftTop
-                } else if (pos.x > right) {
-                    self.gesturePosition = .RightTop
-                }
-            } else if (pos.y > top) {
-                if (pos.x < left) {
-                    self.gesturePosition = .LeftBottom
-                } else if (pos.x > right) {
-                    self.gesturePosition = .RightBottom
-                }
+        // 有効検出矩形ないの場合、表示モード変更
+        // ->余計だな(debugモードでやればいい)
+        if ((pos.x > self.validDetectionRect.origin.x && pos.x < self.validDetectionRect.origin.x + self.validDetectionRect.size.width) && (pos.y > self.validDetectionRect.origin.y && pos.y < self.validDetectionRect.origin.y + self.validDetectionRect.size.height)) {
+            if (gesRec.state == UIGestureRecognizerState.Ended) {
+                
             }
-        } else if (gesRec.state == UIGestureRecognizerState.Changed) {
-            //print("long changed(\(gesRec.state))")
-            if (((pos.x > left) && (pos.x <= right)) && ((pos.y < bottom) || (pos.y > top))) {
-                if (self.gesturePosition != .Middle) {
-                    if (self.gesturePosition == .LeftTop || self.gesturePosition == .LeftBottom) {
-                        self.panMoveDirection = .LeftToRight
-                    } else if (self.gesturePosition == .RightTop || self.gesturePosition == .RightBottom) {
-                        self.panMoveDirection = .RightToLeft
+        } else {
+            //print("pan x:\(pos.x) y:\(pos.y)")
+            if (gesRec.state == UIGestureRecognizerState.Began) {// 設定秒数間押し続くとBeganになる。Endで処理する場合、手を離さないとdebugmodeが変わらない
+                //print("long began(\(gesRec.state))")
+                if (pos.y < bottom) {
+                    if (pos.x < left) {
+                        self.gesturePosition = .LeftTop
+                    } else if (pos.x > right) {
+                        self.gesturePosition = .RightTop
                     }
-                    self.gesturePosition = .Middle
+                } else if (pos.y > top) {
+                    if (pos.x < left) {
+                        self.gesturePosition = .LeftBottom
+                    } else if (pos.x > right) {
+                        self.gesturePosition = .RightBottom
+                    }
                 }
-            }
-            
-        } else if (gesRec.state == UIGestureRecognizerState.Ended) {
-            //print("long ended(\(gesRec.state))")
-            if (pos.y < bottom) {
-                if (pos.x > right) {
-                    if (self.panMoveDirection == .LeftToRight) {
-                        if (self.dispMode == .Blindness) {
-                            self.dispMode = .Normal
-                        } else if (self.dispMode == .Normal) {
-                            self.dispMode = .Setting
+            } else if (gesRec.state == UIGestureRecognizerState.Changed) {
+                //print("long changed(\(gesRec.state))")
+                if (((pos.x > left) && (pos.x <= right)) && ((pos.y < bottom) || (pos.y > top))) {
+                    if (self.gesturePosition != .Middle) {
+                        if (self.gesturePosition == .LeftTop || self.gesturePosition == .LeftBottom) {
+                            self.panMoveDirection = .LeftToRight
+                        } else if (self.gesturePosition == .RightTop || self.gesturePosition == .RightBottom) {
+                            self.panMoveDirection = .RightToLeft
                         }
-                    }
-                } else if (pos.x < left) {
-                    if (self.panMoveDirection == .RightToLeft) {
-                        if (self.dispMode == .Setting) {
-                            self.dispMode = .Normal
-                        } else if (self.dispMode == .Normal) {
-                            self.dispMode = .Blindness
-                        }
+                        self.gesturePosition = .Middle
                     }
                 }
                 
-                self.updateDispMode()
-            } else if (pos.y > top) {
-                if (pos.x > right) {
-                    if (self.panMoveDirection == .LeftToRight) {
-                        if (self.userMode == .Product) {
-                            self.userMode = .Test
+            } else if (gesRec.state == UIGestureRecognizerState.Ended) {
+                //print("long ended(\(gesRec.state))")
+                if (pos.y < bottom) {
+                    if (pos.x > right) {
+                        if (self.panMoveDirection == .LeftToRight) {
+                            if (self.dispMode == .Blindness) {
+                                self.dispMode = .Normal
+                            } else if (self.dispMode == .Normal) {
+                                self.dispMode = .Setting
+                            }
+                        }
+                    } else if (pos.x < left) {
+                        if (self.panMoveDirection == .RightToLeft) {
+                            if (self.dispMode == .Setting) {
+                                self.dispMode = .Normal
+                            } else if (self.dispMode == .Normal) {
+                                self.dispMode = .Blindness
+                            }
                         }
                     }
-                } else if (pos.x < left) {
-                    if (self.panMoveDirection == .RightToLeft) {
-                        if (self.userMode == .Test) {
-                            self.userMode = .Product
+                    
+                    self.updateDispMode()
+                } else if (pos.y > top) {
+                    if (pos.x > right) {
+                        if (self.panMoveDirection == .LeftToRight) {
+                            if (self.userMode == .Product) {
+                                self.userMode = .Test
+                            }
+                        }
+                    } else if (pos.x < left) {
+                        if (self.panMoveDirection == .RightToLeft) {
+                            if (self.userMode == .Test) {
+                                self.userMode = .Product
+                            }
                         }
                     }
+                    
+                    self.updateUserMode()
                 }
                 
-                self.updateUserMode()
+                self.gesturePosition = .None
+                self.panMoveDirection = .None
+            } else {// cancelなど
+                //print("pan others(\(gesRec.state))")
+                self.gesturePosition = .None
+                self.panMoveDirection = .None
             }
-            
-            self.gesturePosition = .None
-            self.panMoveDirection = .None
-        } else {// cancelなど
-            //print("pan others(\(gesRec.state))")
-            self.gesturePosition = .None
-            self.panMoveDirection = .None
         }
     }
     

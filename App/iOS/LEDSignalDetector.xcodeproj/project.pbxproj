@@ -91,6 +91,7 @@
 		C77E91371CDF949500918EB3 /* detect_start.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91351CDF949500918EB3 /* detect_start.png */; };
 		C77E91381CDF949500918EB3 /* detect_stop.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91361CDF949500918EB3 /* detect_stop.png */; };
 		C77E913A1CDF97B500918EB3 /* exposure.png in Resources */ = {isa = PBXBuildFile; fileRef = C77E91391CDF97B500918EB3 /* exposure.png */; };
+		C77E913C1CE0FC9600918EB3 /* ARAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77E913B1CE0FC9600918EB3 /* ARAnimationView.swift */; };
 		C7B0121D1B3DBB7C00539E4A /* CameraSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */; };
 		C7B0121F1B3EF36000539E4A /* LEDTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */; };
 		C7B012221B402A5500539E4A /* ConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C7B012211B402A5500539E4A /* ConfigManager.m */; };
@@ -233,6 +234,7 @@
 		C77E91351CDF949500918EB3 /* detect_start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detect_start.png; sourceTree = "<group>"; };
 		C77E91361CDF949500918EB3 /* detect_stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = detect_stop.png; sourceTree = "<group>"; };
 		C77E91391CDF97B500918EB3 /* exposure.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exposure.png; sourceTree = "<group>"; };
+		C77E913B1CE0FC9600918EB3 /* ARAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARAnimationView.swift; sourceTree = "<group>"; };
 		C7B0121C1B3DBB7C00539E4A /* CameraSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSettingViewController.swift; sourceTree = "<group>"; };
 		C7B0121E1B3EF36000539E4A /* LEDTabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEDTabBarViewController.swift; sourceTree = "<group>"; };
 		C7B012201B402A5500539E4A /* ConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigManager.h; path = Utility/ConfigManager.h; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 				65F482D71A05F9960057D363 /* LEDPanelView.swift */,
 				65F482D91A05F9FD0057D363 /* LEDPedestrianSignalView.swift */,
 				65F482DB1A05FA2F0057D363 /* LEDVehicleSignalView.swift */,
+				C77E913B1CE0FC9600918EB3 /* ARAnimationView.swift */,
 				C7EC02381CBAA9BE0020E5E2 /* ProgressViewController.swift */,
 				C71767E41CC15FDE0026E322 /* AirFolderCollectionViewController.swift */,
 				C71767E31CC15FDE0026E322 /* AirFolderCell.swift */,
@@ -682,6 +685,7 @@
 				C71767EC1CC164910026E322 /* CollectionInfo.swift in Sources */,
 				C71767EE1CC3B4190026E322 /* ConfigSetting.swift in Sources */,
 				65F482DC1A05FA2F0057D363 /* LEDVehicleSignalView.swift in Sources */,
+				C77E913C1CE0FC9600918EB3 /* ARAnimationView.swift in Sources */,
 				C75BDE121CB6B8CB00FA136D /* MSWeakTimer.m in Sources */,
 				657288B41AB319730003DD01 /* HistogramGraphView.m in Sources */,
 				C730C1EF1B85F33000684588 /* RecordInfo.swift in Sources */,

@@ -646,8 +646,8 @@ using namespace cv;
         conf.signalDrawFlag = cm.confSettings.debugMode.signal;
         conf.centerDrawFlag = cm.confSettings.debugMode.center;
         conf.frameDrawFlag = cm.confSettings.debugMode.collection;
-        conf.debugInfoFlag = cm.confSettings.debugMode.log;
-        conf.collectionInfoFlag = cm.confSettings.debugMode.collection;
+        //conf.debugInfoFlag = cm.confSettings.debugMode.log;
+        //conf.collectionInfoFlag = cm.confSettings.debugMode.collection;
     } else {
         conf.binImageDrawFlag = false;
         conf.pointDrawFlag = false;
@@ -658,6 +658,11 @@ using namespace cv;
         conf.frameDrawFlag = false;
         conf.debugInfoFlag = false;
     }
+    
+    // debugModeとは別にテスト用のcollectionモードでも設定される
+    conf.collectionInfoFlag = cm.confSettings.debugMode.collection;
+    // frameごとに返すかのフラグ。getDebugInfoはflagと関係ない
+    conf.debugInfoFlag = cm.confSettings.debugMode.log;
     
     // とりあえずtrue。plistで設定しない。通常は最低シグナル検出矩形を描画
     conf.drawFlag = true;
@@ -1017,7 +1022,8 @@ using namespace cv;
             cv::Point point = points[j];
             //ContourPoint *contourPoint = [[ContourPoint alloc] initWithX:point.x andY:point.y];
             //[contourPoints addObject:contourPoint];
-            NSString *strPoint = [NSString stringWithFormat:@"{x:%d, y:%d}", point.x, point.y];
+            //NSString *strPoint = [NSString stringWithFormat:@"{x:%d, y:%d}", point.x, point.y];
+            NSString *strPoint = [NSString stringWithFormat:@"[%d, %d]", point.x, point.y];
             strPoints = [NSString stringWithFormat:@"%@,%@", strPoints, strPoint];
         }
         strPoints = [NSString stringWithFormat:@"%@]", strPoints];
